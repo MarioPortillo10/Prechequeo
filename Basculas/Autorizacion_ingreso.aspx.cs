@@ -11,114 +11,200 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
+using System.Web.Services;
+
 
 
 public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 {
-    protected void Page_Load(object sender, EventArgs e)
+// Clases para deserializar JSON de la segunda API
+public class QueueData
+{
+    public QueueDataInner data { get; set; }
+}
+
+public class QueueDataInner
+{
+    public int V { get; set; }
+    public int P { get; set; }
+}
+
+protected void Page_Load(object sender, EventArgs e)
+{
+    if (!IsPostBack)
     {
-        if (!IsPostBack)
+        // URL de la primera API
+        string url1 = "http://172.206.251.10/api/shipping/status/3";
+        // URL de la segunda API
+        string url2 = "http://172.206.251.10/api/queue/count/";
+
+        // Token
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjQsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MjkwMjU5ODcsImV4cCI6MjUxNzk2NTk4N30.S5nkzIJPYKdJ7CsA2K1a-jz4xsuIglTEspao5jv1IBk";
+
+        using (WebClient client = new WebClient())
         {
-            // URL que deseas hacer el fetch
-            string url = "http://172.206.251.10:9010/api/shipping/status/3";
+            // Añadir el token al encabezado de autorización
+            client.Headers.Add("Authorization", "Bearer " + token);
 
-            // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjQsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MjkwMjU5ODcsImV4cCI6MjUxNzk2NTk4N30.S5nkzIJPYKdJ7CsA2K1a-jz4xsuIglTEspao5jv1IBk";
-
-            using (WebClient client = new WebClient())
+            try
             {
-                // Añadir el token al encabezado de autorización
-                client.Headers.Add("Authorization", "Bearer " + token);
+                // *** Primera API ***
+                string responseBody1 = client.DownloadString(url1);
+                var data1 = JsonConvert.DeserializeObject<List<Post>>(responseBody1);
 
-                try
+                // Filtrar y procesar datos de la primera API
+                var filteredData = new List<Post>();
+                foreach (var item in data1)
                 {
-                    // Realizar la solicitud GET y leer la respuesta
-                    string responseBody = client.DownloadString(url);
-
-                    // Deserializar la respuesta JSON
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Filtrar registros válidos
-                    var filteredData = new List<Post>();
-                    foreach (var item in data)
+                    if (item.statuses != null && item.statuses.Count > 0 &&
+                        item.statuses[item.statuses.Count - 1].id == 3 &&
+                        item.vehicle != null)
                     {
-                        if (item.statuses != null && item.statuses.Count > 0 &&
-                            item.statuses[item.statuses.Count - 1].id == 3 &&
-                            item.vehicle != null)
-                        {
-                            filteredData.Add(item);
-                        }
+                        filteredData.Add(item);
                     }
-
-                    // Crear una lista de códigos de ingenio que te interesan
-                    var validIngenios = new string[] { "34323", "9", "ICHP", "10", "11", "001001-002" };
-
-                    // Inicializar los conteos por ingenio
-                    var ingenioCounts = new Dictionary<string, int>();
-                    foreach (var item in filteredData)
-                    {
-                        var ingenioCode = item.ingenio != null ? item.ingenio.ingenioCode : null; // Verificación manual de null
-                        if (ingenioCode != null && validIngenios.Contains(ingenioCode))
-                        {
-                            if (ingenioCounts.ContainsKey(ingenioCode))
-                            {
-                                ingenioCounts[ingenioCode]++;
-                            }
-                            else
-                            {
-                                ingenioCounts[ingenioCode] = 1;
-                            }
-                        }
-                    }
-
-                    // Asignar las cantidades a los labels correspondientes
-                    int i = 1;
-                    foreach (var ingenio in validIngenios)
-                    {
-                        // Crear el nombre del Label para cada ingenio (por ejemplo, lblIngenioQuantity1, lblIngenioQuantity2...)
-                        var lblIngenioQuantity = this.FindControl("lblIngenioQuantity" + i.ToString()) as Label;
-
-                        if (lblIngenioQuantity != null)
-                        {
-                            // Asignar la cantidad al label correspondiente
-                            lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
-                        }
-                        i++;
-                    }
-
-                    // Inicializar contadores para Total Registros P y Total Registros V
-
-                    int countP = 0;
-                    int countV = 0;
-                    foreach (var item in filteredData)
-                    {
-                        if (item.vehicle.truckType == "P")
-                        {
-                            countP++;
-                        }
-                        else if (item.vehicle.truckType == "V")
-                        {
-                            countV++;
-                        }
-                    }
-
-                    // Mostrar conteos en etiquetas
-                    lblCountP.Text = "" + countP.ToString();
-                    lblCountV.Text = "" + countV.ToString();
-
-
-                    // Vincular todos los datos filtrados al Repeater
-                    rptRutas.DataSource = filteredData;
-                    rptRutas.DataBind();
                 }
-                catch (Exception ex)
+
+                // Filtrar por tipos de camiones
+                        var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
+                        var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+
+                        // Contar registros por tipo
+                        lblCountP.Text = truckTypeP.Count.ToString();
+                        lblCountV.Text = truckTypeV.Count.ToString();
+
+                        // Crear una lista de códigos de ingenio válidos
+                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+
+                        // Inicializar los conteos de ingenios
+                        var ingenioCounts = new Dictionary<string, int>();
+
+                        // Contar ingenios en todos los registros filtrados
+                        foreach (var item in filteredData)
+                        {
+                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                            {
+                                if (ingenioCounts.ContainsKey(ingenioNavCode))
+                                {
+                                    ingenioCounts[ingenioNavCode]++;
+                                }
+                                else
+                                {
+                                    ingenioCounts[ingenioNavCode] = 1;
+                                }
+                            }
+                        }
+
+                        // Procesar e insertar los conteos en las etiquetas correspondientes
+                        int i = 1;
+                        foreach (var ingenio in validIngenios)
+                        {
+                            // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
+                            var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
+                            if (lblIngenioQuantity != null)
+                            {
+                                // Mostrar el conteo de ingenios o 0 si no existe
+                                lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                            }
+                            i++;
+                        }
+
+                        // Vincular los datos filtrados a los Repeaters correspondientes
+                        rptRutas1.DataSource = truckTypeP;
+                        rptRutas1.DataBind();
+
+                        rptRutas2.DataSource = truckTypeV;
+                        rptRutas2.DataBind();
+
+                int countP = 0;
+                int countV = 0;
+                foreach (var item in filteredData)
                 {
-                    // Manejar errores de solicitud o deserialización
-                    //lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
+                    if (item.vehicle.truckType == "P")
+                    {
+                        countP++;
+                    }
+                    else if (item.vehicle.truckType == "V")
+                    {
+                        countV++;
+                    }
                 }
+
+                lblCountP.Text = countP.ToString();
+                lblCountV.Text = countV.ToString();
+
+                // *** Segunda API ***
+                string responseBody2 = client.DownloadString(url2);
+
+                // Deserializar respuesta de la segunda API
+                var queueData = JsonConvert.DeserializeObject<QueueData>(responseBody2);
+
+                if (queueData != null && queueData.data != null)
+                {
+                    // Asignar datos a etiquetas
+                    lblV.Text = "" + queueData.data.V.ToString();
+                    lblP.Text = "" + queueData.data.P.ToString();
+                }
+                else
+                {
+                    // Si no hay datos, mostrar 0
+                    lblV.Text = "0";
+                    lblP.Text = "0";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejo de errores
+                lblV.Text = "0";
+                lblP.Text = "0";
+
+                // Puedes loguear o mostrar detalles del error para depuración.
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
     }
+}
+
+[WebMethod]
+    public static string ChangeTransactionStatus(string codeGen)
+    {
+        if (string.IsNullOrEmpty(codeGen))
+        {
+            return "Error: La transacción no puede estar vacía.";
+        }
+
+        string url = "http://172.206.251.10/api/queue/send/" + codeGen;
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string responseContent;
+
+        using (var client = new WebClient())
+        {
+            client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+            var requestBody = new { codeGen = codeGen };
+            var json = JsonConvert.SerializeObject(requestBody);
+
+            try
+            {
+                responseContent = client.UploadString(url, "POST", json);
+            }
+            catch (WebException webEx)
+            {
+                using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+                {
+                    return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + reader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                return "Error inesperado: " + ex.Message;
+            }
+        }
+
+        return "Respuesta del servidor: " + responseContent;
+    }
+
 
     private void DataBind()
     {
@@ -138,68 +224,96 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
         File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
     }
 
-public class Post
-{
-    public int id { get; set; }
-    public string codeGen { get; set; }
-    public string product { get; set; }
-    public string operationType { get; set; }
-    public string loadType { get; set; }
-    public string transporter { get; set; }
-    public int productQuantity { get; set; }
-    public long productQuantityKg { get; set; }
-    public string unitMeasure { get; set; }
-    public string requiresSweeping { get; set; }
-    public DateTime createdAt { get; set; }
-    public DateTime updatedAt { get; set; }
-    public Driver driver { get; set; }
-    public Vehicle vehicle { get; set; }
-    public Ingenio ingenio { get; set; }
-    public List<Status> statuses { get; set; }
-}
-
-public class Driver
-{
-    public int id { get; set; }
-    public string license { get; set; }
-    public string name { get; set; }
-}
-
-public class Vehicle
-{
-    public int id { get; set; }
-    public string plate { get; set; }
-    public string trailerPlate { get; set; }
-    public string truckType { get; set; }
-}
-
-public class Ingenio
-{
-    public int id { get; set; }
-    public string ingenioCode { get; set; }
-    public User user { get; set; } // Asegúrate de que esta propiedad esté aquí
-}
-
-public class User
-{
-    public int id { get; set; }
-    public string username { get; set; }
-    public string password { get; set; }
-    public string role { get; set; }
-    public DateTime createdAt { get; set; }
-    public DateTime updatedAt { get; set; }
-}
-
-public class Status
-{
-    public int id { get; set; }
-    public string status { get; set; }
-    public DateTime createdAt { get; set; }
-    public string date { get; set; }
-    public string time { get; set; }
-}
+public class IngenioCount
+    {
+        public string IngenioName { get; set; }
+        public int Count { get; set; }
+    }
 
 
+    public class Post
+    {
+        public string nameProduct { get; set; }
+        public int id { get; set; }
+        public string codeGen { get; set; }
+        public string product { get; set; }
+        public string operationType { get; set; }
+        public string loadType { get; set; }
+        public string transporter { get; set; }
+        public double productQuantity { get; set; }
+        public long productQuantityKg { get; set; }
+        public string unitMeasure { get; set; }
+        public string requiresSweeping { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+        public bool mapping { get; set; }
+        public Driver driver { get; set; }
+        public Vehicle vehicle { get; set; }
+        public Ingenio ingenio { get; set; }
+        public List<Status> statuses { get; set; }
+        public List<ShipmentAttachment> shipmentAttachments { get; set; } // Agregado para los adjuntos
+    }
+
+    public class Driver
+    {
+        public int id { get; set; }
+        public string license { get; set; }
+        public string name { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+
+    public class Vehicle
+    {
+        public int id { get; set; }
+        public string plate { get; set; }
+        public string trailerPlate { get; set; }
+        public string truckType { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+
+    public class Ingenio
+    {
+        public int id { get; set; }
+        public string ingenioCode { get; set; }
+        public string ingenioNavCode { get; set; }
+        public string name { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+        public User user { get; set; }
+    }
+
+    public class User
+    {
+        public int id { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+        public string role { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+
+    public class Status
+    {
+        public int id { get; set; }
+        public string status { get; set; }
+        public DateTime createdAt { get; set; }
+        public string date { get; set; }
+        public string time { get; set; }
+    }
+
+    public class ShipmentAttachment
+    {
+        public int id { get; set; }
+        public string fileUrl { get; set; }
+        public string fileName { get; set; }
+        public string fileType { get; set; }
+        public string attachmentType { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+   
     protected void lnk_VerRuta_Click(object sender, EventArgs e)
     {
 

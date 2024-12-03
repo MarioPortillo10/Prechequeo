@@ -163,6 +163,21 @@
       gap: 10px; /* Espacio de 10px entre los botones */
     }
 
+    .card1 
+    {
+        width: 175px; /* Ancho fijo */
+        height: 75px; /* Alto fijo */
+        background-color: #d1d5db; /* Color de fondo */
+        padding: 1rem;
+        text-align: center;
+        border-radius: 0.5rem; /* Bordes redondeados */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0.5rem; /* Espaciado entre tarjetas */
+    }
+
 </style>
 
 </head>
@@ -304,24 +319,26 @@
                 <div class="grid grid-cols-2 gap-4">
             
                     <!-- Plano -->
-                    <div class="text-white text-center p-4 rounded-lg flex items-center justify-center" style="background-color:#182A6E;">
-                        
+                    <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; max-height: 140px; max-width: 400px;">
                         <div class="flex flex-col items-center">
-                            <div class="text-3xl mb-1">Plano</div>
-                            <div class="text-2xl mt-1 font-bold">
-                                <asp:Label ID="lblTotalRegistrosP" runat="server" CssClass="text-center font-bold mb-2"></asp:Label>
-                            </div>
+                            <!-- Texto en la parte superior -->
+                            <span class="text-3xl mb-1">Plano</span>
+
+                            <span class="text-3xl mt-1 font-bold">
+                                <asp:Label ID="lblP" runat="server" CssClass="text-center font-bold mb-2"></asp:Label>
+                            </span>
                         </div>
                     </div>
 
                     <!-- Volteo -->
-                    <div class="bg-gray-800 text-white text-center p-4 rounded-lg flex items-center justify-center" style="background-color:#242424;">
-                        
-                        <div class="text-center">
-                            <div class="text-3xl mb-1">Volteo</div>
-                            <div class="text-1xl mt-2 font-bold">
-                                <asp:Label ID="lblTotalRegistrosV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
-                            </div>
+                    <div class="text-white text-center rounded-lg" style="background-color:#242424; padding: 8px; max-height: 135px; max-width: 350px;">
+                        <div class="flex flex-col items-center">
+                            <!-- Texto en la parte superior -->
+                            <span class="text-3xl mb-1">Volteo</span>
+
+                            <span class="text-3xl mt-1 font-bold">
+                                <asp:Label ID="lblV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -362,64 +379,62 @@
         </section>
 
         <section>
-            <div class="bg-white">
-                <h2 class="text-lg font-bold mb-2 text-center">TOTAL INGENIOS</h2> <!-- Reduje el margen inferior -->
-                <div class="flex flex-row gap-1 justify-center items-center flex-wrap">
-                    <!-- Tarjeta 1 -->
-                    <div class="bg-gray-300 p-1 max-h-[90px] max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto">
-                        <h2 class="text-xs font-bold text-black mb-1">COMPAÑIA AZUCARERA SALVADOREÑA, S.A. DE C.V.</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity2" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta 2 -->
-                    <div class="bg-gray-300 p-1 max-h-[90px] max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CENTRAL AZUCARERO JIBOA, S.A. DE CV</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity4" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta 3 -->
-                    <div class="bg-gray-300 p-1 max-h-[90px] max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CHAPARRASTIQUE, S.A. DE C.V.</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity3" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta 4 -->
-                    <div class="bg-gray-300 p-1 max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto"
-                        style="height: 68px;">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO EL ANGEL, S.A. DE C.V. </h2>
-                        
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity6" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta 5 -->
-                    <div class="bg-gray-300 p-1 max-h-[90px] max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA CABAÑA, S.A. DE C.V.</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity1" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta 6 -->
-                    <div class="bg-gray-300 p-1 max-h-[90px] max-w-[200px] text-center rounded-lg overflow-hidden flex flex-col justify-center mx-auto">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA MAGDALENA, S.A. DE C.V.</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity5" runat="server" /> <!-- Ingenio 34323 -->
-                        </div>
-                    </div>
-
-                    
+    <div class="bg-white">
+        <h2 class="text-lg font-bold mb-2 text-center">TOTAL INGENIOS</h2>
+        <div class="flex flex-row gap-1 justify-center items-center flex-wrap">
+            <!-- Tarjeta 1 -->
+            <div class="card1">
+                <h2 class="text-xs font-bold text-black mb-1">COMPAÑIA AZUCARERA SALVADOREÑA</h2>
+                <div class="text-base font-bold">
+                    <asp:Label ID="lblIngenioQuantity2" runat="server" />
                 </div>
-
             </div>
-        </section>
+
+            <!-- Tarjeta 2 -->
+            <div class="card1">
+                <h2 class="text-xs font-bold text-black mb-1">INGENIO CENTRAL AZUCARERO JIBOA</h2>
+                <div class="text-base font-bold">
+                    <asp:Label ID="lblIngenioQuantity4" runat="server" />
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 -->
+            <div class="card1">
+                <h2 class="text-xs font-bold text-black mb-1">INGENIO CHAPARRASTIQUE</h2>
+                <div class="text-base font-bold">
+                    <asp:Label ID="lblIngenioQuantity3" runat="server" />
+                </div>
+            </div>
+
+            <!-- Tarjeta 4 -->
+            <div class="card1">
+                <h2> </h2>
+                <h2 class="text-xs font-bold text-black mb-1">INGENIO EL ANGEL</h2>
+                <div class="text-base font-bold">
+                    
+                    <asp:Label ID="lblIngenioQuantity6" runat="server" />
+                </div>
+            </div>
+
+            <!-- Tarjeta 5 -->
+            <div class="card1">
+                <h2 class="text-xs font-bold text-black mb-1">INGENIO LA CABAÑA</h2>
+                <div class="text-base font-bold">
+                    <asp:Label ID="lblIngenioQuantity1" runat="server" />
+                </div>
+            </div>
+
+            <!-- Tarjeta 6 -->
+            <div class="card1">
+                <h2 class="text-xs font-bold text-black mb-1">INGENIO LA MAGDALENA</h2>
+                <div class="text-base font-bold">
+                    <asp:Label ID="lblIngenioQuantity5" runat="server" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 
         <div class="row ml-3 sticky-top" style="border: solid 0px;">
@@ -429,87 +444,177 @@
         </div>
 
 
-
-        <div class="row justify-content-center" style="margin: 20px;">
-            <asp:Repeater ID="rptRutas" runat="server">
-                <ItemTemplate>
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4 card-container">
-                     <div class="card border rounded-4" style="height: 325px; border-color: #ddd;">
-                        <div class="card" style="height: 325px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-                            <%# Eval("vehicle.truckType").ToString() == "V" ? "border-left: 5px solid #2ecc71;" : "border-left: 5px solid #154360;" %>">
-                            <div class="card-body d-flex flex-column">
-                                <span style="padding: 8px 15px; border-radius: 12px; display: inline-block; font-size: 18px;" 
-                                    class='<%# Eval("vehicle.truckType").ToString() == "V" ? "badge badge-success" : "badge badge-dark" %>'>
-                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : "Plano" %>
-                                </span>
-
-                               <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
-                                    data-transporter='<%# HttpUtility.HtmlEncode(Eval("transporter").ToString()) %>' 
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
+            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas1" runat="server">
+                        <ItemTemplate>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 450px;">
+                                    <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
+                                    data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
                                     data-trailerplate='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' 
                                     data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
                                     data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
-                                    
-                                    <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
-                                    <h5></h5>
-                                    <h5 class="card-text text-left">
-                                        <strong>Transacción:</strong>  
-                                        <asp:Label ID="lblNombre" runat="server" CssClass="no-bold" Text='<%# Eval("id") %>'></asp:Label>
-                                    </h5>
+                                        <div style="position: relative;">
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 155%);">
+                                                <span class="badge 
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                        "bg-secondary" %> 
+                                                    text-white px-3 py-2 rounded-pill">
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                                </span>
+                                            </div>
+                                        </div>
 
-                                    <h5 class="card-text text-left">
-                                        <strong>Fecha:</strong>        
-                                        <asp:Label ID="lblFecha" runat="server" CssClass="no-bold" Text='<%# Convert.ToDateTime(Eval("createdAt")).ToString("dd/MM/yyyy") %>'></asp:Label>
-                                    </h5>
+                                        <div class="card-body p-3">
+                                            <!-- Información de la tarjeta con texto más pequeño -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblFechaStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].date") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy")
+                                                            : "No disponible" %>' />
+                                            </p>
 
-                                    <h5 class="card-title text-left">
-                                        <strong>Codigo generacion:</strong>
-                                        <asp:Label ID="lblcodgen" runat="server" CssClass="no-bold" Text='<%# Eval("codeGen") %>'></asp:Label>
-                                    </h5>
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblHoraStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].time") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].time")).ToString("HH:mm:ss")
+                                                            : "No disponible" %>' />
+                                            </p>
 
-                                    <h5 class="card-text text-left">
-                                        <strong>Ingenio:</strong>      
-                                        <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
-                                    </h5>
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblNombre" runat="server"
+                                                    Text='<%# Eval("codeGen") %>' />
+                                            </p>
 
-                                    <h5 class="card-text text-left">
-                                        <strong>Motorista:</strong>      
-                                        <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("transporter").ToString()) %>'></asp:Label>
-                                    </h5>
+                                            <!-- Línea divisoria con grosor y color especificados -->
+                                            <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
 
-                                    <h5 class="card-text text-left">
-                                        <strong>Placa Remolque:</strong>
-                                        <asp:Label ID="lblPlacaRemolque" runat="server" CssClass="no-bold" Text='<%# Eval("vehicle.trailerPlate") %>'></asp:Label>
-                                    </h5>
+                                            <!-- Información adicional de la tarjeta -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-industry text-primary"></i> <strong>Ingenio:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblIngenio" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                            </p>
 
-                                    <h5 class="card-text text-left">
-                                        <strong>Placa Camión:</strong> 
-                                        <asp:Label ID="lblPlacaCamion" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
-                                    </h5>
-
-                                    <div class="icon-container">
-                                        <i class='<%# Eval("vehicle.truckType").ToString() == "V" ? "fa fa-arrow-up" : "fa fa-arrow-right" %>' aria-hidden="true"></i>
-                                    </div>
-
-                                    <div class="icon-container1">
-                                        <span class='<%# Container.ItemIndex == 0 ? "circle-number gold" : 
-                                                Container.ItemIndex == 1 ? "circle-number silver" : 
-                                                Container.ItemIndex == 2 ? "circle-number bronze" : 
-                                                "circle-number yellow" %>'>
-                                            <%# Container.ItemIndex + 1 %>
-                                        </span> <!-- Muestra el número de orden -->
-                                    </div>
-                                </asp:LinkButton>
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Motorista:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbltransporte" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                            </p>
+                                            
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Placa Remolque:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                 <asp:Label ID="lblplacaremolque" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' />
+                                            </p>
+                                            
+                                        </div>
+                                    </asp:LinkButton>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
-                </ItemTemplate>
-            </asp:Repeater>
-        </div>
+            </div>
+
+            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES VOLTEO</h2>
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas2" runat="server">
+                        <ItemTemplate>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 450px;">
+                                    <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
+                                    data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
+                                    data-trailerplate='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' 
+                                    data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
+                                    data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
+                                        <div style="position: relative;">
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 155%);">
+                                                <span class="badge 
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                        "bg-secondary" %> 
+                                                    text-white px-3 py-2 rounded-pill">
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body p-3">
+                                            <!-- Información de la tarjeta con texto más pequeño -->
+                                            <p class="text-start" style="font-size: 0.9rem;">
+                                                <i class="fas fa-calendar-alt text-primary"></i> 
+                                                <strong>Fecha Prechequeo:</strong>
+                                            </p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblFechaStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].createdAt") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].createdAt")).ToString("dd/MM/yyyy")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblHoraStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].createdAt") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].createdAt")).ToString("HH:mm:ss")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblNombre" runat="server"
+                                                    Text='<%# Eval("codeGen") %>' />
+                                            </p>
+
+                                            <!-- Línea divisoria con grosor y color especificados -->
+                                            <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
+
+                                            <!-- Información adicional de la tarjeta -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-industry text-primary"></i> <strong>Ingenio:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblIngenio" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Motorista:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbltransporte" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Placa Remolque:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                 <asp:Label ID="lblplacaremolque" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' />
+                                            </p>
+                                        </div>
+                                    </asp:LinkButton>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </div>
+        </section>
+        
     </main>
 
     <!-- Footer -->
-    <footer class="text-center py-4 text-sm text-gray-600" style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%;">
+    <footer class="text-center py-4 text-sm text-gray-600" 
+            style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
         © 2024 Almacenadora del Pacífico
     </footer>
 
@@ -587,388 +692,6 @@
 </script>
 
 
-
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Configuración de botones y contadores para Volteo
-        const decreaseButtonVolteo = document.getElementById('decreaseButtonVolteo');
-        const increaseButtonVolteo = document.getElementById('increaseButtonVolteo');
-        const numberInputVolteo = document.getElementById('numberInputVolteo');
-        const solicitarVolteo = document.getElementById('solicitarv');
-        
-        // Configuración de botones y contadores para Plano
-        const decreaseButtonPlano = document.getElementById('decreaseButtonPlano');
-        const increaseButtonPlano = document.getElementById('increaseButtonPlano');
-        const numberInputPlano = document.getElementById('numberInputPlano');
-        const solicitarPlano = document.getElementById('solicitarp');
-
-        // Función para obtener el valor como número entero
-        function getValue(input) {
-            let value = parseInt(input.value);
-            return isNaN(value) ? 0 : value; // Si no es un número, regresa 0
-        }
-
-        // Validación para asegurarse de que la suma no pase de 4
-        function validateTotal() {
-            let volteoValue = getValue(numberInputVolteo);
-            let planoValue = getValue(numberInputPlano);
-            return (volteoValue + planoValue) <= 4;
-        }
-
-        // Decrementar Volteo
-        decreaseButtonVolteo.addEventListener('click', function() {
-            let currentValue = getValue(numberInputVolteo);
-            if (currentValue > 0) { // Evitar valores negativos
-                numberInputVolteo.value = currentValue - 1;
-            }
-        });
-
-        // Incrementar Volteo
-        increaseButtonVolteo.addEventListener('click', function() {
-            let currentValue = getValue(numberInputVolteo);
-            if (validateTotal()) {
-                numberInputVolteo.value = currentValue + 1;
-            } else {
-                // Usar SweetAlert para mostrar el mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'La suma total no puede ser mayor que 4',
-                    confirmButtonText: 'Aceptar',
-                    background: '#f8d7da',
-                    confirmButtonColor: '#721c24',
-                });
-            }
-        });
-
-        // Decrementar Plano
-        decreaseButtonPlano.addEventListener('click', function() {
-            let currentValue = getValue(numberInputPlano);
-            if (currentValue > 0) { // Evitar valores negativos
-                numberInputPlano.value = currentValue - 1;
-            }
-        });
-
-        // Incrementar Plano
-        increaseButtonPlano.addEventListener('click', function() {
-            let currentValue = getValue(numberInputPlano);
-            if (validateTotal()) {
-                numberInputPlano.value = currentValue + 1;
-            } else {
-                // Usar SweetAlert para mostrar el mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'La suma total no puede ser mayor que 4',
-                    confirmButtonText: 'Aceptar',
-                    background: '#f8d7da',
-                    confirmButtonColor: '#721c24',
-                });
-            }
-        });
-
-        // Validación al solicitar Volteo
-        solicitarVolteo.addEventListener('click', function() {
-            let currentValue = getValue(numberInputVolteo);
-            if (validateTotal()) {
-                // Usar SweetAlert para mostrar el mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Solicitud Enviada!',
-                    text: `Has solicitado ${currentValue} camiones del tipo Volteo.`,
-                    confirmButtonText: 'Aceptar',
-                    background: '#d4edda',
-                    confirmButtonColor: '#28a745',
-                });
-            } else {
-                // Usar SweetAlert para mostrar el mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'La suma total no puede ser mayor que 4',
-                    confirmButtonText: 'Aceptar',
-                    background: '#f8d7da',
-                    confirmButtonColor: '#721c24',
-                });
-            }
-        });
-
-        // Validación al solicitar Plano
-        solicitarPlano.addEventListener('click', function() {
-            let currentValue = getValue(numberInputPlano);
-            if (validateTotal()) {
-                // Usar SweetAlert para mostrar el mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Solicitud Enviada!',
-                    text: `Has solicitado ${currentValue} camiones del tipo Plano.`,
-                    confirmButtonText: 'Aceptar',
-                    background: '#d4edda',
-                    confirmButtonColor: '#28a745',
-                });
-            } else {
-                // Usar SweetAlert para mostrar el mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'La suma total no puede ser mayor que 4',
-                    confirmButtonText: 'Aceptar',
-                    background: '#f8d7da',
-                    confirmButtonColor: '#721c24',
-                });
-            }
-        });
-    });
-</script>
-
-
-
-
-
-
-
-
-    <script>
-        function createTimer(progressCircleId, timerTextId, startButtonId, stopButtonId, storageKey, duration, redThreshold) 
-        {
-            let interval;
-            let isRunning = false;
-            let milliseconds = localStorage.getItem(`${storageKey}_milliseconds`) ? parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) : 0;
-            let lastTimestamp = performance.now();
-
-            if (localStorage.getItem(`${storageKey}_lastUpdated`) && Date.now() - parseInt(localStorage.getItem(`${storageKey}_lastUpdated`)) > 3600000) 
-            {
-                localStorage.removeItem(`${storageKey}_milliseconds`);
-            }
-            localStorage.setItem(`${storageKey}_lastUpdated`, Date.now().toString());
-
-            updateTimerDisplay(timerTextId, milliseconds);
-
-            // Verifica si el cronómetro está en ejecución y lo arranca si es necesario
-            if (localStorage.getItem(`${storageKey}_isRunning`) === 'true') 
-            {
-                startTimer();
-            }
-
-            window.addEventListener('storage', function(event) {
-                if (event.key === `${storageKey}_milliseconds`) 
-                {
-                    const updatedTime = parseInt(event.newValue);
-                    updateTimerDisplay(timerTextId, updatedTime);
-                }
-            });
-
-            // Botón de inicio
-            document.getElementById(startButtonId).addEventListener('click', function(event) {
-                event.preventDefault();
-                if (!isRunning) 
-                {
-                    startTimer();
-                }
-            });
-
-            // Botón de detención
-            document.getElementById(stopButtonId).addEventListener('click', function(event) {
-                event.preventDefault();
-                console.log(`Botón de detención presionado: ${stopButtonId}`);
-                const codigoGeneracion = this.getAttribute("data-codigo-generacion");
-                console.log(`Código de generación: ${codigoGeneracion}`);
-
-                if (!isRunning) 
-                {
-                    Swal.fire({
-                        title: 'Acción no permitida',
-                        text: 'El cronómetro no está en ejecución.',
-                        icon: 'warning',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) 
-                        {
-                            stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
-                            Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
-                        }
-                    });
-                    return;
-                }
-
-                // Lógica de detención si el cronómetro ha alcanzado el tiempo máximo
-                if (milliseconds >= duration * 1000) 
-                {
-                    $('#confirmationModal').modal('show');  // Mostrar la modal
-                } 
-                else 
-                {
-                    Swal.fire({
-                        title: '¿Estás seguro de detener el cronómetro?',
-                        text: "El cronómetro no ha superado el tiempo máximo.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, detenerlo',
-                        cancelButtonText: 'No, continuar'
-                    }).then((result) => {
-                        if (result.isConfirmed) 
-                        {
-                            stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
-                            Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
-                        }
-                    });
-                }
-            });
-
-            function startTimer() 
-            {
-                isRunning = true;
-                localStorage.setItem(`${storageKey}_isRunning`, 'true');
-                lastTimestamp = performance.now();
-
-                interval = setInterval(() => {
-                    const currentTimestamp = performance.now();
-                    const elapsed = currentTimestamp - lastTimestamp;
-                    lastTimestamp = currentTimestamp;
-
-                    milliseconds += elapsed;
-                    localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
-
-                    const angle = (milliseconds / (duration * 1000)) * 360;
-                    document.getElementById(progressCircleId).style.background = `conic-gradient(${getColor(milliseconds, redThreshold)} ${angle}deg, #f0f0f0 ${angle}deg)`;
-
-                    updateTimerDisplay(timerTextId, milliseconds);
-
-                }, 50);
-            }
-
-            function stopTimer(codigoGeneracion, stopButtonId) 
-            {
-                clearInterval(interval);
-                isRunning = false;
-                localStorage.setItem(`${storageKey}_isRunning`, 'false'); // Asegúrate de que el storageKey sea único
-                updateTimerDisplay(timerTextId, milliseconds);
-                
-                console.log(`Cronómetro detenido: ${stopButtonId}, Código: ${codigoGeneracion}`);
-                
-                // Llama a la función para cambiar el estado
-                //changeStatusTimer(codigoGeneracion, stopButtonId);
-                
-                resetTimer(); // Esto puede ser opcional dependiendo de tu lógica
-                // Recargar la página cuando el usuario presione "Aceptar"
-                location.reload();
-            }
-
-            function resetTimer() 
-            {
-                milliseconds = 0;
-                localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
-                document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
-                updateTimerDisplay(timerTextId, milliseconds);
-            }
-
-            function updateTimerDisplay(timerTextId, milliseconds) 
-            {
-                const minutes = String(Math.floor(milliseconds / 60000)).padStart(2, '0');
-                const seconds = String(Math.floor((milliseconds % 60000) / 1000)).padStart(2, '0');
-                const ms = String(Math.floor((milliseconds % 1000) / 10)).padStart(2, '0');
-                document.getElementById(timerTextId).innerText = `${minutes}:${seconds}:${ms}`;
-            }
-
-            function getColor(milliseconds, redThreshold) 
-            {
-                if (milliseconds >= redThreshold) 
-                {
-                    return '#ff0000';
-                } 
-                else if (milliseconds >= 300000) 
-                {
-                    return '#ff7300';
-                } 
-                else 
-                {
-                    return '#858180';
-                }
-            }
-
-            $('#confirmarDetener').on('click', function() {
-                const motivoDetencion = $('#motivoDetencion').val();
-                if (motivoDetencion) {
-                    console.log(`Motivo de detención: ${motivoDetencion}`);
-                    stopTimer(); // Detiene y ejecuta la lógica correspondiente
-                    $('#confirmationModal').modal('hide');
-                } else {
-                    Swal.fire({
-                        title: 'Selecciona un motivo',
-                        text: 'Debes seleccionar un motivo de detención antes de continuar.',
-                        icon: 'warning',
-                        confirmButtonText: 'Ok'
-                    });
-                }
-            });
-        }
-
-        function changeStatusTimer(codigoGeneracion, stopButtonId) 
-        {
-            var predefinedStatusId = 9; // Cambia esto al ID de estado que deseas
-
-            if (!codigoGeneracion || codigoGeneracion.trim() === '') 
-            {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Por favor, ingrese un Código de Generación',
-                    icon: 'error',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            // Definir storageKey único para cada cronómetro según el botón de parada
-            const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : 'timer2';
-
-            // Guardar el estado actual solo para el cronómetro que se está deteniendo
-            saveTimerState(storageKey);
-
-            $.ajax({
-                async: true, // Esto asegura que no bloqueará el hilo principal
-                type: "POST",
-                url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
-                data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d);
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
-                },
-                error: function(xhr, status, error) 
-                {
-                    console.error("Error en AJAX:", {
-                        status: status,
-                        error: error,
-                        response: xhr.responseText
-                    });
-                }
-            });
-        }
-
-        function saveTimerState(storageKey) 
-        {
-            let milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
-            localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
-            localStorage.setItem(`${storageKey}_isRunning`, 'false'); // Solo detén el cronómetro actual
-        }
-
-        // Inicialización de cronómetros para ambos botones
-        createTimer('progressCircle1', 'timerText1', 'startButton1', 'stopButton1', 'timer1', 900, 900000); // 15 minutos
-        createTimer('progressCircle2', 'timerText2', 'startButton2', 'stopButton2', 'timer2', 600, 600000); // 10 minutos
-
-    </script>
-
-
-
-
-
-
-
 <script>
     function confirmAuthorization(linkButton) 
     {
@@ -980,8 +703,7 @@
 
         // Construye el mensaje de confirmación en formato de lista
         const message = `
-            <p>¿Estás seguro de que este es el camión con el que deseas iniciar el proceso de toma de tiempo?</p>
-            <br>
+            <p>¿Estás seguro de autorizar al camión con el siguiente detalle para entrar a planta?</p>
             <ul style="text-align: left; padding-left: 20px;">
                 <li><strong>Código Generación:</strong> ${codigoGeneracion}</li>
                 <li><strong>Motorista:</strong> ${transporter}</li>
@@ -1000,7 +722,8 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sí',
             cancelButtonText: 'No',
-            customClass: {
+            customClass: 
+            {
                 confirmButton: 'swal-wide-button',
                 cancelButton: 'swal-wide-button'
             }
@@ -1026,8 +749,6 @@
     // Función para cambiar el estatus después de la validación exitosa
         function changeStatus(codigoGeneracion) 
         {
-            var predefinedStatusId = 8; // Cambia esto al ID de estado que deseas
-
             if (!codigoGeneracion || codigoGeneracion.trim() === '') 
             {
                 Swal.fire({
@@ -1042,21 +763,37 @@
 
             $.ajax({
                 type: "POST",
-                url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
-                data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
+                url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
+                data: JSON.stringify({ codeGen: codigoGeneracion}),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(response) 
                 {
-                    console.log("Respuesta de la API: ", response.d); 
-                    
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                    // Mostrar una alerta de éxito usando SweetAlert
+                    Swal.fire({
+                        title: '¡Operación exitosa!',
+                        text: "El Ingreso a sido autorizado", // Mostrar el mensaje de la API
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        if (result.isConfirmed) 
+                        {
+                            // Recargar la página cuando el usuario presione "Aceptar"
+                            location.reload();
+                        }
+                    });
                 },
                 error: function(xhr, status, error) 
                 {
-                    console.error("Error cambiando el estado: ", error);
+                    // Mostrar una alerta de error usando SweetAlert
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al cambiar el estado: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
+
             });
         }
 

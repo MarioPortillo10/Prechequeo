@@ -241,7 +241,7 @@
             <a href="Autorizacion_ingreso.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
                 <i class="fas fa-unlock mr-2"></i>Autorizacion Ingreso
             </a>
-            <a href="Autorizacion_Porton4.aspx" class="block px-4 py-2 bg-primary text-white">
+            <a href="Autorizacion_Porton4.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
                 <i class="fas fa-check-square mr-2"></i>Autorizacion Porton 4
             </a>
             <a href="Lista_Negra.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
@@ -264,7 +264,6 @@
     <a href="Default.aspx" class="block text-gray-700 hover:text-orange-600">Pre-Transacciones</a>
     <a href="Rutas_Transacciones.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Transacciones</a>
     <a href="Rutas_Actividades.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Actividades</a>
-
     <a href="Autorizacion_Camiones.aspx" class="block text-gray-700 hover:text-orange-600">Chequeo de Informacion</a>
     <a href="Autorizacion_ingreso.aspx" class="block text-gray-700 hover:text-orange-600">Autorizacion Ingreso</a>
     <a href="Autorizacion_Porton4.aspx" class="block text-gray-700 bg-primary text-white">Autorizacion Porton 4</a>
@@ -339,16 +338,16 @@
 
                             <!-- Contador en la parte inferior con los botones -->
                             <div class="flex items-center space-x mt-1">
-                                <button id="decreaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
-                                <input id="numberInputVolteo" type="number" value="0" data-type="volteo" style="width: 60px; text-align: center; margin: 0 5px; border: 2px solid #4472C4; border-radius: 5px; padding: 5px; font-size: 16px; transition: border-color 0.3s; color: black;" 
+                                <button id="decreaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
+                                <input id="numberInputPlano" type="number" value="0" data-type="plano" style="width: 60px; text-align: center; margin: 0 5px; border: 2px solid #4472C4; border-radius: 5px; padding: 5px; font-size: 16px; transition: border-color 0.3s; color: black;" 
                                     onfocus="this.style.borderColor='#C9E9D2';" 
                                     onblur="this.style.borderColor='#4472C4';" />
-                                <button id="increaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
+                                <button id="increaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
                             </div>
                         </div>
 
                         <!-- Botón Solicitar -->
-                        <button id="solicitarv" class="button-orange mt-2 py-1 px-3 rounded-md text-xs font-semibold" type="button">Solicitar</button>
+                        <button id="solicitarp" class="button-orange mt-2 py-1 px-3 rounded-md text-xs font-semibold" type="button">Solicitar</button>
                     </div>
 
                     <!-- Solicitar Volteo -->
@@ -359,16 +358,16 @@
 
                             <!-- Contador en la parte inferior con los botones -->
                             <div class="flex items-center space-x mt-1">
-                                <button id="decreaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
-                                <input id="numberInputPlano" type="number" value="0" data-type="plano" 
+                                <button id="decreaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
+                                <input id="numberInputVolteo" type="number" value="0" data-type="volteo" 
                                     style="width: 60px; text-align: center; margin: 0 5px; border: 2px solid #C9E9D2; border-radius: 5px; padding: 5px; font-size: 16px; transition: border-color 0.3s; color: black;" 
                                     onfocus="this.style.borderColor='#4472C4';" onblur="this.style.borderColor='#C9E9D2';" />
-                                <button id="increaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
+                                <button id="increaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
                             </div>
                         </div>
 
                         <!-- Botón Solicitar -->
-                        <button  id="solicitarp" class="button-orange mt-2 py-1 px-3 rounded-md text-xs font-semibold" type="button">Solicitar</button>
+                        <button  id="solicitarv" class="button-orange mt-2 py-1 px-3 rounded-md text-xs font-semibold" type="button">Solicitar</button>
                     </div>
                 </div>
             </div>
@@ -376,152 +375,160 @@
             </div>
         </section>
 
-    <!-- Unidades Planas & Unidades de Volteo -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
-        <div class="w-3/4 mx-auto bg-white"> 
-            <asp:Repeater ID="rptRutas1" runat="server">
-                <ItemTemplate>
-                     <!-- Unidades Planas -->
-                    <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #182A6E; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
+        <!-- Unidades Planas & Unidades de Volteo -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
+            <div class="w-3/4 mx-auto bg-white"> 
+                <asp:Repeater ID="rptRutas1" runat="server">
+                    <ItemTemplate>
+                        <!-- Unidades Planas -->
+                        <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #182A6E; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
                             <div class="w-1/4 flex flex-col items-center">
                                 <div id="progressCircle1" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
                                     <div id="timerText1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
                                 </div>
                             </div>
-                            
+                        
+                           
                             <div class="mt-2 flex flex-col items-center">
                                 <div class="flex justify-center">
-                                    <button id="startButton1" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md">Iniciar</button>
+                                    <!-- Unidades de Volteo -->
+                                    <button id="startButton1" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
+                                        data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
                                     <button id="stopButton1" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
                                 </div>
-                                
+                        
                                 <!-- Texto condicional con recuadro -->
-                                <span class="text-blue-500 font-bold mt-2" 
-                                    runat="server" 
-                                    Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
-                                    style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #0067c2; border-radius: 8px; background-color: #0067c2; color: #f0f0f0;">
-                                    Se Requiere Barrido
+                                <span class="text-gray-500 font-bold mt-2" 
+                                      runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
+                                      style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
+                                      Barrido Doble
                                 </span>
                             </div>
-
                         </div>
-                    </div>
-                    <!-- Info 1 -->
-                    <div class="bg-white p-2 rounded-md  text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
-                        <p>
-                            <strong>Transaccion:</strong>
-                        </p>
+                         </div>
                         
-                        <p>
-                            <strong>Ingenio:</strong> 
-                            <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
-                        </p>
-
-                        <p>
-                            <strong>Motorista:</strong>
-                            <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
-                        </p>
-
-                        <p>
-                            <strong>Placa Remolque:</strong>
-                            <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
-                        </p>
-
-                        <p>
-                            <strong>Placa Camión:</strong> 
-                            <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
-                        </p>
-
-                        <p>
-                            <strong>Hora de Ingreso:</strong> 
-                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
-                        </p>
-
-                    </div>
-            </ItemTemplate>
-        </asp:Repeater>
-
-        <!-- Entry 2 -->    
-        <asp:Repeater ID="rptRutas" runat="server">
-            <ItemTemplate>
-                <!-- Unidades Planas -->
-                <h2 class="text-lg font-bold mb-4 text-center">UNIDAD PLANA EN COLA</h2>
-                <div class="bg-blue-600 text-white p-2 rounded-lg mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
-                    <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
-                                    data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
-                                    data-trailerplate='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' 
-                                    data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
-                                    data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
-                                    
-                        <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
-                        <ul class="space-y text-sm" style="color: white; text-align: left;">
-                            <li>
+                        <!-- Info 1 -->
+                        <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
+                            <p>
                                 <strong>Transaccion:</strong>
-                            </li>
-                            <li>
-                                <strong>Ingenio:</strong> 
-                                <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
-                            </li>
-                            <li>
-                                <strong>Motorista:</strong> 
-                                <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
-                            </li>
-                            
-                            <li>
-                                <strong>Placa Remolque:</strong>
-                                <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
-                            </li>
-                            <li>
-                                <strong>Placa Camión:</strong> 
-                                <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
-                            </li>
-                            <li>
-                                <strong>Hora de Ingreso:</strong> 
-                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
-                            </li>
-                        </ul>
-                    </asp:LinkButton>
-                </div>
-            </ItemTemplate>
-        </asp:Repeater>
-         </div>   
-        
+                            </p>
 
-        <!-- Unidades de Volteo -->
-            <asp:Repeater ID="rptRutas3" runat="server">
-                <ItemTemplate>
-                <div class="w-3/4 mx-auto bg-white"> 
-            <h2 class="text-lg font-bold mb-4 text-center">UNIDADES DE VOLTEO</h2>
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #242424; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
-                        <div class="w-1/4 flex flex-col items-center">
-                            <div id="progressCircle2" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
-                                <div id="timerText2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
-                            </div>
+                            <p>
+                                <strong>Ingenio:</strong>
+                                <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold"
+                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Motorista:</strong>
+                                <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold"
+                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Placa Remolque:</strong>
+                                <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold"
+                                    Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Placa Camión:</strong>
+                                <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold"
+                                    Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Hora de Ingreso:</strong>
+                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
+                            </p>
                         </div>
-                        
-                        <div class="mt-2 flex flex-col items-center">
-                            <div class="flex justify-center">
-                                <button id="startButton2" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md">Iniciar</button>
-                                <button id="stopButton2" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+                <!-- Entry 2 -->    
+                <asp:Repeater ID="rptRutas" runat="server">
+                    <ItemTemplate>
+                        <!-- Unidades Planas -->
+                        <h2 class="text-lg font-bold mb-4 text-center">UNIDAD PLANA EN COLA</h2>
+                        <div class="bg-blue-600 text-white p-2 rounded-lg mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
+                            <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
+                                            data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
+                                            data-trailerplate='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' 
+                                            data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
+                                            data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
+                                    
+                                <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
+                                <ul class="space-y text-sm" style="color: white; text-align: left;">
+                                    <li>
+                                        <strong>Transaccion:</strong>
+                                    </li>
+                                    <li>
+                                        <strong>Ingenio:</strong> 
+                                        <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
+                                    </li>
+                                    <li>
+                                        <strong>Motorista:</strong> 
+                                        <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                                    </li>
+                                    
+                                    <li>
+                                        <strong>Placa Remolque:</strong>
+                                        <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                                    </li>
+                                    <li>
+                                        <strong>Placa Camión:</strong> 
+                                        <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                                    </li>
+                                    <li>
+                                        <strong>Hora de Ingreso:</strong> 
+                                        <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
+                                    </li>
+                                </ul>
+                            </asp:LinkButton>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </div>   
+        
+            <div class="w-3/4 mx-auto bg-white"> 
+             <asp:Repeater ID="rptRutas3" runat="server">
+                <ItemTemplate>
+                    <h2 class="text-lg font-bold mb-4 text-center">UNIDADES DE VOLTEO</h2>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #242424; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
+                            <div class="w-1/4 flex flex-col items-center">
+                                <div id="progressCircle2" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
+                                    <div id="timerText2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
+                                </div>
                             </div>
-                            <!-- Texto condicional con recuadro -->
-                            <span class="text-gray-500 font-bold mt-2" 
-                                  runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
-                                  style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
-                                  Se Requiere Barrido
-                            </span>
+                        
+                           
+                            <div class="mt-2 flex flex-col items-center">
+                                <div class="flex justify-center">
+                                    <!-- Unidades de Volteo -->
+                                    <button id="startButton2" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
+                                        data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
+                                    <button id="stopButton2" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                                </div>
+                        
+                                <!-- Texto condicional con recuadro -->
+                                <span class="text-gray-500 font-bold mt-2" 
+                                      runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
+                                      style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
+                                      Barrido Doble
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
+
                     <!-- Info 1 -->
                     <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
                         <p>
                             <strong>Transaccion:</strong>
                         </p>
-                        
+                                                   
                         <p>
                             <strong>Ingenio:</strong> 
                             <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>'></asp:Label>
@@ -547,6 +554,9 @@
                             <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
                         </p>
                     </div>
+
+                    <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;"> </div>
+
                 </ItemTemplate>
             </asp:Repeater>
 
@@ -603,6 +613,32 @@
           style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%;">
     © 2024 Almacenadora del Pacífico
   </footer>
+
+<!-- Modal para seleccionar tipo de barrido -->
+<div id="barridoModal" class="modal" abindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Tipo de Barrido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Seleccione el tipo de barrido:</p>
+                <select id="tipoBarrido" class="form-control">
+                    <option value="N">Sencillo</option>
+                    <option value="S">Doble</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmBarrido">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal -->
 <div id="confirmationModal" class="modal" tabindex="-1" role="dialog">
@@ -715,6 +751,9 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script>
+        
+    </script>
 
     <!-- JavaScript for Mobile Menu Toggle -->
     <script>
@@ -725,47 +764,55 @@
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() 
+    {
         // Configuración de botones y contadores para Volteo
         const decreaseButtonVolteo = document.getElementById('decreaseButtonVolteo');
         const increaseButtonVolteo = document.getElementById('increaseButtonVolteo');
-        const numberInputVolteo = document.getElementById('numberInputVolteo');
-        const solicitarVolteo = document.getElementById('solicitarv');
+        const numberInputVolteo    = document.getElementById('numberInputVolteo');
+        const solicitarVolteo      = document.getElementById('solicitarv');
         
         // Configuración de botones y contadores para Plano
         const decreaseButtonPlano = document.getElementById('decreaseButtonPlano');
         const increaseButtonPlano = document.getElementById('increaseButtonPlano');
-        const numberInputPlano = document.getElementById('numberInputPlano');
-        const solicitarPlano = document.getElementById('solicitarp');
+        const numberInputPlano    = document.getElementById('numberInputPlano');
+        const solicitarPlano      = document.getElementById('solicitarp');
 
         // Función para obtener el valor como número entero
-        function getValue(input) {
+        function getValue(input) 
+        {
             let value = parseInt(input.value);
             return isNaN(value) ? 0 : value; // Si no es un número, regresa 0
         }
 
         // Validación para asegurarse de que la suma no pase de 4
-        function validateTotal() {
+        function validateTotal() 
+        {
             let volteoValue = getValue(numberInputVolteo);
             let planoValue = getValue(numberInputPlano);
             return (volteoValue + planoValue) <= 4;
         }
 
         // Decrementar Volteo
-        decreaseButtonVolteo.addEventListener('click', function() {
+        decreaseButtonVolteo.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputVolteo);
-            if (currentValue > 0) { // Evitar valores negativos
+            if (currentValue > 0) // Evitar valores negativos
+            { 
                 numberInputVolteo.value = currentValue - 1;
             }
         });
 
         // Incrementar Volteo
-        increaseButtonVolteo.addEventListener('click', function() {
+        increaseButtonVolteo.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputVolteo);
-            if (validateTotal()) {
+            if (validateTotal()) 
+            {
                 numberInputVolteo.value = currentValue + 1;
-            } else {
-                // Usar SweetAlert para mostrar el mensaje de error
+            } 
+            else  // Usar SweetAlert para mostrar el mensaje de error
+            {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -778,15 +825,18 @@
         });
 
         // Decrementar Plano
-        decreaseButtonPlano.addEventListener('click', function() {
+        decreaseButtonPlano.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputPlano);
-            if (currentValue > 0) { // Evitar valores negativos
+            if (currentValue > 0) // Evitar valores negativos
+            { 
                 numberInputPlano.value = currentValue - 1;
             }
         });
 
         // Incrementar Plano
-        increaseButtonPlano.addEventListener('click', function() {
+        increaseButtonPlano.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputPlano);
             if (validateTotal()) {
                 numberInputPlano.value = currentValue + 1;
@@ -804,9 +854,13 @@
         });
 
         // Validación al solicitar Volteo
-        solicitarVolteo.addEventListener('click', function() {
+        solicitarVolteo.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputVolteo);
-            if (validateTotal()) {
+            var Tipo_Unidad = 'V';
+            if (validateTotal()) 
+            {
+                SolicitarUnidad(Tipo_Unidad, currentValue);
                 // Usar SweetAlert para mostrar el mensaje de éxito
                 Swal.fire({
                     icon: 'success',
@@ -816,7 +870,10 @@
                     background: '#d4edda',
                     confirmButtonColor: '#28a745',
                 });
-            } else {
+                
+            } 
+            else 
+            {
                 // Usar SweetAlert para mostrar el mensaje de error
                 Swal.fire({
                     icon: 'error',
@@ -830,9 +887,13 @@
         });
 
         // Validación al solicitar Plano
-        solicitarPlano.addEventListener('click', function() {
+        solicitarPlano.addEventListener('click', function() 
+        {
             let currentValue = getValue(numberInputPlano);
-            if (validateTotal()) {
+            var Tipo_Unidad = 'P';
+            if (validateTotal()) 
+            {
+                SolicitarUnidad(Tipo_Unidad, currentValue);
                 // Usar SweetAlert para mostrar el mensaje de éxito
                 Swal.fire({
                     icon: 'success',
@@ -842,7 +903,10 @@
                     background: '#d4edda',
                     confirmButtonColor: '#28a745',
                 });
-            } else {
+
+            } 
+            else 
+            {
                 // Usar SweetAlert para mostrar el mensaje de error
                 Swal.fire({
                     icon: 'error',
@@ -855,6 +919,29 @@
             }
         });
     });
+
+    function SolicitarUnidad(Tipo_Unidad, currentValue)
+    {
+        
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "Tiempos_Azucar.aspx/SolicitarUnidad",
+            data: JSON.stringify({ Tipo_Unidad: Tipo_Unidad, currentValue: currentValue }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(response) 
+            {
+                console.log("Respuesta de la API: ", response.d);
+                // Recargar la página cuando el usuario presione "Aceptar"
+                //location.reload();
+            },
+            error: function(xhr, status, error) 
+            {
+                console.error("Error en AJAX:", { status: status, error: error, response: xhr.responseText });
+            }
+        });
+    }
 </script>
 
 
@@ -865,82 +952,9 @@
 
 
     <script>
-    function createTimer(progressCircleId, timerTextId, startButtonId, stopButtonId, storageKey, duration, redThreshold) {
-        let interval;
-        let isRunning = false;
-        let milliseconds = localStorage.getItem(`${storageKey}_milliseconds`) ? parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) : 0;
-        let lastTimestamp = performance.now();
 
-        if (localStorage.getItem(`${storageKey}_lastUpdated`) && Date.now() - parseInt(localStorage.getItem(`${storageKey}_lastUpdated`)) > 3600000) {
-            localStorage.removeItem(`${storageKey}_milliseconds`);
-        }
-        localStorage.setItem(`${storageKey}_lastUpdated`, Date.now().toString());
-
-        updateTimerDisplay(timerTextId, milliseconds);
-
-        // Verifica si el cronómetro está en ejecución y lo arranca si es necesario
-        if (localStorage.getItem(`${storageKey}_isRunning`) === 'true') {
-            startTimer();
-        }
-
-        window.addEventListener('storage', function(event) {
-            if (event.key === `${storageKey}_milliseconds`) {
-                const updatedTime = parseInt(event.newValue);
-                updateTimerDisplay(timerTextId, updatedTime);
-            }
-        });
-
-        // Botón de inicio
-        document.getElementById(startButtonId).addEventListener('click', function(event) {
-            event.preventDefault();
-            if (!isRunning) {
-                startTimer();
-            }
-        });
-
-        // Botón de detención
-        document.getElementById(stopButtonId).addEventListener('click', function(event) {
-            event.preventDefault();
-            console.log(`Botón de detención presionado: ${stopButtonId}`);
-            const codigoGeneracion = this.getAttribute("data-codigo-generacion");
-            console.log(`Código de generación: ${codigoGeneracion}`);
-
-            if (!isRunning) {
-                Swal.fire({
-                    title: 'Acción no permitida',
-                    text: 'El cronómetro no está en ejecución.',
-                    icon: 'warning',
-                    confirmButtonText: 'Ok'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
-                        Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
-                    }
-                });
-                return;
-            }
-
-            // Lógica de detención si el cronómetro ha alcanzado el tiempo máximo
-            if (milliseconds >= duration * 1000) {
-                $('#confirmationModal').modal('show');  // Mostrar la modal
-            } else {
-                Swal.fire({
-                    title: '¿Estás seguro de detener el cronómetro?',
-                    text: "El cronómetro no ha superado el tiempo máximo.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, detenerlo',
-                    cancelButtonText: 'No, continuar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
-                        Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
-                    }
-                });
-            }
-        });
-
-        function startTimer() {
+    function startTimer() 
+        {
             isRunning = true;
             localStorage.setItem(`${storageKey}_isRunning`, 'true');
             lastTimestamp = performance.now();
@@ -959,6 +973,219 @@
                 updateTimerDisplay(timerTextId, milliseconds);
             }, 50);
         }
+    function mostrarModal(event, button) 
+    {
+        const requiresSweeping = button.getAttribute('data-requires-sweeping'); // Obtén el valor de requiresSweeping desde el atributo de datos
+        $('#barridoModal').modal('show');
+
+        document.getElementById('confirmBarrido').onclick = function() {
+            const tipoSeleccionado = document.getElementById('tipoBarrido').value;
+            console.log('Valor de tipoSeleccionado:', tipoSeleccionado);
+            console.log(requiresSweeping);
+
+            // Verificamos si el tipo de barrido requerido es sencillo
+            if (requiresSweeping === 'S' && tipoSeleccionado === 'N') 
+            {
+                // Mostramos una alerta de confirmación usando SweetAlert2
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Has seleccionado un barrido sencillo, pero se requiere barrido doble. ¿Deseas continuar?',
+                    icon: 'warning', // Icono de advertencia
+                    showCancelButton: true, // Habilitamos el botón "Cancelar"
+                    confirmButtonText: 'Sí', // Texto para el botón de confirmación
+                    cancelButtonText: 'No'  // Texto para el botón de cancelación
+                }).then((result) => {
+                    // Verificamos si el usuario confirmó
+                    if (result.isConfirmed) 
+                    {
+                        // Mostramos un modal para añadir un comentario
+                        showCommentModal(() => {
+                            // Inicia el cronómetro después de validar el comentario
+                            console.log('Iniciando cronómetro tras comentario...');
+                            startTimer(); // Llamamos a la función para iniciar el cronómetro
+                        });
+                    }
+                });
+            } 
+            // Verificamos si el tipo seleccionado es doble (caso opuesto al requerido)
+            else if (tipoSeleccionado === 'N' && requiresSweeping === 'S') 
+            {
+                // Mostramos una alerta similar a la anterior
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Has seleccionado un barrido doble, pero se requiere barrido sencillo. ¿Deseas continuar?',
+                    icon: 'warning', // Icono de advertencia
+                    showCancelButton: true, // Habilitamos el botón "Cancelar"
+                    confirmButtonText: 'Sí', // Texto para el botón de confirmación
+                    cancelButtonText: 'No'  // Texto para el botón de cancelación
+                }).then((result) => {
+                    // Verificamos si el usuario confirmó
+                    if (result.isConfirmed) 
+                    {
+                        // Mostramos un modal para añadir un comentario
+                        showCommentModal(() => {
+                            // Inicia el cronómetro después de validar el comentario
+                            console.log('Iniciando cronómetro tras comentario...');
+                            startTimer(); // Llamamos a la función para iniciar el cronómetro
+                        });
+                    }
+                });
+            } 
+            // Si no hay discrepancias entre lo requerido y lo seleccionado
+            else 
+            {
+                // Mostramos en la consola el tipo de barrido seleccionado
+                console.log(`Tipo de barrido seleccionado: ${tipoSeleccionado}`);
+                // Cerramos el modal de selección de barrido
+                $('#barridoModal').modal('hide'); 
+
+                // Iniciamos el cronómetro automáticamente
+                console.log('Iniciando cronómetro directamente...');
+                startTimer(); // Llamamos a la función para iniciar el cronómetro
+            }
+        };
+    }
+
+
+    function showCommentModal(callback) 
+    {
+        const formElement = document.getElementById('form1');
+
+        Swal.fire({
+            title: 'Ingrese su comentario',
+            input: 'textarea',
+            inputPlaceholder: 'Escribe tu comentario aquí...',
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            cancelButtonText: 'Cancelar',
+            allowOutsideClick: false,
+            backdrop: true,
+            focusConfirm: false,
+            didOpen: (modal) => {
+                if (formElement) 
+                {
+                    formElement.setAttribute('aria-hidden', 'false');
+                    formElement.removeAttribute('inert');
+                }
+
+                const textarea = modal.querySelector('textarea');
+                if (textarea) 
+                {
+                    textarea.removeAttribute('aria-hidden');
+                    textarea.focus();
+                }
+            },
+            willClose: () => {
+                if (formElement) 
+                {
+                    formElement.setAttribute('aria-hidden', 'true');
+                }
+            },
+            preConfirm: (comment) => {
+                if (!comment) 
+                {
+                    Swal.showValidationMessage('Por favor ingrese un comentario');
+                } 
+                else 
+                {
+                    console.log(`Comentario ingresado: ${comment}`);
+                    return comment; // Retorna el comentario para su uso
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) 
+            {
+                console.log('Comentario enviado:', result.value);
+                if (callback) callback(); // Ejecuta el callback al confirmar
+            }
+        });
+    }
+
+    function createTimer(progressCircleId, timerTextId, startButtonId, stopButtonId, storageKey, duration, redThreshold) 
+    {
+        let interval;
+        let isRunning = false;
+        let milliseconds = localStorage.getItem(`${storageKey}_milliseconds`) ? parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) : 0;
+        let lastTimestamp = performance.now();
+
+        if (localStorage.getItem(`${storageKey}_lastUpdated`) && Date.now() - parseInt(localStorage.getItem(`${storageKey}_lastUpdated`)) > 3600000) 
+        {
+            localStorage.removeItem(`${storageKey}_milliseconds`);
+        }
+        localStorage.setItem(`${storageKey}_lastUpdated`, Date.now().toString());
+
+        updateTimerDisplay(timerTextId, milliseconds);
+
+        // Verifica si el cronómetro está en ejecución y lo arranca si es necesario
+        if (localStorage.getItem(`${storageKey}_isRunning`) === 'true') 
+        {
+            startTimer();
+        }
+
+        window.addEventListener('storage', function(event) {
+            if (event.key === `${storageKey}_milliseconds`) 
+            {
+                const updatedTime = parseInt(event.newValue);
+                updateTimerDisplay(timerTextId, updatedTime);
+            }
+        });
+
+        // Botón de inicio
+        document.getElementById(startButtonId).addEventListener('click', function(event) {
+            event.preventDefault();
+            if (!isRunning) 
+            {
+                startTimer();
+            }
+        });
+
+        // Botón de detención
+        document.getElementById(stopButtonId).addEventListener('click', function(event) {
+            event.preventDefault();
+            console.log(`Botón de detención presionado: ${stopButtonId}`);
+            const codigoGeneracion = this.getAttribute("data-codigo-generacion");
+            console.log(`Código de generación: ${codigoGeneracion}`);
+
+            if (!isRunning) 
+            {
+                Swal.fire({
+                    title: 'Acción no permitida',
+                    text: 'El cronómetro no está en ejecución.',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.isConfirmed) 
+                    {
+                        stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
+                        Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
+                    }
+                });
+                return;
+            }
+
+            // Lógica de detención si el cronómetro ha alcanzado el tiempo máximo
+            if (milliseconds >= duration * 1000) 
+            {
+                $('#confirmationModal').modal('show');  // Mostrar la modal
+            } 
+            else 
+            {
+                Swal.fire({
+                    title: '¿Estás seguro de detener el cronómetro?',
+                    text: "El cronómetro no ha superado el tiempo máximo.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, detenerlo',
+                    cancelButtonText: 'No, continuar'
+                }).then((result) => {
+                    if (result.isConfirmed) 
+                    {
+                        stopTimer(codigoGeneracion, stopButtonId); // Pasa el codigoGeneracion al detener
+                        Swal.fire('Detenido', 'El cronómetro ha sido detenido.', 'success');
+                    }
+                });
+            }
+        });
 
         function stopTimer(codigoGeneracion, stopButtonId) 
         {
@@ -974,7 +1201,7 @@
 
             resetTimer(); // Esto puede ser opcional dependiendo de tu lógica
             // Recargar la página cuando el usuario presione "Aceptar"
-            location.reload();
+            //location.reload();
         }
 
         function resetTimer() 
@@ -992,7 +1219,6 @@
             const ms = String(Math.floor((milliseconds % 1000) / 10)).padStart(2, '0');
 
             document.getElementById(timerTextId).innerText = `${minutes}:${seconds}:${ms}`;
-
         }
 
         function getColor(milliseconds, redThreshold) 
@@ -1033,7 +1259,7 @@
 
     function changeStatusTimer(codigoGeneracion, stopButtonId) 
     {
-        var predefinedStatusId = 9; // Cambia esto al ID de estado que deseas
+        var predefinedStatusId = 8; // Cambia esto al ID de estado que deseas
 
         if (!codigoGeneracion || codigoGeneracion.trim() === '') 
         {
@@ -1087,8 +1313,8 @@
     {
         // Aquí actualizas el botón del cronómetro 1
         var stopButton1 = document.getElementById('stopButton1');
-        stopButton1.textContent = "Iniciar";  // Cambia el texto a "Iniciar"
-        stopButton1.style.backgroundColor = "green";  // Cambia el color de fondo del botón a verde
+        stopButton1.textContent = "Detener";  // Cambia el texto a "Iniciar"
+        stopButton1.style.backgroundColor = "red";  // Cambia el color de fondo del botón a verde
 
         // Si tienes otro cronómetro (como Cronómetro 2)
         var stopButton2 = document.getElementById('stopButton2');

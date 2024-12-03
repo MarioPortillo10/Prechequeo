@@ -22,7 +22,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
-            string url = "http://172.206.251.10:9010/api/shipping/status/4?includeAttachments=true";
+            string url = "http://172.206.251.10/api/shipping/status/4?includeAttachments=true";
 
             // Token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjQsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MjkwMjU5ODcsImV4cCI6MjUxNzk2NTk4N30.S5nkzIJPYKdJ7CsA2K1a-jz4xsuIglTEspao5jv1IBk";
@@ -57,81 +57,80 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
     }
 
     [WebMethod]
-    public static string ValidarDatos(string codigoGeneracion, string marchamo1, string marchamo2, string marchamo3, string marchamo4)
+public static string ValidarDatos(string codigoGeneracion, string marchamo1, string marchamo2, string marchamo3, string marchamo4)
+{
+    if (string.IsNullOrEmpty(codigoGeneracion))
     {
+        return "Error: El código de generación no puede estar vacío.";
+    }
 
-        if (string.IsNullOrEmpty(codigoGeneracion))
-        {
-            return "El código de generación no puede estar vacío.";
-        }
+    string url = string.Format("http://172.206.251.10/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
 
-        string url = "http://172.206.251.10:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
-        Console.WriteLine(url); // Para depuración
-
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
-
+    try
+    {
         using (WebClient client = new WebClient())
         {
             client.Headers.Add("Authorization", "Bearer " + token);
-            try
+
+            // Descarga los datos de la API
+            string responseBody = client.DownloadString(url);
+
+            // Deserializa los datos en el objeto Post
+            var data = JsonConvert.DeserializeObject<Post>(responseBody);
+
+            // Validar que haya información de sellos en la respuesta
+            if (data == null || data.shipmentSeals == null || !data.shipmentSeals.Any())
             {
-                string responseBody = client.DownloadString(url);
-                Console.WriteLine("Response Body: " + responseBody); // Para ver la respuesta del servidor
-
-                var data = JsonConvert.DeserializeObject<Post>(responseBody);
-                Console.WriteLine("Deserialized Data: " + JsonConvert.SerializeObject(data, Formatting.Indented)); // Datos deserializados
-
-                // Crear una lista de marchamos para validar
-                var marchamos = new List<string> { marchamo1, marchamo2, marchamo3, marchamo4 };
-                // Filtrar marchamos vacíos
-                var marchamosValidos = marchamos.Where(m => !string.IsNullOrEmpty(m)).ToList();
-
-                // Obtener los sealCodes de la respuesta (en este caso puede estar vacío)
-                var sealCodes = data.shipmentSeals.Select(seal => seal.sealCode).ToList();
-                Console.WriteLine("Seal Codes: " + string.Join(", ", sealCodes)); // Muestra los códigos de sellos
-
-                if (sealCodes.Count == 0)
-                {
-                    return "Error: No hay sellos disponibles en el sistema para validar.";
-                }
-
-                // Verificar si todos los marchamos ingresados están en sealCodes sin importar el orden
-                bool sealCodesValidos = !marchamosValidos.Except(sealCodes).Any();
-
-                if (sealCodesValidos)
-                {
-                    return "Validación exitosa: los datos son correctos.";
-                }
-                else
-                {
-                    return "Error: los datos ingresados no coinciden con la información del servidor.";
-                }
+                return "Error: No hay sellos disponibles en el sistema para validar.";
             }
-            catch (WebException webEx)
+
+            // Crear la lista de marchamos ingresados
+            var marchamos = new List<string> { marchamo1, marchamo2, marchamo3, marchamo4 }
+                            .Where(m => !string.IsNullOrEmpty(m)) // Filtrar vacíos
+                            .ToList();
+
+            if (!marchamos.Any())
             {
-                var response = webEx.Response as HttpWebResponse;
-                if (response != null)
-                {
-                    using (var stream = response.GetResponseStream())
-                    using (var reader = new StreamReader(stream))
-                    {
-                        string errorResponse = reader.ReadToEnd();
-                        Console.WriteLine("Error: " + errorResponse); // Imprime el error del servidor
-                    }
+                return "Error: Debes ingresar al menos un marchamo para validar.";
+            }
 
-                    if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        return "Error: El código de generación no se encontró (404).";
-                    }
-                }
-                return "Error en la solicitud: " + webEx.Message;
-            }
-            catch (Exception ex)
-            {
-                return "Error en la solicitud: " + ex.Message;
-            }
+            // Extraer los sealCodes de la respuesta
+            var sealCodes = data.shipmentSeals.Select(seal => seal.sealCode).ToList();
+
+            // Validar si todos los marchamos ingresados están en los sealCodes
+            bool validacionExitosa = !marchamos.Except(sealCodes).Any();
+
+            return validacionExitosa
+                ? "Validación exitosa: todos los marchamos son correctos."
+                : "Error: uno o más marchamos no coinciden con los datos del servidor.";
         }
     }
+    catch (WebException webEx)
+    {
+        // Manejar errores HTTP
+        var response = webEx.Response as HttpWebResponse;
+        if (response != null)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return "Error: El código de generación no se encontró (404).";
+            }
+            using (var stream = response.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                string errorResponse = reader.ReadToEnd();
+                return string.Format("Error en la solicitud: {0}", errorResponse);
+            }
+        }
+        return string.Format("Error en la solicitud: {0}", webEx.Message);
+    }
+    catch (Exception ex)
+    {
+        return string.Format("Error: {0}", ex.Message);
+    }
+}
+
 
    public class Post
     {
@@ -142,7 +141,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public string operationType { get; set; }
         public string loadType { get; set; }
         public string transporter { get; set; }
-        public int productQuantity { get; set; }
+        public double productQuantity { get; set; }
         public long productQuantityKg { get; set; }
         public string unitMeasure { get; set; }
         public string requiresSweeping { get; set; }
@@ -155,6 +154,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public List<Status> statuses { get; set; }
         public List<ShipmentAttachment> shipmentAttachments { get; set; } // Agregado para los adjuntos
         public List<ShipmentSeal> shipmentSeals { get; set; }
+        public NavRecord navRecord { get; set; }
     }
 
     public class Driver
@@ -180,6 +180,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
     {
         public int id { get; set; }
         public string ingenioCode { get; set; }
+        public string name { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public User user { get; set; }
@@ -222,6 +223,111 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public string sealDescription { get; set; }
         public DateTime createdAt { get; set; }
     }
+
+    public class NavRecord
+    {
+        public string timestamp { get; set; }
+        public int id { get; set; }
+        public int transaccion { get; set; }
+        public string ticket { get; set; }
+        public DateTime fechaentra { get; set; }
+        public string horaentra { get; set; }
+        public DateTime fechasale { get; set; }
+        public string horasale { get; set; }
+        public string tiempo { get; set; }
+        public int tarjetano { get; set; }
+        public int bascula { get; set; }
+        public int bascula2 { get; set; }
+        public string actividad { get; set; }
+        public string descActividad { get; set; }
+        public string almacen { get; set; }
+        public string descAlmacen { get; set; }
+        public string producto { get; set; }
+        public string descProducto { get; set; }
+        public string categoria { get; set; }
+        public int pesoin { get; set; }
+        public int pesoout { get; set; }
+        public int pesoneto { get; set; }
+        public string cliente { get; set; }
+        public string descCliente { get; set; }
+        public string vehiculo { get; set; }
+        public string motorista { get; set; }
+        public string descMotorista { get; set; }
+        public string transportista { get; set; }
+        public string descTransportista { get; set; }
+        public string codbuque { get; set; }
+        public string buque { get; set; }
+        public string envioingenio { get; set; }
+        public string envioalmapac { get; set; }
+        public string viajecepa { get; set; }
+        public string boletacepa { get; set; }
+        public int pesocepa { get; set; }
+        public int tipocarga { get; set; }
+        public string observaciones { get; set; }
+        public string usuario { get; set; }
+        public int semaforo { get; set; }
+        public int semaforo2 { get; set; }
+        public int semaforo3 { get; set; }
+        public int semaforo4 { get; set; }
+        public int estatus { get; set; }
+        public int salida { get; set; }
+        public int codfactor { get; set; }
+        public int factor1 { get; set; }
+        public int factor2 { get; set; }
+        public int factor3 { get; set; }
+        public int pesocliente { get; set; }
+        public int equivalencia { get; set; }
+        public string ticketgranel { get; set; }
+        public string ticketensacado { get; set; }
+        public string almacen2 { get; set; }
+        public string descAlmacen2 { get; set; }
+        public string ticketlimpieza { get; set; }
+        public string codigounidad { get; set; }
+        public string ordenretiro { get; set; }
+        public int tipocamion { get; set; }
+        public int tipocamionr { get; set; }
+        public int pesoreal { get; set; }
+        public string usuariosale { get; set; }
+        public string usuariomod { get; set; }
+        public int registro { get; set; }
+        public int dobleticket { get; set; }
+        public int ticketenano { get; set; }
+        public int disponible { get; set; }
+        public DateTime fechabarco { get; set; }
+        public DateTime fechabarco2 { get; set; }
+        public int pesoinv1 { get; set; }
+        public int pesoinv2 { get; set; }
+        public string remision { get; set; }
+        public string licencia { get; set; }
+        public string mercancia { get; set; }
+        public string contenedor { get; set; }
+        public int bultos { get; set; }
+        public string documentos { get; set; }
+        public DateTime fechaTemp { get; set; }
+        public int temperatura { get; set; }
+        public int basculaEntrada { get; set; }
+        public int idZafra { get; set; }
+        public int peso2 { get; set; }
+        public int codbuque2 { get; set; }
+        public int statusAuthorized { get; set; }
+        public string puerta { get; set; }
+        public int status { get; set; }
+        public int inventory { get; set; }
+        public int quantityRelasedI { get; set; }
+        public int liquidacion { get; set; }
+        public string codbuque21 { get; set; }
+        public string codbuque3 { get; set; }
+        public string codbuque4 { get; set; }
+        public string codbuque5 { get; set; }
+        public int agentLogTruck { get; set; }
+        public string lotNo { get; set; }
+        public int qtyRelasedAvailability { get; set; }
+        public string marchamo1 { get; set; }
+        public string marchamo2 { get; set; }
+        public string marchamo3 { get; set; }
+        public string marchamo4 { get; set; }
+    }
+
    
 
  

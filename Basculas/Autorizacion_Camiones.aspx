@@ -5,40 +5,182 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Autorizacion de Camiones</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chequeo de Informacion</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.6/dist/jquery.fancybox.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" />
+    <!-- Tipo de letra -->
+    <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
 
-    <style>
-        .no-bold 
-        {
-            font-weight: normal;
-        }
-        
-    </style>
+  <style>
+    /* Establece la fuente del cuerpo de la página */
+    body 
+    {
+      font-family: 'Roboto', sans-serif; /* Usa la fuente Roboto, con sans-serif como alternativa */
+    }
 
-  
-    <script>
-        //Confirma si el cliente quiere eliminar el item.
-        function getConfirmation() 
-        {
-            var retVal = confirm("¿Desea eliminar esta fila?");
-            if (retVal == true) 
-            {
-                //alert("User wants to continue!");
-                return true;
-            } 
-            else 
-            {
-                //alert("User does not want to continue!");
-                return false;
-            }
-        }
-    </script>
+    /* Estilo para botones naranjas */
+    .button-orange 
+    {
+      background-color: #f97316; /* Color de fondo naranja */
+    }
+
+    .button-orange:hover 
+    {
+      background-color: #ea580c; /* Color de fondo más oscuro al pasar el mouse */
+    }
+
+    /* Estilo para una línea vertical Plano*/
+    .vertical-line 
+    {
+      border-left: 4px solid #2b6cb0; /* Línea vertical anaranjada de 4px */
+      height: 100%; /* Altura completa del contenedor */
+    }
+
+    /* Estilo para una línea vertical Volteo*/
+    .vertical-line 
+    {
+      border-left: 4px solid #f97316; /* Línea vertical anaranjada de 4px */
+      height: 100%; /* Altura completa del contenedor */
+    }
+
+    /* Estilo para una línea en el banner */
+    .banner-line 
+    {
+      border-bottom: 6px solid #f97316; /* Línea horizontal en el banner de 6px */
+    }
+
+    /* Estilo para un banner personalizado */
+    .custom-banner 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      align-items: center; /* Alinea los elementos al centro verticalmente */
+      background-color: #f97316; /* Color de fondo naranja */
+      padding: 0.25rem 1rem; /* Espaciado interno reducido: 0.25rem arriba y abajo, 1rem a los lados */
+      color: white; /* Color del texto blanco */
+      margin-top: 105px;
+      width: 45%;
+      border-radius: 5px;
+    }
+
+    /* Estilo para el título dentro del banner */
+    .custom-banner h1 
+    {
+      color: white; /* Color del texto blanco */
+      font-size: 1.5rem; /* Tamaño de fuente reducido a 1.5rem */
+      font-weight: bold; /* Texto en negrita */
+      margin: 0; /* Elimina el margen por defecto */
+      font-family: 'Gilroy-Bold', sans-serif;
+    }
+
+    /* Estilo para tarjetas */
+    .card 
+    {
+      border-radius: 10px; /* Bordes redondeados de 10px */
+      overflow: hidden; /* Oculta el contenido que se desborda */
+    }
+
+    /* Estilo para la cabecera de la tarjeta */
+    .card-header 
+    {
+      background-color: #2b6cb0; /* Color de fondo azul */
+      color: white; /* Color del texto blanco */
+      padding: 10px; /* Espaciado interno de 10px */
+    }
+
+    .header 
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 50px;
+        background-color: #fff;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 100; /* Para asegurar que esté en la parte superior de otros elementos */
+        font-family: 'Gilroy-Light', sans-serif;
+    }
+
+    .logo img 
+    {
+        max-height: 35px;
+    }
+
+    .login-button 
+    {
+        border: 2px solid #FF5C00;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #FF5C00;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+         font-family: 'Gilroy-Bold', sans-serif;
+    }
+
+    .login-button i 
+    {
+        margin-right: 8px;
+    }
+
+    .login-button:hover 
+    {
+        background-color: #FF5C00;
+        color: white;
+    }
+
+    /* Contenedor para el temporizador */
+    .timer-container 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
+    }
+
+    /* Estilo para la información del temporizador */
+    .timer-info 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      align-items: center; /* Alinea los elementos al centro verticalmente */
+      gap: 20px; /* Espacio de 20px entre los elementos */
+    }
+
+    /* Estilo para cada div dentro de la información del temporizador */
+    .timer-info div 
+    {
+      background-color: white; /* Color de fondo blanco */
+      width: 80px; /* Ancho de 80px */
+      height: 80px; /* Altura de 80px */
+      border-radius: 50%; /* Bordes redondeados para hacer un círculo */
+    }
+
+    /* Estilo para el contenedor de botones */
+    .buttons 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      gap: 10px; /* Espacio de 10px entre los botones */
+    }
+    
+    .card1 
+    {
+        width: 175px; /* Ancho fijo */
+        height: 75px; /* Alto fijo */
+        background-color: #d1d5db; /* Color de fondo */
+        padding: 1rem;
+        text-align: center;
+        border-radius: 0.5rem; /* Bordes redondeados */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0.5rem; /* Espaciado entre tarjetas */
+    }
+
+
+</style>
+
 </head>
 <body>
  <form id="form1" runat="server">
@@ -66,271 +208,482 @@
         </UpdateParameters>
     </asp:SqlDataSource>
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="#">
-                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" style="height: 40px; width: auto;">
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="Default.aspx">
-                                <i class="far fa-file-alt"></i>&nbsp;Pre-Transacciones
-                            </a>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Rutas</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="Rutas_Transacciones.aspx">
-                                    <i class="fas fa-road"></i>&nbsp;Rutas Transacciones
-                                </a>
-                                <a class="dropdown-item" href="Rutas_Actividades.aspx">
-                                    <i class="fas fa-road"></i>&nbsp;Rutas Actividades
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="nav-item dropdown active" style="position: relative">
-                            <span id="nft_1" class="badge badge-danger" style="position: absolute; top: -5px; left: 12px;"></span>
-                            <a class="nav-link dropdown-toggle  bg-primary text-white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Monitoreo</a>
-                            <div class="dropdown-menu">
-                                <span id="nft_1" class="badge badge-danger" style="position: absolute; top: -5px; left: 12px;"></span>
-                                <a class="dropdown-item  bg-primary text-white" href="Autorizacion_Camiones.aspx">
-                                    <i class="fa fa-truck" aria-hidden="true"></i>&nbsp;Chequeo de Informacion
-                                </a>
-
-                                <a class="dropdown-item" href="Autorizacion_ingreso.aspx">
-                                    <i class="fas fa-unlock"></i>&nbsp;Autorizacion Ingreso
-                                </a>
-
-                                <a class="dropdown-item" href="Autorizacion_Porton4.aspx">
-                                    <i class="fas fa-check-square"></i>&nbsp;Autorizacion Porton 4
-                                </a>
-
-                                <a class="dropdown-item" href="Lista_Negra.aspx">
-                                    <i class="fas fa-list-alt"></i>&nbsp;Lista Negra Motorista
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="Tiempos_Azucar.aspx">
-                                <i class="fas fa-clock"></i>&nbsp;Recepcion Azucar
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="my-2 my-lg-0">
-                        <asp:LinkButton ID="lnk_perfil" OnClick="lnk_perfil_Click" CssClass="btn btn-outline-success my-2 my-sm-0" runat="server"> Perfil</asp:LinkButton>
-
-                        <asp:LinkButton ID="lnk_salir" OnClick="LinkSalir1_Click"
-                            CssClass="btn btn-outline-info my-2 my-sm-0" runat="server">
-                            <i class="fas fa-power-off">&nbsp Salir </i>&nbsp<i class="far fa-user"></i>
-                        </asp:LinkButton>
-                    </div>
-                </div>
-            </nav>
-
-        <div class="row ml-4">
-            <h2>Chequeo de Informacion</h2>
+    <!-- Header -->
+<header class="header bg-gradient-to-r from-white to-gray-200 py-4">
+    <div class="container mx-auto flex items-center justify-between">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" alt="Almapac Logo" class="h-12">
         </div>
 
-       <br>
+        <!-- Navbar Toggler for Mobile View -->
+        <button id="menu-toggle" class="md:hidden text-gray-600 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
 
-        <div class="col-lg-12">
-            <div class="row justify-content-center" style="margin: 20px;">
-                <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar transacciones..." class="form-control mb-3" style="border-radius: 15px; height: 45px; width:  1500px; border-color: black;">
-            </div>
-            <div class="container my-5">
-    <!-- Contenedor de tarjetas -->
-    <div class="row d-flex flex-wrap justify-content-center">
-        <asp:Repeater ID="rptRutas" runat="server">
-            <ItemTemplate>
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4 card-container">
-                    <div class="card border rounded-4" style="height: 750px; border-color: #ddd;">
-                        <asp:LinkButton CssClass="btn" 
-                            ID="lnk_VerRuta" 
-                            runat="server" 
-                            data-toggle="modal" 
-                            data-target="#rutaModal" 
-                            data-codigo-generacion='<%# Eval("codeGen") %>' 
-                            OnClick="lnk_VerRuta_Click">
-                            
-                            <!-- Imagen superior adaptada al recuadro con object-fit: contain -->
-                            <asp:Image ID="imgShipment" runat="server" 
-                                ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
-                                            ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl 
-                                            : "" %>' 
-                                CssClass="img-fluid rounded-top" 
-                                style="width: 100%; height: 250px; object-fit: contain; background-color: #f8f9fa;" />
-                            
-                            <div class="card-body p-4" style="height: 350px;">
-                                <!-- Badge de tipo de camión -->
-                                <div class="d-flex justify-content-start align-items-center mb-3">
-                                    <span class="badge 
-                                        <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
-                                            Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
-                                            "bg-secondary" %> 
-                                        text-white px-3 py-2 rounded-pill">
-                                        <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
-                                            Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
-                                    </span>
-                                </div>
-
-                                <!-- Información distribuida en columnas -->
-                                <div class="row">
-                                    <!-- Columna izquierda -->
-                                    <div class="col-lg-6 col-md-6">
-                                        <p><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lblFechaStatus" runat="server" 
-                                                Text='<%# Eval("statuses[1].createdAt") != null 
-                                                        ? Convert.ToDateTime(Eval("statuses[1].createdAt")).ToString("dd/MM/yyyy") 
-                                                        : "No disponible" %>' />
-                                        </p>
-
-                                        <p><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lblHoraStatus" runat="server" 
-                                                Text='<%# Eval("statuses[1].createdAt") != null 
-                                                        ? Convert.ToDateTime(Eval("statuses[1].createdAt")).ToString("HH:mm:ss") 
-                                                        : "No disponible" %>' />
-                                        </p>
-
-                                        <p><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lblNombre" runat="server" 
-                                                Text='<%# Eval("codeGen") %>' />
-                                        </p>
-                                    </div>
-
-                                    <!-- Columna derecha -->
-                                    <div class="col-lg-6 col-md-6">
-                                        <p><i class="fas fa-industry text-primary"></i> <strong>Ingenio:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lblIngenio" runat="server" 
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.user.username").ToString()) %>' />
-                                        </p>
-
-                                        <p><i class="fas fa-cogs text-primary"></i> <strong>Tipo Operación:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lbloperacion" runat="server" 
-                                                Text='<%# Eval("operationType") != null ? 
-                                                        (Eval("operationType").ToString() == "C" ? "Carga" : 
-                                                        Eval("operationType").ToString() == "D" ? "Descarga" : "No disponible") 
-                                                        : "No disponible" %>' />
-                                        </p>
-
-                                        <p><i class="fas fa-box text-primary"></i> <strong>Producto:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lblproducto" runat="server" 
-                                                Text='<%# Eval("nameProduct") != null ? 
-                                                        HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) : 
-                                                        "N/A" %>' />
-                                        </p>
-                                        
-                                        <p><i class="fas fa-user text-primary"></i> <strong>Motorista:</strong></p>
-                                        <p class="text-muted mb-1">
-                                            <asp:Label ID="lbltransporte" runat="server" 
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </asp:LinkButton>
-                    </div>
-                </div>
-            </ItemTemplate>
-        </asp:Repeater>
+        <!-- Navbar Links -->
+<nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
+    <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
+        <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
+    </a>
+    <div class="relative group">
+        <a href="#" class="hover:text-orange-600 px-2 py-1 flex items-center">
+            <span>Rutas</span>
+            <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z"/></svg>
+        </a>
+        <!-- Dropdown Menu -->
+        <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg group-hover:block hidden">
+            <a href="Rutas_Transacciones.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                <i class="fas fa-road mr-2"></i>Rutas Transacciones
+            </a>
+            <a href="Rutas_Actividades.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                <i class="fas fa-road mr-2"></i>Rutas Actividades
+            </a>
+        </div>
     </div>
 
-    
+    <div class="relative group">
+        <a href="#" class="bg-primary text-white flex items-center px-2 py-1 rounded">
+            <span>Monitoreo</span>
+            <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z"/></svg>
+        </a>
+        <!-- Dropdown Menu -->
+        <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg group-hover:block hidden">
+            <a href="Autorizacion_Camiones.aspx" class="block px-4  bg-primary text-white flex items-center px-2 py-1 rounded">
+                <i class="fa fa-truck mr-2"></i>Chequeo de Informacion
+            </a>
+            <a href="Autorizacion_ingreso.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                <i class="fas fa-unlock mr-2"></i>Autorizacion Ingreso
+            </a>
+            <a href="Autorizacion_Porton4.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                <i class="fas fa-check-square mr-2"></i>Autorizacion Porton 4
+            </a>
+            <a href="Lista_Negra.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                <i class="fas fa-list-alt mr-2"></i>Lista Negra Motorista
+            </a>
+        </div>
+    </div>
+    <a href="Tiempos_Azucar.aspx">
+        <i class="fas fa-clock mr-2"></i>Recepcion Azucar
+    </a>
+</nav>
 
+<!-- Logout Button -->
+<a href="login.aspx" class="login-button" style="text-decoration:none">
+    <i class="fas fa-user"></i> Cerrar Sesión
+</a>
 
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="md:hidden hidden px-4 py-2 space-y-2 bg-gray-100">
+    <a href="Default.aspx" class="block text-gray-700 hover:text-orange-600">Pre-Transacciones</a>
+    <a href="Rutas_Transacciones.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Transacciones</a>
+    <a href="Rutas_Actividades.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Actividades</a>
+
+    <a href="Autorizacion_Camiones.aspx" class="block text-gray-700 hover:text-orange-600">Chequeo de Informacion</a>
+    <a href="Autorizacion_ingreso.aspx" class="block text-gray-700 hover:text-orange-600">Autorizacion Ingreso</a>
+    <a href="Autorizacion_Porton4.aspx" class="block text-gray-700 bg-primary text-white">Autorizacion Porton 4</a>
+    <a href="Lista_Negra.aspx" class="block text-gray-700 hover:text-orange-600">Lista Negra Motorista</a>
+    <a href="Tiempos_Azucar.aspx" class="block text-gray-700 hover:text-orange-600">Recepcion Azucar</a>
+    <a href="login.aspx" class="block text-gray-700 hover:text-orange-600">Cerrar Sesión</a>
 </div>
 
+<!-- JavaScript to handle the dropdown for mobile version -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.group');
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', function() {
+                const menu = dropdown.querySelector('.group-hover\\:block');
+                menu.classList.toggle('hidden');
+            });
+        });
+    });
+</script>
 
-        </div>
+
+</header>
+
+ 
+  <!-- Banner -->
+  <section class="custom-banner text-center">
+    <h1>Chequeo de Informacion</h1>
+  </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-8">
+        <!-- Unidad en Espera & Solicitar Unidades -->
+        <section>
             
+            <div class="bg-white">
+                <h2 class="text-lg font-bold mb-4 text-center">TOTAL UNIDADES</h2>
+                
+                <div class="flex justify-center items-center min-h-[25vh]">
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- Tarjeta de "Solicitar Plano" -->
+                        <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; width: 300px; height: 125px;">
+                            <div class="flex flex-col items-center justify-center h-full">
+                                <!-- Texto en la parte superior -->
+                                <span class="text-3xl mb-1">Plano</span>
+                                <span class="text-3xl mt-1 font-bold">
+                                <asp:Label ID="lblCountP" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                </span>
+                            </div>    
+                        </div>
+
+                        <!-- Tarjeta de "Solicitar Volteo" -->
+                        <div class="text-white text-center rounded-lg" style="background-color: #242424; padding: 5px; width: 300px; height: 125px;">
+                            <div class="flex flex-col items-center justify-center h-full">
+                                <!-- Texto en la parte superior -->
+                                <span class="text-3xl mb-1">Volteo</span>
+                                <div class="text-3xl mt-1 font-bold">
+                                <asp:Label ID="lblCountV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-white">
+                <h2 class="text-lg font-bold mb-2 text-center">TOTAL INGENIOS</h2>
+                <div class="flex flex-row gap-1 justify-center items-center flex-wrap">
+                    <!-- Tarjeta 1 -->
+                    <div class="card1">
+                        <h2 class="text-xs font-bold text-black mb-1">COMPAÑIA AZUCARERA SALVADOREÑA</h2>
+                        <div class="text-base font-bold">
+                            <asp:Label ID="lblIngenioQuantity2" runat="server" />
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 2 -->
+                    <div class="card1">
+                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CENTRAL AZUCARERO JIBOA</h2>
+                        <div class="text-base font-bold">
+                            <asp:Label ID="lblIngenioQuantity4" runat="server" />
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3 -->
+                    <div class="card1">
+                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CHAPARRASTIQUE</h2>
+                        <div class="text-base font-bold">
+                            <asp:Label ID="lblIngenioQuantity3" runat="server" />
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 4 -->
+                    <div class="card1">
+                        <h2> </h2>
+                        <h2 class="text-xs font-bold text-black mb-1">INGENIO EL ANGEL</h2>
+                        <div class="text-base font-bold">
+                            
+                            <asp:Label ID="lblIngenioQuantity6" runat="server" />
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 5 -->
+                    <div class="card1">
+                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA CABAÑA</h2>
+                        <div class="text-base font-bold">
+                            <asp:Label ID="lblIngenioQuantity1" runat="server" />
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 6 -->
+                    <div class="card1">
+                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA MAGDALENA</h2>
+                        <div class="text-base font-bold">
+                            <asp:Label ID="lblIngenioQuantity5" runat="server" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="row ml-3" style="border: solid 0px;">
+            <div class="col mt-2 mb-2">
+                <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Busca aqui la transaccion..." class="form-control mb-3" style="border-radius: 15px; background-color: #f8f9f9; border: 1px solid #000000;">
+            </div>
+        </div>
+    
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
+            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas1" runat="server">
+                        <ItemTemplate>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 600px;">
+                                    <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server"
+                                        data-toggle="modal" data-target="#rutaModal"
+                                        data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
+                                        <div style="position: relative;">
+                                            <asp:Image ID="imgShipment" runat="server"
+                                                ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                            ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                            : "" %>'
+                                                CssClass="img-fluid rounded-top"
+                                                style="width: 100%; height: 180px; object-fit: contain; background-color: #f8f9fa;" />
+                                            
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 120%);">
+                                                <span class="badge 
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                        "bg-secondary" %> 
+                                                    text-white px-3 py-2 rounded-pill">
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body p-3">
+                                            <!-- Información de la tarjeta con texto más pequeño -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblFechaStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].date") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblHoraStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].time") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].time")).ToString("HH:mm:ss")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblNombre" runat="server"
+                                                    Text='<%# Eval("codeGen") %>' />
+                                            </p>
+
+                                            <!-- Línea divisoria con grosor y color especificados -->
+                                            <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
+
+                                            <!-- Información adicional de la tarjeta -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-industry text-primary"></i> <strong>Ingenio:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblIngenio" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Tipo Operación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbloperacion" runat="server"
+                                                    Text='<%# Eval("operationType") != null ?
+                                                            (Eval("operationType").ToString() == "C" ? "Carga" :
+                                                            Eval("operationType").ToString() == "D" ? "Descarga" : "No disponible")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-box text-primary"></i> <strong>Producto:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblproducto" runat="server"
+                                                    Text='<%# Eval("nameProduct") != null ?
+                                                            HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) :
+                                                            "N/A" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Motorista:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbltransporte" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                            </p>
+                                        </div>
+                                    </asp:LinkButton>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </div>
+
+            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES VOLTEO</h2>
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas2" runat="server">
+                        <ItemTemplate>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 600px;">
+                                    <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server"
+                                        data-toggle="modal" data-target="#rutaModal"
+                                        data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
+                                        <div style="position: relative;">
+                                            <asp:Image ID="imgShipment" runat="server"
+                                                ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                            ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                            : "" %>'
+                                                CssClass="img-fluid rounded-top"
+                                                style="width: 100%; height: 180px; object-fit: contain; background-color: #f8f9fa;" />
+                                            
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 120%);">
+                                                <span class="badge 
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                        "bg-secondary" %> 
+                                                    text-white px-3 py-2 rounded-pill">
+                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body p-3">
+                                            <!-- Información de la tarjeta con texto más pequeño -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblFechaStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].date") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblHoraStatus" runat="server"
+                                                    Text='<%# Eval("statuses[1].time") != null
+                                                            ? Convert.ToDateTime(Eval("statuses[1].time")).ToString("HH:mm:ss")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblNombre" runat="server"
+                                                    Text='<%# Eval("codeGen") %>' />
+                                            </p>
+
+                                            <!-- Línea divisoria con grosor y color especificados -->
+                                            <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
+
+                                            <!-- Información adicional de la tarjeta -->
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-industry text-primary"></i> <strong>Ingenio:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblIngenio" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Tipo Operación:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbloperacion" runat="server"
+                                                    Text='<%# Eval("operationType") != null ?
+                                                            (Eval("operationType").ToString() == "C" ? "Carga" :
+                                                            Eval("operationType").ToString() == "D" ? "Descarga" : "No disponible")
+                                                            : "No disponible" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-box text-primary"></i> <strong>Producto:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblproducto" runat="server"
+                                                    Text='<%# Eval("nameProduct") != null ?
+                                                            HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) :
+                                                            "N/A" %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Motorista:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lbltransporte" runat="server"
+                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                            </p>
+                                        </div>
+                                    </asp:LinkButton>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-sm text-gray-600" 
+            style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
+        © 2024 Almacenadora del Pacífico
+    </footer>
+
+
+       
         <!-- Modal RESTABLECER CONTRASEÑA -->
-            <div class="modal fade" id="editPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+        <div class="modal fade" id="editPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class=" modal-title" id="editPass2">Cambiar contraseña</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group col-12">
+                            <asp:TextBox ID="txtUsuario" Enabled="false" Text="Usuario1" CssClass="form-control" runat="server"></asp:TextBox>
+                        </div>
+
+                        <div class="form-group col-12">
+                            <asp:TextBox ID="txtPass" TextMode="Password" CssClass="form-control" placeholder="Contraseña" runat="server"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="ReqtxtPass" runat="server" ControlToValidate="txtPass" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="reset" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+         <!-- Modal de Validación -->
+            <div class="modal fade" id="rutaModal" tabindex="-1" role="dialog" aria-labelledby="rutaModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editPass2">Cambiar contraseña</h5>
+                            <h5 class="modal-title" id="rutaModalLabel">Validación de Información</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group col-12">
-                                <asp:TextBox ID="txtUsuario" Enabled="false" Text="Usuario1" CssClass="form-control" runat="server"></asp:TextBox>
-                            </div>
-
-                            <div class="form-group col-12">
-                                <asp:TextBox ID="txtPass" TextMode="Password" CssClass="form-control" placeholder="Contraseña" runat="server"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="ReqtxtPass" runat="server" ControlToValidate="txtPass" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="reset" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
-                            </div>
-                        </div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal de Validación -->
-            <div class="modal fade" id="rutaModal" tabindex="-1" role="dialog" aria-labelledby="rutaModalLabel" aria-hidden="true" data-backdrop="static">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-
-
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="rutaModalLabel">Validación de Información</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
-                                        <form>
-                                            <div class="form-group">
-                                                <label for="recipient-name" class="col-form-label">Licencia:</label>
-                                                <input type="text" class="form-control" id="txt_licencia" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="message-text" class="col-form-label">Placa Remolque:</label>
-                                                <input type="text" class="form-control" id="txt_placaremolque" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="message-text" class="col-form-label">Placa Camion:</label>
-                                                <input type="text" class="form-control" id="txt_placamion" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
-                                                <input type="text" class="form-control" id="txt_tarjeta" />
-                                            </div>
-                                        </form>
-                                        <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
-                                    </div>
+                            <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
+                            <form>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Licencia:</label>
+                                    <input type="text" class="form-control" id="txt_licencia" />
                                 </div>
-
-                            </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">Placa Remolque:</label>
+                                    <input type="text" class="form-control" id="txt_placaremolque" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">Placa Camion:</label>
+                                    <input type="text" class="form-control" id="txt_placamion" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
+                                    <input type="number" class="form-control" id="txt_tarjeta" />
+                                </div>
+                            </form>
+                            <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </asp:SqlDataSource>
+        </div>
+        </div>
+       </div>
+
+    </form>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -341,54 +694,20 @@
 
     <!-- Custom Scripts -->
     <script src="../src/js/spotlight.bundle.js"></script>
-    
-    <!-- Picturefill (for responsive images) -->
-    <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
 
-    <!-- LightGallery and Plugins -->
-    <script src="https://cdn.rawgit.com/sachinchoolur/lightgallery.js/master/dist/js/lightgallery.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-autoplay.js/master/dist/lg-autoplay.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
 
-
-    <script>
-        // Inicializar el carrusel y otros elementos cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar el carrusel
-            var carouselElement = document.getElementById('carouselRuta');
-            var carousel = new bootstrap.Carousel(carouselElement, {
-                interval: false // Asegúrate de que el intervalo esté desactivado
-            });
-
-            // Mover al siguiente formulario
-            document.getElementById('nextBtnRuta').addEventListener('click', function () {
-                carousel.next(); // Mueve al siguiente formulario (slide)
-            });
-
-            // Volver al formulario anterior
-            document.getElementById('backBtnRuta').addEventListener('click', function () {
-                carousel.prev(); // Mueve al formulario anterior (slide)
-            });
-
-            // Restablecer el carrusel al primer slide al cerrar la modal
-            $('#rutaModal').on('hidden.bs.modal', function () {
-                carousel.to(0); // Mueve el carrusel al primer slide
-            });
-        });
+     <script>
         $(document).ready(function () 
-        {
-            $('#rutaModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Botón que abrió el modal
-                var codigoGeneracion = button.data('codigo-generacion'); // Extraer la información del atributo data-codigo-generacion
-                var modal = $(this);
-                modal.find('#codigoGeneracionInput').val(codigoGeneracion); // Mostrar el código de generación en el input
+            {
+                $('#rutaModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget); // Botón que abrió el modal
+                    var codigoGeneracion = button.data('codigo-generacion'); // Extraer la información del atributo data-codigo-generacion
+                    var modal = $(this);
+                    modal.find('#codigoGeneracionInput').val(codigoGeneracion); // Mostrar el código de generación en el input
+                });
             });
-        });
 
         function filterCards() 
         {
@@ -410,15 +729,13 @@
             });
         }
 
-
-
-
         function validarInformacion() 
         {
-            var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
-            var licencia = document.getElementById('txt_licencia').value;
-            var placaRemolque = document.getElementById('txt_placaremolque').value;
-            var placaCamion = document.getElementById('txt_placamion').value;
+            var codigoGeneracion    = document.getElementById('codigoGeneracionInput').value;
+            var licencia            = document.getElementById('txt_licencia').value;
+            var placaRemolque       = document.getElementById('txt_placaremolque').value;
+            var placaCamion         = document.getElementById('txt_placamion').value;
+            var tarjeta             = document.getElementById('txt_tarjeta').value
 
             $.ajax({
                 type: "POST",
@@ -438,7 +755,7 @@
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
                             // Llamar a la función changeStatus después de la validación exitosa
-                            changeStatus(codigoGeneracion);
+                            asignartarjeta(codigoGeneracion, tarjeta);
                         });
                     } 
                     else 
@@ -464,12 +781,34 @@
             });
         }
 
+        // Funcion para asignar la tarjeta en NAV
+        function asignartarjeta(codigoGeneracion, tarjeta) 
+        {
+            $.ajax({
+                type: "POST",
+                url: "Autorizacion_Camiones.aspx/AsignarTarjeta",
+                data: JSON.stringify({ codigoGeneracion: codigoGeneracion, tarjeta: tarjeta }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) 
+                {
+                    console.log("Respuesta de la API: ", response.d); 
+                    changeStatus(codigoGeneracion);
+                },
+                error: function(xhr, status, error) 
+                {
+                    console.error("Error cambiando el estado: ", error);
+                }
+            });
+        }
+
         // Función para cambiar el estatus después de la validación exitosa
         function changeStatus(codigoGeneracion) 
         {
             var predefinedStatusId = 3; // Cambia esto al ID de estado que deseas
 
-            if (!codigoGeneracion || codigoGeneracion.trim() === '') {
+            if (!codigoGeneracion || codigoGeneracion.trim() === '') 
+            {
                 Swal.fire({
                     title: 'Error',
                     text: 'Por favor, ingrese un Código de Generación',
@@ -490,7 +829,7 @@
                 {
                     console.log("Respuesta de la API: ", response.d); 
                     // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                    //location.reload();
                 },
                 error: function(xhr, status, error) 
                 {
@@ -501,5 +840,6 @@
 
 
     </script>
+
 </body>
 </html>

@@ -21,7 +21,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            string url = "http://172.206.251.10:9010/api/shipping/status/2?includeAttachments=true";
+            string url = "http://172.206.251.10/api/shipping/status/2?includeAttachments=true";
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
 
             using (WebClient client = new WebClient())
@@ -37,19 +37,74 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 2
-                    var filteredData = data.Where(p => p.statuses.Count > 0 && p.statuses.Last().id == 2).ToList();
+                    // Filtrar registros válidos
+                    var filteredData = new List<Post>();
+                    foreach (var item in data)
+                    {
+                        if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2 && item.vehicle != null)
+                        {
+                            filteredData.Add(item);
+                        }
+                    }
 
-                    // Vincular los datos filtrados al control Repeater
-                    rptRutas.DataSource = filteredData;
-                    rptRutas.DataBind();
+                    // Filtrar por tipos de camiones
+                    var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
+                    var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+
+                    // Contar registros por tipo
+                    lblCountP.Text = truckTypeP.Count.ToString();
+                    lblCountV.Text = truckTypeV.Count.ToString();
+
+                    // Crear una lista de códigos de ingenio válidos
+                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+
+                    // Inicializar los conteos de ingenios
+                    var ingenioCounts = new Dictionary<string, int>();
+
+                    // Contar ingenios en todos los registros filtrados
+                    foreach (var item in filteredData)
+                    {
+                        var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                        if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                        {
+                            if (ingenioCounts.ContainsKey(ingenioNavCode))
+                            {
+                                ingenioCounts[ingenioNavCode]++;
+                            }
+                            else
+                            {
+                                ingenioCounts[ingenioNavCode] = 1;
+                            }
+                        }
+                    }
+
+                    // Procesar e insertar los conteos en las etiquetas correspondientes
+                    int i = 1;
+                    foreach (var ingenio in validIngenios)
+                    {
+                        // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
+                        var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
+                        if (lblIngenioQuantity != null)
+                        {
+                            // Mostrar el conteo de ingenios o 0 si no existe
+                            lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                        }
+                        i++;
+                    }
+
+                    // Vincular los datos filtrados a los Repeaters correspondientes
+                    rptRutas1.DataSource = truckTypeP;
+                    rptRutas1.DataBind();
+
+                    rptRutas2.DataSource = truckTypeV;
+                    rptRutas2.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    // Manejar errores de solicitud o deserialización
+                    // lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
                 }
-            }
+            }    
         }
     }
 
@@ -63,7 +118,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         }
 
         // Token y endpoint
-        string url = "http://172.206.251.10:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string url = "http://172.206.251.10/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
 
         using (WebClient client = new WebClient())
@@ -108,8 +163,14 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         }
     }
 
+    public class IngenioCount
+    {
+        public string IngenioName { get; set; }
+        public int Count { get; set; }
+    }
 
-   public class Post
+
+    public class Post
     {
         public string nameProduct { get; set; }
         public int id { get; set; }
@@ -118,7 +179,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         public string operationType { get; set; }
         public string loadType { get; set; }
         public string transporter { get; set; }
-        public int productQuantity { get; set; }
+        public double productQuantity { get; set; }
         public long productQuantityKg { get; set; }
         public string unitMeasure { get; set; }
         public string requiresSweeping { get; set; }
@@ -155,6 +216,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     {
         public int id { get; set; }
         public string ingenioCode { get; set; }
+        public string ingenioNavCode { get; set; }
+        public string name { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public User user { get; set; }
@@ -216,7 +279,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     private string GetImageFromApi(string codigoGeneracion)
     {
         // Simulación de la llamada a la API para obtener la URL de la imagen (puedes usar la lógica que ya tienes)
-        string url = "http://172.206.251.10:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string url = "http://172.206.251.10/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
 
         using (WebClient client = new WebClient())
@@ -303,7 +366,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             return "Error: La transacción no puede estar vacía.";
         }
 
-        string url = "http://172.206.251.10:9010/api/status/push/";
+        string url = "http://172.206.251.10/api/status/push/";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
         string responseContent;
 
@@ -313,6 +376,55 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
             var requestBody = new { codeGen = codeGen, predefinedStatusId = predefinedStatusId };
+            var json = JsonConvert.SerializeObject(requestBody);
+
+            try
+            {
+                responseContent = client.UploadString(url, "POST", json);
+            }
+            catch (WebException webEx)
+            {
+                using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+                {
+                    return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + reader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                return "Error inesperado: " + ex.Message;
+            }
+        }
+
+        return "Respuesta del servidor: " + responseContent;
+    }
+
+    [WebMethod]
+    public static string AsignarTarjeta(string codigoGeneracion, int tarjeta)
+    {
+        if (string.IsNullOrEmpty(codigoGeneracion))
+        {
+            return "El código de generación no puede estar vacío.";
+        }
+
+         if (tarjeta == null)
+        {
+            return "La tarjeta no puede estar vacía.";
+        }
+
+        // Muestra los datos antes de enviarlos
+        Console.WriteLine("Datos enviados: codigoGeneracion = " + codigoGeneracion + ", tarjeta = " + tarjeta);
+        
+        // Token y endpoint
+        string url = "http://172.206.251.10/api/shipping/setMagneticCard/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string responseContent;
+
+        using (var client = new WebClient())
+        {
+            client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+            var requestBody = new { codeGen = codigoGeneracion, cardNumber = tarjeta };
             var json = JsonConvert.SerializeObject(requestBody);
 
             try

@@ -4,7 +4,7 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prechequeo - Almapac</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,15 +13,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns"  crossorigin="anonymous" />
-
     <!-- Tipo de letra -->
     <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
    
-    <style>
-    body {
+<style>
+    body 
+    {
         font-family: 'Poppins', sans-serif;
         background-color: #f3f3f3;
         display: flex;
@@ -32,7 +31,8 @@
         overflow: hidden;
     }
 
-    .main {
+    .main 
+    {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
@@ -42,7 +42,8 @@
         overflow: hidden;
     }
 
-    .header {
+    .header 
+    {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -50,15 +51,17 @@
         background-color: #fff;
         position: fixed;
         top: 0;
-                width: 100%;
+        width: 100%;
         z-index: 100; /* Para asegurar que esté en la parte superior de otros elementos */
     }
 
-    .logo img {
+    .logo img 
+    {
         max-height: 35px;
     }
 
-    .login-button {
+    .login-button 
+    {
         border: 2px solid #FF5C00;
         padding: 10px 20px;
         border-radius: 5px;
@@ -69,16 +72,19 @@
         align-items: center;
     }
 
-    .login-button i {
+    .login-button i 
+    {
         margin-right: 8px;
     }
 
-    .login-button:hover {
+    .login-button:hover 
+    {
         background-color: #FF5C00;
         color: white;
     }
 
-    .truck-image-container {
+    .truck-image-container 
+    {
         display: flex;
         align-items: flex-start;
         flex: 0 0 auto;
@@ -89,7 +95,8 @@
         left: -150px;
     }
 
-    .truck-image {
+    .truck-image 
+    {
         max-width: 1000px;
         height: auto;
         max-height: 100%;
@@ -97,7 +104,8 @@
         margin-top: 0;
     }
 
-    .text-section {
+    .text-section 
+    {
         max-width: 500px;
         margin-left: -300px;
         display: flex;
@@ -107,7 +115,8 @@
         margin-top: 70px;
     }
 
-    .text-section h2 {
+    .text-section h2 
+    {
         font-size: 5rem;
         color: #1E3A8A;
         font-weight: 700;
@@ -118,7 +127,8 @@
         font-family: 'Gilroy-Bold', sans-serif;
     }
 
-    .text-section h1 {
+    .text-section h1 
+    {
         font-size: 5rem;
         color: #FF5C00;
         font-weight: 700;
@@ -128,7 +138,8 @@
         font-family: 'Gilroy-Bold', sans-serif;
     }
 
-    .text-section p {
+    .text-section p 
+    {
         font-size: 1.5rem;
         color: #6B7280;
         font-weight: 600;
@@ -136,7 +147,8 @@
         font-family: 'Gilroy-Light', sans-serif;
     }
 
-    .precheck-box {
+    .precheck-box 
+    {
         margin-top: 10px;
         padding: 40px;
         background-color: #1E3A8A;
@@ -147,7 +159,8 @@
         text-align: center;
     }
 
-    .precheck-box p {
+    .precheck-box p 
+    {
         color: white;
         margin: 0;
         font-size: 1.2rem;
@@ -155,7 +168,8 @@
         margin-top: -20px;
     }
 
-    .precheck-input {
+    .precheck-input 
+    {
         padding: 10px;
         width: 100%;
         border: none;
@@ -168,12 +182,14 @@
         color: black;
     }
 
-    .precheck-input:focus {
+    .precheck-input:focus 
+    {
         outline: none;
         box-shadow: 0 0 5px rgba(255, 92, 0, 0.5);
     }
 
-    .precheck-button {
+    .precheck-button 
+    {
         width: 100%;
         background-color: #FF5C00;
         color: white;
@@ -185,14 +201,70 @@
         display: inline-block;
     }
 
-    .circle {
+    .circle 
+    {
         position: absolute;
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.05);
         z-index: 1;
     }
 
-    footer {
+    /* Estilo para la modal */
+    .custom-modal 
+    {
+        max-width: 1200px;
+        width: 900px;
+        margin-top: -50px;
+        margin-right: 65px !important;
+    }
+
+    .modal-content 
+    {
+        margin-right: 65px !important;
+        background: none;
+        border: none;
+        width: 1000px;
+    }
+
+    .modal-dialog 
+    {
+        position: absolute;
+        top: 50px; /* Distancia desde arriba */
+        left: 175px; /* Distancia desde la izquierda */
+        margin: 0; /* Elimina márgenes predeterminados */
+
+    }
+
+    /* Contenedor de la imagen dentro del formulario */
+    .image-container 
+    {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        height: 1075px; /* Altura ajustable */
+        background-image: url('https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/tickets%20(1).png?raw=true');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: bottom; /* Imagen alineada al bottom */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: -300px; /* Espaciado entre formulario y imagen */
+        margin-right: 100px;
+    }
+
+    /* Formulario dentro de la imagen */
+    .form-overlay 
+    {    
+        width: 90%;
+        max-width: 800px;
+        background: none;
+        border-radius: 10px;
+        z-index: 7;
+    }
+
+    footer 
+    {
         background-color: #242424;
         padding: 10px 0;
         text-align: center;
@@ -204,7 +276,8 @@
     }
 
     /* Estilo personalizado del cuadro */
-    .swal2-container .swal2-popup {
+    .swal2-container .swal2-popup 
+    {
         background-color: #E7E7E7 !important;
         border-radius: 40px !important; /* Bordes menos redondeados */
         padding: 15px 10px; /* Menos espacio interno */
@@ -213,7 +286,8 @@
     }
 
     /* Contenedor del icono */
-    .swal2-icon-custom {
+    .swal2-icon-custom 
+    {
         position: relative;
         margin: 0 auto 10px;
         width: 45px; /* Icono más pequeño */
@@ -221,7 +295,8 @@
     }
 
     /* Círculo con borde naranja */
-    .swal2-icon-custom::before {
+    .swal2-icon-custom::before 
+    {
         content: '';
         display: block;
         background-color: #E7E7E7;
@@ -235,7 +310,8 @@
     }
 
     /* La "X" en blanco */
-    .swal2-icon-custom .swal2-x-mark {
+    .swal2-icon-custom .swal2-x-mark 
+    {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -246,7 +322,8 @@
     }
 
     /* Las líneas de la "X" */
-    .swal2-icon-custom .swal2-x-mark-line {
+    .swal2-icon-custom .swal2-x-mark-line 
+    {
         background-color: #FD7304;
         height: 4px; /* Líneas más delgadas */
         width: 20px; /* Líneas más cortas */
@@ -259,12 +336,14 @@
         transform: rotate(45deg);
     }
 
-    .swal2-icon-custom .swal2-x-mark-line:nth-child(2) {
+    .swal2-icon-custom .swal2-x-mark-line:nth-child(2) 
+    {
         transform: rotate(-45deg);
     }
 
     /* Estilo del título "ERROR" */
-    .swal2-title {
+    .swal2-title 
+    {
         font-size: 24px !important; /* Fuente más pequeña */
         font-weight: bold;
         color: #000000;
@@ -277,7 +356,8 @@
     }
 
     /* Línea divisoria (delgada) */
-    .custom-divider {
+    .custom-divider 
+    {
         width: 75%; /* Reducir tamaño de la línea */
         height: 2px;
         background-color: #182A6E;
@@ -285,7 +365,8 @@
     }
 
     /* Estilo del texto de mensaje */
-    .swal2-html-container {
+    .swal2-html-container 
+    {
         font-size: 19px !important; /* Texto más pequeño */
         color: #000000;
         text-align: center;
@@ -303,6 +384,62 @@
         padding: 8px 20px; /* Menos padding */
         font-size: 16px !important; /* Texto más pequeño */
         margin-top: 5px; /* Menos espacio superior */
+    }
+
+    /* Estilo personalizado para el ancho y alto de la Sweet Alert */
+    .custom-alert-wide-container .swal2-popup 
+    {
+        background-color: #FFFFFF !important;
+        border-radius: 15px !important; /* Bordes redondeados */
+        padding: 20px 15px; /* Ajusta el espacio interno */
+        width: 600px !important; /* Ancho personalizado */
+        max-width: 80%; /* Ancho máximo relativo a la ventana */
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2) !important; /* Sombra personalizada */
+        overflow: hidden; /* Ocultar contenido que desborde */
+    }
+
+    .custom-alert-wide-container .swal2-title 
+    {
+        font-size: 26px !important; /* Tamaño del título */
+        color: #333333; /* Color del texto */
+        text-align: center; /* Centrar el texto */
+        margin: 0 !important; /* Quitar márgenes externos */
+        padding: 0 !important; /* Quitar padding */
+        line-height: 1.2 !important; /* Espaciado entre líneas ajustado */
+        letter-spacing: normal !important; /* Eliminar separación entre letras */
+    }
+
+    .custom-alert-wide-container .swal2-html-container 
+    {
+        font-size: 16px !important; /* Tamaño del texto del mensaje */
+        color: #555555; /* Color del texto */
+        line-height: 1.5; /* Espaciado entre líneas */
+        text-align: justify; /* Justificar el texto */
+    }
+
+    .custom-alert-wide-container .swal2-actions 
+    {
+        justify-content: center !important; /* Centrar los botones */
+        gap: 20px; /* Espaciado moderado entre los botones */
+        margin: 20px 0 0 !important; /* Espacio superior para separación del contenido */
+    }
+
+    .custom-alert-wide-container .swal2-styled.swal2-confirm 
+    {
+        background-color: #4CAF50 !important; /* Color del botón Aceptar */
+        color: white !important;
+        border-radius: 8px; /* Redondeo del botón */
+        padding: 10px 15px; /* Ajustar tamaño del botón */
+        font-size: 16px !important; /* Tamaño de fuente */
+    }
+
+    .custom-alert-wide-container .swal2-styled.swal2-cancel 
+    {
+        background-color: #F44336 !important; /* Color del botón Cancelar */
+        color: white !important;
+        border-radius: 8px; /* Redondeo del botón */
+        padding: 10px 15px; /* Ajustar tamaño del botón */
+        font-size: 16px !important; /* Tamaño de fuente */
     }
 
     /* Responsive styles */
@@ -356,29 +493,29 @@
 
     @media (max-width: 480px) 
     {
-        .header {
+        .header 
+        {
             padding: 10px 20px;
         }
 
-        .login-button {
+        .login-button 
+        {
             padding: 8px 16px;
             font-size: 0.9rem;
         }
 
-        .text-section h2, .text-section h1 {
+        .text-section h2, .text-section h1 
+        {
             font-size: 2rem;
         }
 
-        .precheck-box {
+        .precheck-box 
+        {
             padding: 20px;
             font-size: 0.9rem;
         }
     }
-    
 </style>
-
-
-
 
 
 <body>
@@ -429,283 +566,334 @@
         </div>
     </main>
     <!-- Modal de Validación -->
-                <div class="modal fade bd-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
-                    aria-labelledby="editModalLabel" aria-hidden="true" data-backdrop="static">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
+    <div class="modal fade bd-example-modal-lg" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- Carousel for swipe effect -->
+                <div id="carouselForms" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <!-- Primer Formulario Ticket -->
+                        <div class="carousel-item active">
+                            <div class="modal-header" style="background-color: transparent; border: none; display: flex; align-items: center;">
+                                <div style="flex-grow: 1; text-align: center; margin-right: 350px;">
+                                    <h5 class="modal-title" id="editPass2" style="font-size: 28px; font-weight: bold; margin-top: 10px;">VIAJE DISPONIBLE PRECHEQUEO</h5>
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
 
-                            <!-- Carousel for swipe effect -->
-                            <div id="carouselForms" class="carousel slide" data-bs-interval="false">
-                                <div class="carousel-inner">
+                            <div class="modal-body">
+                                <asp:UpdatePanel ID="UpdatePanelModal1" runat="server">
+                                    <ContentTemplate>
+                                        <div class="image-container">
+                                            <div class="form-overlay" style="display: flex; justify-content: flex-start; align-items: center; padding: 0; margin-left: 425px; margin-top: -215px; width: 100%; transform: translateX(-350px);">
+                                                <div class="form-group" style="flex: 0 0 150px; text-align: left; margin-right: 0; padding: 0;">
+                                                    <label for="txt_ingenio" style="font-size: 20px; display: block; margin-top: -5px;">
+                                                        <strong>ORIGEN:</strong>
+                                                    </label>
+                                                    <h2 style="font-size: 16px; margin: 0;">
+                                                        <asp:Literal ID="txt_ingenio" runat="server" Mode="PassThrough" />
+                                                    </h2>
+                                                </div>
 
-                                    <!-- Primer Formulario (Ingenio, Producto, Placas) -->
-                                    <div class="carousel-item active">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Validacion de Prechequeo</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal();">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                                <!-- Tipo -->
+                                                <div class="form-group1" style="flex: 0 0 auto; text-align: left; margin-left: 30px; padding: 0; display: flex; flex-direction: column; align-items: flex-start;">
+                                                <label for="tipoUnidad" style="font-size: 20px; display: block; margin-bottom: 10px;">
+                                                    <strong>TIPO:</strong>
+                                                </label>
+                                                
+                                                <!-- Contenedor de imágenes y checkboxes en fila -->
+                                                <div id="tipoUnidad" style="display: flex; flex-direction: row; align-items: center; gap: 15px;">
+
+                                                <!-- Imagen de camión ícono (tamaño reducido) -->
+                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
+                                                <!-- Imagen de camión de volteo (más ancha) -->
+                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
+
+                                                <!-- Contenedor de checkboxes -->
+                                                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
+                                                    <!-- Checkbox para PLANA -->
+                                                    <div class="form-check" style="margin-bottom: 5px;">
+                                                        <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                        <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
+                                                    </div>
+
+                                                    <!-- Checkbox para VOLTEO -->
+                                                    <div class="form-check">
+                                                        <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                        <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
-                                        <div class="modal-body">
-                                            <asp:UpdatePanel ID="UpdatePanel2" runat="server">
-                                                <ContentTemplate>
-                                                    <form>
-                                                        <div class="form-group">
-                                                            <label for="txt_ingenio">Ingenio</label>
-                                                            <asp:TextBox ID="txt_ingenio" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_producto">Producto</label>
-                                                            <asp:TextBox ID="txt_producto" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_transporte">Transporte</label>
-                                                            <asp:TextBox ID="txt_transporte" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_motorista">Motorista</label>
-                                                            <asp:TextBox ID="txt_motorista" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_licencia">Licencia</label>
-                                                            <asp:TextBox ID="txt_licencia" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_placaCamion">Placa Camion</label>
-                                                            <asp:TextBox ID="txt_placaCamion" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_placaRemolque">Placa Remolque</label>
-                                                            <asp:TextBox ID="txt_placaRemolque" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="txt_tipoUnidad">Tipo Unidad</label>
-                                                            <asp:TextBox ID="txt_tipoUnidad" CssClass="form-control"
-                                                                runat="server" Enabled="false"></asp:TextBox>
-                                                        </div>
-                                                    </form>
-                                                </ContentTemplate>
-                                            </asp:UpdatePanel>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary"
-                                                id="nextBtn">Siguiente</button>
+
+                                        <!-- Destino -->
+                                        <div class="form-group" style="flex: 1.3; text-align: left; margin-left: 100px; padding: 0; margin-top: -15px; width: 100%; max-width: none;">
+                                            <label for="txt_ingenio" style="font-size: 20px; display: block; margin-bottom: 5px;">
+                                                <strong>DESTINO:</strong>
+                                            </label>
+                                            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" 
+                                                style="height: 30px; width: 135px; max-width: none;">
                                         </div>
                                     </div>
 
-                                    <!-- Segundo Formulario (Captura de Fotografía) -->
-                                    <div class="carousel-item">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Captura de Fotografia</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form>
-                                                <div class="form-group">
-                                                    <label for="exampleFormControlFile1">Fotografia</label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <video id="camera" width="320" height="240"></video>
-                                                    <canvas id="canvas" width="320" height="240"></canvas>
-                                                </div>
-                                                <div class="form-group">
-                                                    <button type="button" id="takePhoto" class="btn btn-dark">
-                                                        <i class="fa fa-camera" aria-hidden="true"></i> Capturar
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" id="backBtn">Volver</button>
-                                            <button type="button" class="btn btn-primary" id="changeStatusButton" onclick="changeStatus()">Confirmar</button>
+
+                                    <div class="container" style="position: relative;">
+                                        <div class="form-row" style="align-items: flex-start; margin-top: 100px; margin-right: 50px; position: absolute; top: -110px; left: 0;">
+                                            <!-- Fecha -->
+                                            <div class="form-group" style="flex: 0.4; margin-right: 35px; margin-left: -773px;">
+                                                <label for="txtFecha" style="font-size: 14px; margin-bottom: 5px; margin-top: 18px; display: block; width: 160px;">
+                                                    <strong>FECHA PRECHEQUEO:</strong>
+                                                </label>
+                                                <p style="font-size: 14px; margin: 0; margin-top: -5px;">
+                                                    <asp:Literal ID="txtFecha" runat="server" Mode="PassThrough" />
+                                                </p>
+                                            </div>
+                                            <!-- Transportista -->
+                                            <div class="form-group" style="flex: 0 0 300px; margin-left: -100px; margin-right: 0; margin-top: 15px;">
+                                                <label for="txt_transporte" style="font-size: 14px; margin-bottom: 5px;">
+                                                    <strong>EMPRESA DE TRANSPORTE:</strong>
+                                                </label>
+                                                <p style="font-size: 14px; margin: 0; margin-top: -5px; flex: 1; width: 250px;">
+                                                    <asp:Literal ID="txt_transporte" runat="server" Mode="PassThrough" />
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Fila para Hora, Placa Camión y Placa Remolque -->
+                                    <div class="container" style="position: relative;">
+                                        <div class="form-row-container" style="position: absolute; top: 100px; right: 405px; display: flex; justify-content: flex-start; margin-bottom: 15px;">
+                                            <!-- Hora -->
+                                            <div class="form-group" style="flex: 0.4; margin-top: -2px; margin-left: 10px;"> <!-- Reducido el margen derecho -->
+                                                <label for="txtHora" style="font-size: 14px; margin-bottom: 0px; width: 150px;">
+                                                    <strong>HORA PRECHEQUEO:</strong>
+                                                </label>
+                                                <div style="width: 120px; font-size: 14px"> <!-- Ajusta el ancho según lo necesites -->
+                                                    <asp:Literal ID="txtHora" runat="server" Mode="PassThrough" />
+                                                </div>
+                                            </div>
+
+                                            <!-- Cabezal -->
+                                            <div class="form-group" style="flex: 2; margin-left: 60px;"> <!-- Reducido el margen derecho -->
+                                                <label for="txt_placaCamion" style="font-size: 14px; margin-bottom: 0px; display: block;">
+                                                    <strong>CABEZAL:</strong>
+                                                </label>
+                                                <p style="font-size: 14px; width: 20px; margin: 0;">
+                                                    <asp:Literal ID="txt_placaCamion" runat="server" Mode="PassThrough" />
+                                                </p>
+                                            </div>
+
+                                            <!-- Remolque -->
+                                            <div class="form-group" style="flex: 1; margin-left: 115px;"> <!-- Sin margen derecho para acercar más -->
+                                                <label for="txt_placaRemolque" style="font-size: 14px; margin-bottom: 0px; display: block;">
+                                                    <strong>REMOLQUE:</strong>
+                                                </label>
+                                                <p style="font-size: 14px; width: 80px; margin: 0;">
+                                                    <asp:Literal ID="txt_placaRemolque" runat="server" Mode="PassThrough" />
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>    
+                        </ContentTemplate>
+                    </asp:UpdatePanel>   
+                    <div class="modal-footer" style="border: none; box-shadow: none; position: relative; top: -735px; left: 320px; display: flex; flex-direction: column; align-items: center; background-color: transparent;">
+                        <div style="display: flex; align-items: center; margin-bottom: 70px; margin-left: 25px;">
+                            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 55px; height: auto; filter: brightness(0) invert(1); margin-right: 15px;">
+                            <h5 style="font-size: 28px; font-weight: bold; color: white; margin-right: 10px;">PRECHEQUEO</h5>
+                        </div>
+
+                        <!-- Texto "CONTINUAR" -->
+                        <p style="font-size: 36px; font-weight: bold; color: white; margin-bottom: -10px; margin-left: 44px;">CONTINUAR</p>
+
+                        <!-- Texto "PRECHEQUEO" en la parte inferior -->
+                        <p style="font-size: 38px; color: white; margin-bottom: 75px; margin-left: 47px;">PRECHEQUEO</p>
+
+                        <!-- Botón -->
+                        <button type="button" class="btn btn-primary" id="nextBtn">REALIZO PRECHEQUEO</button>
+                    </div>
+                </div>
+            
+
+                        <!-- Segundo Formulario (Captura de Fotografía) -->
+                        <div class="carousel-item" style="background-color: #f9f9f9; max-width: 500px; margin: 0 auto; border-radius: 30px; overflow: hidden;">
+                            <!-- Modal Header -->
+                            <div class="modal-header" style="background-color: transparent; flex-shrink: 0; display: flex; justify-content: center; align-items: center; padding: 0.5rem; border-bottom: 1px solid #e0e0e0; border-radius: 8px 8px 0 0; width: 100%; height: 40px;">
+                                <h5 class="modal-title" style="margin: 0; font-size: 1.2rem; font-weight: bold; color: #2c3e50; text-align: center;">
+                                    <span style="display: inline-block; padding: 0.3rem 0.8rem; background-color: #002073; color: #fff; border-radius: 20px; font-size: 1rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                        Captura de Fotografía
+                                    </span>
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; font-size: 1.3rem; color: #7f8c8d; cursor: pointer; transition: color 0.3s;">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body" style="flex-grow: 1; width: 90%; margin: auto; display: flex; flex-direction: column; justify-content: flex-start; padding: 0.5rem; transform: translateY(-5%);">    
+                                <div class="p-4">
+                                    <div class="flex justify-center mb-4">
+                                        <div class="w-280 h-210 overflow-hidden border-2 border-gray-300" style="width: 280px; height: 210px;">
+                                            <video id="camera" width="280" height="210"></video>
+                                            <canvas id="canvas" width="280" height="210"></canvas>
+                                            <img id="capturedPhoto" src="" alt="Captured Photo" style="width: 100%; height: 100%; display: none;" />
+                                        </div>
+                                    </div>
+
+                                    <!-- License and Motorista Section -->
+                                    <asp:UpdatePanel ID="UpdatePanelModal2" runat="server">
+                                        <ContentTemplate>
+                                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
+                                                <!-- License and Motorista Section -->
+                                                <asp:Literal ID="txt_licencia" runat="server" Mode="PassThrough" />
+                                                <br />
+                                                <asp:Literal ID="txt_motorista" runat="server" Mode="PassThrough" />
+                                            </div>
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
+
+                                    <!-- Capture Button -->
+                                    <div class="flex justify-center mt-2">
+                                        <button type="button" id="takePhoto" class="px-3 py-1.5 bg-orange-500 text-white font-bold rounded shadow hover:bg-orange-600">
+                                            <i class="fas fa-camera" aria-hidden="true"></i> Capturar
+                                        </button>
+                                    </div> 
+                                    <button type="button" class="btn" id="backBtn" style="width: 25%; margin-left: 100px; margin-top: 10px; background-color: #888281; color: white;">Volver</button>
+                                    <button type="button" class="btn" id="changeStatusButton" onclick="changeStatus()" style="width: 25%; margin-top: 10px; background-color: #002174; color: white;">Continuar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
-        © 2024 Almacenes del Pacífico - Todos los derechos reservados
+        © 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados
     </footer>
 </form>
 
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   <!-- Scripts necesarios de Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<!-- SweetAlert2 (latest version) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
 
+<!-- Custom Scripts -->
+<script src="../src/js/spotlight.bundle.js"></script>
 
-  
+<!-- LightGallery and Plugins -->
+<script src="https://cdn.rawgit.com/sachinchoolur/lightgallery.js/master/dist/js/lightgallery.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-autoplay.js/master/dist/lg-autoplay.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
+<script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
 
-        <!-- SweetAlert2 (latest version) -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
-
-        <!-- Custom Scripts -->
-        <script src="../src/js/spotlight.bundle.js"></script>
-
-        <!-- Picturefill (for responsive images) -->
-        <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
-
-       <!-- LightGallery and Plugins -->
-        <script src="https://cdn.rawgit.com/sachinchoolur/lightgallery.js/master/dist/js/lightgallery.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-autoplay.js/master/dist/lg-autoplay.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
-        <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
-
-    <!-- Código para mostrar el modal -->
-
-        <script>
-           // Inicializar el carrusel y otros elementos cuando el DOM esté listo
-            document.addEventListener('DOMContentLoaded', function () {
-                // Inicializar el carrusel
-                var carouselElement = document.getElementById('carouselForms');
-                var carousel = new bootstrap.Carousel(carouselElement, {
-                    interval: false // Asegúrate de que el intervalo esté desactivado
-                });
-
-                // Mover al siguiente formulario
-                document.getElementById('nextBtn').addEventListener('click', function () {
-                    carousel.next(); // Mueve al siguiente formulario (slide)
-                });
-
-                // Volver al formulario anterior
-                document.getElementById('backBtn').addEventListener('click', function () {
-                    carousel.prev(); // Mueve al formulario anterior (slide)
-                });
-
-                // Restablecer el carrusel al primer slide al cerrar la modal
-                $('#editModal').on('hidden.bs.modal', function () {
-                    carousel.to(0); // Mueve el carrusel al primer slide
-                });
-                
-                // Cerrar la modal al hacer clic en el botón de cierre
-                document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) {
-                    element.addEventListener('click', function () {
-                        var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                        modal.hide();
-                    });
-                });
-            });
-
-            document.addEventListener("DOMContentLoaded", function () 
-            {
-                const txtTransaccion = document.getElementById("<%= txtTransaccion.ClientID %>");
-
-                // Colocar el cursor en el `input` al cargar la página
-                txtTransaccion.focus();
-
-                // Mantener el cursor en el `input` después de cada ingreso
-                txtTransaccion.addEventListener("blur", function () {
-                    txtTransaccion.focus();
-                });
-
-                // Detectar el evento `Enter` y llamar a la función `checkInput()`
-                txtTransaccion.addEventListener("keypress", function (event) {
-                    if (event.key === "Enter") {
-                        event.preventDefault(); // Evitar la recarga de página o submit por defecto
-                        checkInput(); // Llamar a la función `checkInput()`
-                    }
-                });
-            });
-
-        function checkInput() 
-        {
-            var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
-            
-            if (txtTransaccion === '') {
-    // Mostrar la alerta al cargar la página
-    Swal.fire({
-        html: `
-            <div class="swal2-icon-custom">
-                <div class="swal2-x-mark">
-                    <div class="swal2-x-mark-line"></div>
-                    <div class="swal2-x-mark-line"></div>
-                </div>
-            </div>
-            <div class="swal2-title">ERROR</div>
-            <div class="custom-divider"></div>
-            El código de generación ingresado no existe.
-        `,
-        confirmButtonText: 'OK',
-        customClass: {
-            popup: 'swal2-popup',
-            confirmButton: 'swal2-styled swal2-confirm'
-        },
-        showConfirmButton: true
-    }).then((result) => {
-        // Verificar si se hizo clic en "OK" para limpiar el campo
-        if (result.isConfirmed) {
-            // Limpiar el valor del input
-            document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
-        }
-    }).catch((error) => {
-        console.error('Error en SweetAlert2:', error);
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var carouselElement = document.getElementById('carouselForms');
+    var carousel = new bootstrap.Carousel(carouselElement, {
+        interval: false
     });
 
-    return false;
-}
-
-
-            var dataFound = document.getElementById('dataFound').value;
-
-            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () 
+    document.getElementById('nextBtn').addEventListener('click', function () {
+        Swal.fire({
+            title: 'Aviso Importante',
+            text: 'Al proceder con el prechequeo, usted confirma que toda la información proporcionada es precisa y veraz. Al hacer clic en “Aceptar”, usted autoriza y valida que los datos ingresados son correctos y completos. Cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso. Asegúrese de revisar cuidadosamente todos los detalles antes de continuar.',
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+                popup: 'custom-alert-wide-container', // Nueva clase específica
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) 
             {
-                if (dataFound === 'true') 
-                { 
-                    $('#editModal').modal('show');
-                }
-            });
+                carousel.next();
+            }
+        });
+    });
 
-            
+    document.getElementById('backBtn').addEventListener('click', function () {
+        carousel.prev();
+    });
 
-            return true;
+    $('#editModal').on('hidden.bs.modal', function () {
+        carousel.to(0);
+    });
+
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) {
+        element.addEventListener('click', function () {
+            var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            modal.hide();
+        });
+    });
+});
+
+
+   document.addEventListener("DOMContentLoaded", function () {
+    const txtTransaccion = document.getElementById("<%= txtTransaccion.ClientID %>");
+    const lnkBuscar = document.getElementById("<%= lnkBuscar.ClientID %>");
+
+    // Colocar el cursor en el `input` al cargar la página
+    txtTransaccion.focus();
+
+    // Mantener el cursor en el `input` después de cada ingreso
+    txtTransaccion.addEventListener("blur", function () {
+        txtTransaccion.focus();
+    });
+
+    // Detectar el evento `Enter` y ejecutar las acciones correspondientes
+    txtTransaccion.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Evitar la recarga de página o submit por defecto
+
+            // Simular el clic en el botón asociado
+            if (lnkBuscar) {
+                lnkBuscar.click();
+            }
         }
+    });
+});
 
-        // Inicializar lightGallery (Si lo necesitas)
-lightGallery(document.getElementById('lightgallery'));
 
-// Obtener elementos de video y canvas
-const video = document.getElementById('camera');
-const canvas = document.getElementById('canvas');
-const takePhotoButton = document.getElementById('takePhoto');
-const changeStatusButton = document.getElementById('changeStatusButton');
-let isPhotoTaken = false; // Variable para verificar si se tomó la foto
+    window.onload = function() {
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('canvas');
+    const capturedPhoto = document.getElementById('capturedPhoto');
+    const takePhotoButton = document.getElementById('takePhoto');
+    let isPhotoTaken = false; 
 
-// Configurar acceso a la cámara
-navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    // Configurar acceso a la cámara
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(stream => {
-        // Establecer la fuente del video en la transmisión de la cámara
         video.srcObject = stream;
         video.play();
 
-        // Tomar una foto cuando el usuario haga clic en el botón
-        takePhotoButton.addEventListener('click', () => {
-            // Dibujar el fotograma del video en el canvas
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        takePhotoButton.addEventListener('click', (event) => {
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             event.preventDefault();
-            
-            // Obtener la foto como una cadena codificada en base64
+
+            // Obtener la imagen capturada en formato base64
             const photo = canvas.toDataURL('image/jpeg');
-            var codeGen = document.getElementById('txtTransaccion').value.trim();
-            console.log("Este es el código de generación: ", codeGen);
 
             // Verificar si la foto está vacía
-            if (photo === 'data:,') {
+            if (photo === 'data:,') 
+            {
                 Swal.fire({
                     title: 'Error',
                     text: 'Por favor, capture una foto antes de cambiar el estado.',
@@ -713,46 +901,33 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: false })
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Aceptar'
                 });
-                return; // No permitir la captura sin foto
+                return;
             }
 
-            // Enviar la imagen al servidor con AJAX
-            fetch('Prechequeo.aspx/UploadPhoto', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ imageData: photo, codeGen: codeGen })
-            })
-            .then(response => response.json())
-            .then(result => {
-                // Mostrar SweetAlert basado en la respuesta
-                console.log("Este es el resultado", result);
-                if (result.d === 'success') {
-                    Swal.fire('Éxito', 'Imagen enviada correctamente', 'success');
-                    // Habilitar el botón de cambio de estado
-                    changeStatusButton.disabled = false;
-                    isPhotoTaken = true; // Marcar que la foto fue tomada
-                } else {
-                    Swal.fire('Error', 'Hubo un problema al enviar la imagen', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error al enviar la imagen:', error);
-                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-            });
+            // Mostrar la imagen capturada en el contenedor
+            capturedPhoto.src = photo;
+            capturedPhoto.style.display = 'block'; // Mostrar la imagen capturada
+
+            // Ocultar el canvas y el video después de tomar la foto
+            canvas.style.display = 'none';
+            video.style.display = 'none';
+            isPhotoTaken = true; // Marcar que la foto fue tomada
+
         });
     })
     .catch(error => {
         console.error('Error al acceder a la cámara:', error);
     });
+};
 
-        // Función para cambiar el estado
+    // Función para cambiar el estado
 function changeStatus() {
-    var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
-    var canvas = document.getElementById('canvas');
-    var photo = canvas.toDataURL('image/jpeg'); // Obtén la imagen como base64
+    const txtTransaccion = document.getElementById('txtTransaccion').value.trim();
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const photo = canvas.toDataURL('image/jpeg'); // Obtén la imagen como base64
 
+    // Verificar si el código de transacción está vacío
     if (txtTransaccion === '') {
         Swal.fire({
             title: 'Error',
@@ -762,7 +937,12 @@ function changeStatus() {
             confirmButtonText: 'Aceptar'
         });
         return false;
-    } else if (!isPhotoTaken) { // Verifica si la foto ha sido tomada
+    }
+
+    // Verificar si la foto ha sido tomada
+    const isCanvasEmpty = !context.getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0);
+
+    if (isCanvasEmpty) {
         Swal.fire({
             title: 'Error',
             text: 'Por favor, capture una foto antes de cambiar el estado.',
@@ -770,82 +950,152 @@ function changeStatus() {
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Aceptar'
         });
-        return false; // No permite cambiar el estatus si no se ha tomado la foto
-    } else {
-        var predefinedStatusId = 2; // Cambia esto al ID de estado que deseas
+        return false; // No permite continuar si no hay foto
+    }
 
-        $.ajax({
-            type: "POST",
-            url: "Prechequeo.aspx/ChangeTransactionStatus",
-            data: JSON.stringify({
-                codeGen: txtTransaccion,
-                predefinedStatusId: predefinedStatusId,
-                imageData: photo  // Aquí agregas la imagen base64 al enviar
-            }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            
-            success: function(response) {
-                var message = response.d;
+    const predefinedStatusId = 2; // Cambia esto al ID de estado que deseas
 
-                if (message === "Error: No se puede cambiar el estado sin haber subido una foto.") {
-                    Swal.fire({
-                        title: 'Advertencia',
-                        text: message,
-                        icon: 'warning',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Aceptar'
-                    });
-                } 
-                else if (message === "Cambio de estatus realizado con éxito") 
-                {
-                    Swal.fire({
-                        title: 'Exito',
-                        text: 'Prechequeo ha sido realizado.',
-                        icon: 'success',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un problema al realizar el cambio de estatus.',
-                        icon: 'error',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error cambiando el estado: ", error);
+    // Realizar el cambio de estado primero
+    $.ajax({
+        type: "POST",
+        url: "Prechequeo.aspx/ChangeTransactionStatus",
+        data: JSON.stringify({
+            codeGen: txtTransaccion,
+            predefinedStatusId: predefinedStatusId,
+            imageData: photo
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(response) {
+            const message = response.d;
+
+            if (message === "Error: No se puede cambiar el estado sin haber subido una foto.") {
+                Swal.fire({
+                    title: 'Advertencia',
+                    text: message,
+                    icon: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                });
+            } else if (message === "Cambio de estatus realizado con éxito") {
+                // Si el cambio de estado es exitoso, proceder con la subida de la foto
+                fetch('Prechequeo.aspx/UploadPhoto', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        imageData: photo, 
+                        codeGen: txtTransaccion 
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.d === 'success') {
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: 'Prechequeo ha sido realizado y la foto se ha subido correctamente.',
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire('Error', 'No se pudo subir la imagen al servidor', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al subir la imagen:', error);
+                    Swal.fire('Error', 'No se pudo conectar con el servidor para subir la imagen', 'error');
+                });
+            } else {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al cambiar el estado.',
+                    text: 'Hubo un problema al realizar el cambio de estatus.',
                     icon: 'error',
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Aceptar'
                 });
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error cambiando el estado: ", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al cambiar el estado.',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
 
-        return false; // Asegúrate de que no se envíe un estado vacío
-    }
+    return false; // Prevenir cualquier comportamiento por defecto
 }
 
 
 
-            function closeModal()
+
+    function closeModal()
+    {
+        // Recarga la página cuando el usuario presione Cerrar
+        location.reload();
+    }
+
+    function checkInput() 
+    {
+        var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
+            
+        if (txtTransaccion === '') 
+        {
+            // Mostrar la alerta al cargar la página
+            Swal.fire({
+                html: `
+                    <div class="swal2-icon-custom">
+                        <div class="swal2-x-mark">
+                            <div class="swal2-x-mark-line"></div>
+                            <div class="swal2-x-mark-line"></div>
+                        </div>
+                    </div>
+                    <div class="swal2-title">ERROR</div>
+                    <div class="custom-divider"></div>
+                    El código de generación ingresado no existe.
+                `,
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-popup',
+                    confirmButton: 'swal2-styled swal2-confirm'
+                },
+                showConfirmButton: true
+            }).then((result) => {
+            // Verificar si se hizo clic en "OK" para limpiar el campo
+            if (result.isConfirmed) 
             {
-                // Recarga la página cuando el usuario presione Cerrar
-                location.reload();
+                // Limpiar el valor del input
+                document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
             }
-        </script>
+            }).catch((error) => {
+                console.error('Error en SweetAlert2:', error);
+            });
 
+            return false;
+        }
 
-    </body>
+        var dataFound = document.getElementById('dataFound').value;
 
-    </html>
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () 
+        {
+            if (dataFound === 'true') 
+            { 
+                $('#editModal').modal('show');
+            }
+        });
+        
+        return true;
+    }
+</script>
+</body>
+</html>
