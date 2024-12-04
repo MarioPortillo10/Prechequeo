@@ -19,6 +19,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        this.LogEvent("Inicio de la carga de la página P4.");
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
@@ -26,6 +27,8 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 
             // Token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            // Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             using (WebClient client = new WebClient())
             {
@@ -34,8 +37,17 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 
                 try
                 {
+                    // Log de la solicitud
+                    this.LogEvent("Realizando solicitud GET a la URL: " + url);
+                    this.LogEvent("Método de solicitud: GET");
+                    this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
+                    
                     // Realizar la solicitud GET y leer la respuesta
                     string responseBody = client.DownloadString(url);
+
+                    // Log de la respuesta
+                    this.LogEvent("Respuesta recibida:");
+                    this.LogEvent(responseBody);
 
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
@@ -51,85 +63,166 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                 {
                     // Manejo de errores (por ejemplo, mostrar un mensaje de error)
                     Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    // Log detallado del error
+                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                    this.LogEvent("Mensaje de excepción: " + ex.Message);
+                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
                 }
             }
         }
     }
 
     [WebMethod]
-public static string ValidarDatos(string codigoGeneracion, string marchamo1, string marchamo2, string marchamo3, string marchamo4)
-{
-    if (string.IsNullOrEmpty(codigoGeneracion))
+    public static string ValidarDatos(string codigoGeneracion, string marchamo1, string marchamo2, string marchamo3, string marchamo4)
     {
-        return "Error: El código de generación no puede estar vacío.";
-    }
-
-    string url = string.Format("https://apiclientes.almapac.com:9010/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
-    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
-
-    try
-    {
-        using (WebClient client = new WebClient())
+        if (string.IsNullOrEmpty(codigoGeneracion))
         {
-            client.Headers.Add("Authorization", "Bearer " + token);
-
-            // Descarga los datos de la API
-            string responseBody = client.DownloadString(url);
-
-            // Deserializa los datos en el objeto Post
-            var data = JsonConvert.DeserializeObject<Post>(responseBody);
-
-            // Validar que haya información de sellos en la respuesta
-            if (data == null || data.shipmentSeals == null || !data.shipmentSeals.Any())
-            {
-                return "Error: No hay sellos disponibles en el sistema para validar.";
-            }
-
-            // Crear la lista de marchamos ingresados
-            var marchamos = new List<string> { marchamo1, marchamo2, marchamo3, marchamo4 }
-                            .Where(m => !string.IsNullOrEmpty(m)) // Filtrar vacíos
-                            .ToList();
-
-            if (!marchamos.Any())
-            {
-                return "Error: Debes ingresar al menos un marchamo para validar.";
-            }
-
-            // Extraer los sealCodes de la respuesta
-            var sealCodes = data.shipmentSeals.Select(seal => seal.sealCode).ToList();
-
-            // Validar si todos los marchamos ingresados están en los sealCodes
-            bool validacionExitosa = !marchamos.Except(sealCodes).Any();
-
-            return validacionExitosa
-                ? "Validación exitosa: todos los marchamos son correctos."
-                : "Error: uno o más marchamos no coinciden con los datos del servidor.";
+            return "Error: El código de generación no puede estar vacío.";
         }
-    }
-    catch (WebException webEx)
-    {
-        // Manejar errores HTTP
-        var response = webEx.Response as HttpWebResponse;
-        if (response != null)
+
+        string url = string.Format("https://apiclientes.almapac.com:9010/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        
+        // Forzar el uso de TLS 1.2
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        
+        try
         {
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            using (WebClient client = new WebClient())
             {
-                return "Error: El código de generación no se encontró (404).";
-            }
-            using (var stream = response.GetResponseStream())
-            using (var reader = new StreamReader(stream))
-            {
-                string errorResponse = reader.ReadToEnd();
-                return string.Format("Error en la solicitud: {0}", errorResponse);
+                // Log de la solicitud
+                LogEventS("Realizando solicitud GET a la URL: " + url);
+                LogEventS("Método de solicitud: GET");
+                LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
+            
+                client.Headers.Add("Authorization", "Bearer " + token);
+
+                // Descarga los datos de la API
+                string responseBody = client.DownloadString(url);
+
+                // Deserializa los datos en el objeto Post
+                var data = JsonConvert.DeserializeObject<Post>(responseBody);
+
+                // Log de la respuesta
+                LogEventS("Respuesta recibida:");
+                LogEventS(responseBody);
+
+                // Validar que haya información de sellos en la respuesta
+                if (data == null || data.shipmentSeals == null || !data.shipmentSeals.Any())
+                {
+                    return "Error: No hay sellos disponibles en el sistema para validar.";
+                }
+
+                // Crear la lista de marchamos ingresados
+                var marchamos = new List<string> { marchamo1, marchamo2, marchamo3, marchamo4 }
+                                .Where(m => !string.IsNullOrEmpty(m)) // Filtrar vacíos
+                                .ToList();
+
+                if (!marchamos.Any())
+                {
+                    return "Error: Debes ingresar al menos un marchamo para validar.";
+                }
+
+                // Extraer los sealCodes de la respuesta
+                var sealCodes = data.shipmentSeals.Select(seal => seal.sealCode).ToList();
+
+                // Validar si todos los marchamos ingresados están en los sealCodes
+                bool validacionExitosa = !marchamos.Except(sealCodes).Any();
+
+                return validacionExitosa
+                    ? "Validación exitosa: todos los marchamos son correctos."
+                    : "Error: uno o más marchamos no coinciden con los datos del servidor.";
             }
         }
-        return string.Format("Error en la solicitud: {0}", webEx.Message);
+        catch (WebException webEx)
+        { 
+            // Manejar errores HTTP
+            var response = webEx.Response as HttpWebResponse;
+            if (response != null)
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return "Error: El código de generación no se encontró (404).";
+                }
+                using (var stream = response.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    string errorResponse = reader.ReadToEnd();
+                    return string.Format("Error en la solicitud: {0}", errorResponse);
+                }
+            }
+            return string.Format("Error en la solicitud: {0}", webEx.Message);
+        }
+        catch (Exception ex)
+        {
+            return string.Format("Error: {0}", ex.Message);
+            // Log detallado del error
+            LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+            LogEventS("Mensaje de excepción: " + ex.Message);
+            LogEventS("Pila de llamadas: " + ex.StackTrace);
+        }
     }
-    catch (Exception ex)
+
+    public void LogEvent(object message)
     {
-        return string.Format("Error: {0}", ex.Message);
+        string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
     }
-}
+
+    // Método para escribir en el Visor de eventos
+    public static void LogEventS(object message)
+    {
+        string logFilePath = "~/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
 
 
    public class Post
@@ -334,12 +427,6 @@ public static string ValidarDatos(string codigoGeneracion, string marchamo1, str
 
     protected void lnk_VerRuta_Click(object sender, EventArgs e)
     {
-
-    
-
-
-
-
         LinkButton lnk_VerRuta = (LinkButton)sender;
         GridViewRow row = (GridViewRow)lnk_VerRuta.NamingContainer;
         GridView gvw = (GridView)row.NamingContainer;
@@ -417,8 +504,6 @@ public static string ValidarDatos(string codigoGeneracion, string marchamo1, str
     {
         GridView gvw_rutasDetalles = (GridView)sender;
         GridViewRow row = gvw_rutasDetalles.Rows[e.RowIndex];
-
-       
     }
 
     protected void lnk_perfil_Click(object sender, EventArgs e)

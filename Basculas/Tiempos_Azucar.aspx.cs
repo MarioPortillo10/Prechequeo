@@ -26,6 +26,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 
             // Token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             // Función para ver las que son de tipo PLANA y que están esperando
             using (WebClient client = new WebClient())
@@ -267,7 +268,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         string url = baseUrl + Tipo_Unidad + "/" + currentValue;
 
         // Token de autenticación
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluX3VzZXIiLCJzdWIiOjEsInJvbGVzIjpbImFkbWluIl0sImlhdCI6MTczMjU0NjQyOSwiZXhwIjoxNzMyNjMyODI5fQ.RjGdJmeyiXnINuKhJXF9gIeKOdGuaxPOpmrDyleYHqI";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         try
         {

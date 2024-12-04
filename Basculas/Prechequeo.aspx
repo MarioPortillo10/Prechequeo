@@ -814,34 +814,39 @@
     });
 
     document.getElementById('nextBtn').addEventListener('click', function () {
-        Swal.fire({
-    title: 'Aviso Importante',
-    html: `
-        <div style="white-space: pre-line; margin-top: -20px">
-            Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
-            
-            Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
-            
-            En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
-        </div>
-    `,
-    icon: 'warning',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    confirmButtonText: 'Aceptar',
-    customClass: {
-        popup: 'custom-alert-wide-container', // Nueva clase específica
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger'
-    },
-    buttonsStyling: false
-}).then((result) => {
-    if (result.isConfirmed) {
-        carousel.next();
-    }
+    Swal.fire({
+        title: 'Aviso Importante',
+        html: `
+            <div style="white-space: pre-line; margin-top: -20px">
+                Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
+                
+                Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
+                
+                En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Aceptar',
+        customClass: {
+            popup: 'custom-alert-wide-container', // Nueva clase específica
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Acción al confirmar
+            carousel.next();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // Acción al cancelar: cerrar la modal
+            $('#editModal').modal('hide'); // Bootstrap 4: cierra la modal
+        }
+    });
 });
 
-    });
+
 
     document.getElementById('backBtn').addEventListener('click', function () {
         carousel.prev();
@@ -879,7 +884,7 @@
 
             // Simular el clic en el botón asociado
             if (lnkBuscar) {
-                lnkBuscar.click();
+                lnkBuscar.click();  
             }
         }
     });
@@ -1061,57 +1066,80 @@ function changeStatus() {
         location.reload();
     }
 
-    function checkInput() 
-    {
-        var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
-            
-        if (txtTransaccion === '') 
-        {
-            // Mostrar la alerta al cargar la página
-            Swal.fire({
-                html: `
-                    <div class="swal2-icon-custom">
-                        <div class="swal2-x-mark">
-                            <div class="swal2-x-mark-line"></div>
-                            <div class="swal2-x-mark-line"></div>
-                        </div>
+    function checkInput() {
+    var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
+    
+    if (txtTransaccion === '') {
+        // Mostrar la alerta si el campo está vacío
+        Swal.fire({
+            html: `
+                <div class="swal2-icon-custom">
+                    <div class="swal2-x-mark">
+                        <div class="swal2-x-mark-line"></div>
+                        <div class="swal2-x-mark-line"></div>
                     </div>
-                    <div class="swal2-title">ERROR</div>
-                    <div class="custom-divider"></div>
-                    El código de generación ingresado no existe.
-                `,
-                confirmButtonText: 'OK',
-                customClass: {
-                    popup: 'swal2-popup',
-                    confirmButton: 'swal2-styled swal2-confirm'
-                },
-                showConfirmButton: true
-            }).then((result) => {
-            // Verificar si se hizo clic en "OK" para limpiar el campo
-            if (result.isConfirmed) 
-            {
-                // Limpiar el valor del input
-                document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
+                </div>
+                <div class="swal2-title">ERROR</div>
+                <div class="custom-divider"></div>
+                El código de generación ingresado no existe.
+            `,
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal2-popup',
+                confirmButton: 'swal2-styled swal2-confirm'
+            },
+            showConfirmButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('txtTransaccion').value = ''; // Limpiar el campo
             }
-            }).catch((error) => {
-                console.error('Error en SweetAlert2:', error);
-            });
-
-            return false;
-        }
-
-        var dataFound = document.getElementById('dataFound').value;
-
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () 
-        {
-            if (dataFound === 'true') 
-            { 
-                $('#editModal').modal('show');
-            }
+        }).catch((error) => {
+            console.error('Error en SweetAlert2:', error);
         });
-        
-        return true;
+
+        return false; // No permitir la ejecución de la función del servidor
     }
+
+    // Llamada AJAX para verificar la respuesta de la API
+    $.ajax({
+        url: 'https://apiclientes.almapac.com:9010/api/shipping/' + txtTransaccion + '', // URL de la API
+        type: 'GET', // Tipo de solicitud (puede cambiar dependiendo de tu API)
+        success: function(response) {
+            console.log('Respuesta de la API:', response);
+            
+            if (response && response.valido) { // Asegúrate de que la respuesta tenga una estructura esperada
+                Swal.fire({
+                    title: 'Datos recibidos',
+                    text: 'Los datos se han cargado correctamente.',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Mostrar la modal si la respuesta es válida
+                    $('#myModal').modal('show'); // Asegúrate de que la modal esté correctamente inicializada en tu página
+                });
+            } else {
+                Swal.fire({
+                    title: 'ERROR',
+                    text: 'Los datos de la transacción no son válidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error en la llamada a la API:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al intentar obtener los datos.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+    return true; // Permitir la ejecución de la función del servidor
+}
+
+
 </script>
 </body>
 </html>

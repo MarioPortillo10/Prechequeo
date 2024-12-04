@@ -31,6 +31,7 @@ public class QueueDataInner
 
 protected void Page_Load(object sender, EventArgs e)
 {
+    this.LogEvent("Inicio de la carga de la página AuI.");
     if (!IsPostBack)
     {
         // URL de la primera API
@@ -41,6 +42,8 @@ protected void Page_Load(object sender, EventArgs e)
         // Token
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
+        // Forzar el uso de TLS 1.2
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         using (WebClient client = new WebClient())
         {
             // Añadir el token al encabezado de autorización
@@ -48,9 +51,17 @@ protected void Page_Load(object sender, EventArgs e)
 
             try
             {
+                // Log de la solicitud
+                this.LogEvent("Realizando solicitud GET a la URL: " + url1);
+                this.LogEvent("Método de solicitud: GET");
+                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 // *** Primera API ***
                 string responseBody1 = client.DownloadString(url1);
                 var data1 = JsonConvert.DeserializeObject<List<Post>>(responseBody1);
+
+                // Log de la respuesta
+                this.LogEvent("Respuesta recibida:");
+                this.LogEvent(responseBody1);
 
                 // Filtrar y procesar datos de la primera API
                 var filteredData = new List<Post>();
@@ -133,8 +144,16 @@ protected void Page_Load(object sender, EventArgs e)
                 lblCountP.Text = countP.ToString();
                 lblCountV.Text = countV.ToString();
 
+                // Log de la solicitud
+                this.LogEvent("Realizando solicitud GET a la URL: " + url2);
+                this.LogEvent("Método de solicitud: GET");
+                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 // *** Segunda API ***
                 string responseBody2 = client.DownloadString(url2);
+
+                // Log de la respuesta
+                this.LogEvent("Respuesta recibida:");
+                this.LogEvent(responseBody2);
 
                 // Deserializar respuesta de la segunda API
                 var queueData = JsonConvert.DeserializeObject<QueueData>(responseBody2);
@@ -160,12 +179,16 @@ protected void Page_Load(object sender, EventArgs e)
 
                 // Puedes loguear o mostrar detalles del error para depuración.
                 Console.WriteLine("Error: " + ex.Message);
+                // Log detallado del error
+                this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                this.LogEvent("Mensaje de excepción: " + ex.Message);
+                this.LogEvent("Pila de llamadas: " + ex.StackTrace);
             }
         }
     }
 }
 
-[WebMethod]
+    [WebMethod]
     public static string ChangeTransactionStatus(string codeGen)
     {
         if (string.IsNullOrEmpty(codeGen))
@@ -174,16 +197,26 @@ protected void Page_Load(object sender, EventArgs e)
         }
 
         string url = "https://apiclientes.almapac.com:9010/api/queue/send/" + codeGen;
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
         string responseContent;
+        // Forzar el uso de TLS 1.2
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         using (var client = new WebClient())
         {
+            // Log de la solicitud
+            LogEventS("Realizando solicitud GET a la URL: " + url);
+            LogEventS("Método de solicitud: GET");
+            LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
             var requestBody = new { codeGen = codeGen };
             var json = JsonConvert.SerializeObject(requestBody);
+            
+            // Log de la respuesta
+            LogEventS("Respuesta recibida:");
+            LogEventS(requestBody);
 
             try
             {
@@ -199,10 +232,15 @@ protected void Page_Load(object sender, EventArgs e)
             catch (Exception ex)
             {
                 return "Error inesperado: " + ex.Message;
+                // Log detallado del error
+                LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+                LogEventS("Mensaje de excepción: " + ex.Message);
+                LogEventS("Pila de llamadas: " + ex.StackTrace);
             }
         }
 
         return "Respuesta del servidor: " + responseContent;
+        LogEventS(responseContent);
     }
 
 
@@ -212,17 +250,68 @@ protected void Page_Load(object sender, EventArgs e)
         sql_rutas_actividades.DataBind();
     }
 
-    // Método para escribir en el Visor de eventos
-    public void LogEvent(string message)
+    public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
         string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
         if (!Directory.Exists(logDirectory))
         {
             Directory.CreateDirectory(logDirectory);
         }
-        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
     }
+
+    // Método para escribir en el Visor de eventos
+    public static void LogEventS(object message)
+{
+    string logFilePath = "~/Logs/MyAppLog.txt"; // Ruta absoluta
+    string logDirectory = Path.GetDirectoryName(logFilePath);
+
+    // Crear el directorio si no existe
+    if (!Directory.Exists(logDirectory))
+    {
+        Directory.CreateDirectory(logDirectory);
+    }
+
+    // Convertir el mensaje a string
+    string logMessage;
+    try
+    {
+        logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+    }
+    catch
+    {
+        // Si la serialización falla, usar el método ToString() o "null" si es nulo
+        logMessage = (message != null) ? message.ToString() : "null";
+    }
+
+    // Formatear el mensaje de log
+    string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+    // Escribir el log en el archivo
+    File.AppendAllText(logFilePath, formattedLog);
+}
+
+
 
 public class IngenioCount
     {

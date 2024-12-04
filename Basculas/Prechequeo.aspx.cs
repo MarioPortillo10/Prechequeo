@@ -25,7 +25,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     string baseUrl = "https://apiclientes.almapac.com:9010/api/";
     string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
     public static string baseUrlStatic = "https://apiclientes.almapac.com:9010/api/";
-    public static string tokenStatic = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjIsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzA5MzExMjksImV4cCI6MjUxOTg3MTEyOX0.f7sPuL-bNUaxbY-D3NFs2PAM3KlghRBP4YRnfU_-jhU";
+    public static string tokenStatic = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
     protected void Page_Load(object sender, EventArgs e)
     {
        
@@ -34,6 +34,8 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
 
     protected void lnkBuscar_Click(object sender, EventArgs e)
     {
+        Response.Write("La función lnkBuscar_Click se está ejecutando."); // Imprime en la página para depurar
+
         string transaccion = txtTransaccion.Text.Trim();
         string url = this.baseUrl + "shipping/" + transaccion;
 
@@ -42,9 +44,17 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             client.Headers.Add("Authorization", "Bearer " + this.token);
             try
             {
+                // Log de la solicitud
+                this.LogEvent("Realizando solicitud GET a la URL: " + url);
+                this.LogEvent("Método de solicitud: GET");
+                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 string responseBody = client.DownloadString(url);
                 var data = JsonConvert.DeserializeObject<Post>(responseBody);
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));  // Imprime el objeto completo
+
+                // Log de la respuesta
+                this.LogEvent("Respuesta recibida:");
+                this.LogEvent(responseBody);
 
                 if (data == null || string.IsNullOrEmpty(data.transporter))
                 {
@@ -87,6 +97,10 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                 chkPlana.Checked = data.truckType == "PLANA";
                 chkVolteo.Checked = data.truckType == "VOLTEO";
 
+                // Mostrar/Ocultar imágenes dependiendo de la selección
+                //imgPlana.Style["display"] = chkPlana.Checked ? "block" : "none";
+                //imgVolteo.Style["display"] = chkVolteo.Checked ? "block" : "none";
+
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "openModal", 
                     "$('#editModal').modal('show');", true);
             }
@@ -105,6 +119,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "generalErrorAlert", 
                     "swal('Error', 'Ocurrió un error: " + ex.Message + "', 'error');", true);
+                this.LogEvent(ex);
             }
         }
     }
@@ -191,8 +206,8 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         // Aquí podrías añadir una comprobación adicional si la imagen se ha subido correctamente usando otro mecanismo (como una variable global o un estado persistente).
         // Si la foto se subió, se sigue adelante con la actualización del estatus.
 
-        string url = "https://apiclientes.almapac.com:9010/api/status/push/";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        string url = "http://192.168.200.112:3000/api/status/push/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
         string responseContent;
 
         using (var client = new WebClient())

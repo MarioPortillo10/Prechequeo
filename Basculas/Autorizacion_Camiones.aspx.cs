@@ -19,10 +19,13 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        this.LogEvent("Inicio de la carga de la página.");
         if (!IsPostBack)
         {
             string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            // Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             using (WebClient client = new WebClient())
             {
@@ -31,83 +34,125 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 
                 try
                 {
+                    
                     // Realizar la solicitud GET y leer la respuesta
                     string responseBody = client.DownloadString(url);
 
+                    // Log de la respuesta
+                
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Filtrar registros válidos
-                    var filteredData = new List<Post>();
-                    foreach (var item in data)
+                    
+                    // Verificar si hay datos para mostrar
+                    if (data != null && data.Count > 0)
                     {
-                        if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2 && item.vehicle != null)
+                        // Filtrar registros válidos
+                        var filteredData = new List<Post>();
+                        foreach (var item in data)
                         {
-                            filteredData.Add(item);
-                        }
-                    }
-
-                    // Filtrar por tipos de camiones
-                    var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
-                    var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
-
-                    // Contar registros por tipo
-                    lblCountP.Text = truckTypeP.Count.ToString();
-                    lblCountV.Text = truckTypeV.Count.ToString();
-
-                    // Crear una lista de códigos de ingenio válidos
-                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
-
-                    // Inicializar los conteos de ingenios
-                    var ingenioCounts = new Dictionary<string, int>();
-
-                    // Contar ingenios en todos los registros filtrados
-                    foreach (var item in filteredData)
-                    {
-                        var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-                        if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
-                        {
-                            if (ingenioCounts.ContainsKey(ingenioNavCode))
+                            if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2 && item.vehicle != null)
                             {
-                                ingenioCounts[ingenioNavCode]++;
-                            }
-                            else
-                            {
-                                ingenioCounts[ingenioNavCode] = 1;
+                                filteredData.Add(item);
                             }
                         }
-                    }
 
-                    // Procesar e insertar los conteos en las etiquetas correspondientes
-                    int i = 1;
-                    foreach (var ingenio in validIngenios)
-                    {
-                        // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
-                        var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
-                        if (lblIngenioQuantity != null)
+                        // Filtrar por tipos de camiones
+                        var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
+                        var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+
+                        // Contar registros por tipo
+                        lblCountP.Text = truckTypeP.Count.ToString();
+                        lblCountV.Text = truckTypeV.Count.ToString();
+
+                    
+                        // Crear una lista de códigos de ingenio válidos
+                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+
+                        // Inicializar los conteos de ingenios
+                        var ingenioCounts = new Dictionary<string, int>();
+
+                        // Contar ingenios en todos los registros filtrados
+                        foreach (var item in filteredData)
                         {
-                            // Mostrar el conteo de ingenios o 0 si no existe
-                            lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                            {
+                                if (ingenioCounts.ContainsKey(ingenioNavCode))
+                                {
+                                    ingenioCounts[ingenioNavCode]++;
+                                }
+                                else
+                                {
+                                    ingenioCounts[ingenioNavCode] = 1;
+                                }
+                            }
                         }
-                        i++;
+
+
+                        // Procesar e insertar los conteos en las etiquetas correspondientes
+                        int i = 1;
+                        foreach (var ingenio in validIngenios)
+                        {
+                            var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
+                            if (lblIngenioQuantity != null)
+                            {
+                                lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                            }
+                            i++;
+                        }
+
+                        // Vincular los datos filtrados a los Repeaters correspondientes
+                        rptRutas1.DataSource = truckTypeP;
+                        rptRutas1.DataBind();
+
+                        rptRutas2.DataSource = truckTypeV;
+                        rptRutas2.DataBind();
                     }
-
-                    // Vincular los datos filtrados a los Repeaters correspondientes
-                    rptRutas1.DataSource = truckTypeP;
-                    rptRutas1.DataBind();
-
-                    rptRutas2.DataSource = truckTypeV;
-                    rptRutas2.DataBind();
                 }
                 catch (Exception ex)
                 {
+                    // Log detallado del error
+                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                    this.LogEvent("Mensaje de excepción: " + ex.Message);
+                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+
                     // Manejar errores de solicitud o deserialización
                     // lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
                 }
-            }    
+            }
         }
     }
 
+
+    public void LogEvent(object message)
+    {
+        string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
 
     [WebMethod]
     public static string ValidarDatos(string codigoGeneracion, string licencia, string placaRemolque, string placaCamion)
@@ -279,7 +324,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     private string GetImageFromApi(string codigoGeneracion)
     {
         // Simulación de la llamada a la API para obtener la URL de la imagen (puedes usar la lógica que ya tienes)
-        string url = "https://apiclientes.almapac.com:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string url = "http://192.168.200.112:3000/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
         using (WebClient client = new WebClient())
@@ -368,6 +413,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 
         string url = "https://apiclientes.almapac.com:9010/api/status/push/";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        
         string responseContent;
 
         using (var client = new WebClient())
