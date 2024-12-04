@@ -22,10 +22,10 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
-            string url = "http://172.206.251.10/api/shipping/status/4?includeAttachments=true";
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4?includeAttachments=true";
 
             // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjQsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MjkwMjU5ODcsImV4cCI6MjUxNzk2NTk4N30.S5nkzIJPYKdJ7CsA2K1a-jz4xsuIglTEspao5jv1IBk";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
             using (WebClient client = new WebClient())
             {
@@ -64,7 +64,7 @@ public static string ValidarDatos(string codigoGeneracion, string marchamo1, str
         return "Error: El código de generación no puede estar vacío.";
     }
 
-    string url = string.Format("http://172.206.251.10/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
+    string url = string.Format("https://apiclientes.almapac.com:9010/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
     string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
 
     try

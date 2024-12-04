@@ -317,17 +317,18 @@
         <section>
             
             <div class="bg-white">
-                <h2 class="text-lg font-bold mb-4 text-center">TOTAL UNIDADES</h2>
+                <div class="bg-white">
+                <h2 class="text-lg font-bold mb-1 text-center">TOTAL UNIDADES</h2> <!-- Margen inferior más pequeño -->
                 
                 <div class="flex justify-center items-center min-h-[25vh]">
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-2 mt-[-10px]"> <!-- Agregado margen superior negativo -->
                         <!-- Tarjeta de "Solicitar Plano" -->
                         <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; width: 300px; height: 125px;">
                             <div class="flex flex-col items-center justify-center h-full">
                                 <!-- Texto en la parte superior -->
-                                <span class="text-3xl mb-1">Plano</span>
+                                <span class="text-3xl mb-1">Plana</span>
                                 <span class="text-3xl mt-1 font-bold">
-                                <asp:Label ID="lblCountP" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                    <asp:Label ID="lblCountP" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
                                 </span>
                             </div>    
                         </div>
@@ -338,7 +339,7 @@
                                 <!-- Texto en la parte superior -->
                                 <span class="text-3xl mb-1">Volteo</span>
                                 <div class="text-3xl mt-1 font-bold">
-                                <asp:Label ID="lblCountV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                    <asp:Label ID="lblCountV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
                                 </div>
                             </div>
                         </div>
@@ -413,7 +414,7 @@
             </div>
         </div>
     
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif; margin-bottom: 50px;">
             <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
                 <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
                 <div class="row g-4">
@@ -451,7 +452,7 @@
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lblFechaStatus" runat="server"
                                                     Text='<%# Eval("statuses[1].date") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy")
+                                                            ? (Eval("statuses[1].date"))
                                                             : "No disponible" %>' />
                                             </p>
 
@@ -459,7 +460,7 @@
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lblHoraStatus" runat="server"
                                                     Text='<%# Eval("statuses[1].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[1].time")).ToString("HH:mm:ss")
+                                                            ? (Eval("statuses[1].time"))
                                                             : "No disponible" %>' />
                                             </p>
 
@@ -479,7 +480,7 @@
                                                     Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
                                             </p>
 
-                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Tipo Operación:</strong></p>
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Recepción:</strong></p>
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lbloperacion" runat="server"
                                                     Text='<%# Eval("operationType") != null ?
@@ -575,7 +576,7 @@
                                                     Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
                                             </p>
 
-                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Tipo Operación:</strong></p>
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-cogs text-primary"></i> <strong>Recepción:</strong></p>
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lbloperacion" runat="server"
                                                     Text='<%# Eval("operationType") != null ?
@@ -668,7 +669,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
-                                    <input type="number" class="form-control" id="txt_tarjeta" />
+                                    <input type="number" class="form-control" id="txt_tarjeta"  oninput="this.value = this.value.slice(0, 4)" />
                                 </div>
                             </form>
                             <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
@@ -711,23 +712,28 @@
 
         function filterCards() 
         {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.card-container');
+            // Obtén el valor del input de búsqueda
+            var input = document.getElementById("searchInput").value.toLowerCase();
 
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                //console.log("Texto de la tarjeta:", text); // Para depuración
+            // Selecciona todas las tarjetas dentro de los repetidores
+            var cards = document.querySelectorAll(".card");
 
-                // Muestra la tarjeta si el texto incluye la entrada de búsqueda, de lo contrario, la oculta
-                card.style.display = text.includes(input) ? 'block' : 'none';
-            });
-
-            // Alineación para evitar huecos
-            const visibleCards = Array.from(cards).filter(card => card.style.display === 'block');
-            visibleCards.forEach((card, index) => {
-                card.style.order = index; // Alinear las tarjetas visibles
+            // Recorre todas las tarjetas y muestra u oculta según el filtro
+            cards.forEach(function(card) 
+            {
+                // Combina el texto de los elementos de la tarjeta en una sola cadena y lo compara con el input
+                var cardText = card.innerText.toLowerCase();
+                if (cardText.includes(input)) 
+                {
+                    card.style.display = "block"; // Muestra la tarjeta
+                } 
+                else 
+                {
+                    card.style.display = "none"; // Oculta la tarjeta
+                }
             });
         }
+
 
         function validarInformacion() 
         {

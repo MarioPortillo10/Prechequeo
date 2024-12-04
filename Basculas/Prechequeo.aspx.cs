@@ -22,9 +22,9 @@ using System.Globalization;
 public partial class Basculas_Prechequeo : System.Web.UI.Page
 {
     string cod_rol = "";
-    string baseUrl = "http://172.206.251.10/api/";
-    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
-    public static string baseUrlStatic = "http://172.206.251.10/api/";
+    string baseUrl = "https://apiclientes.almapac.com:9010/api/";
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+    public static string baseUrlStatic = "https://apiclientes.almapac.com:9010/api/";
     public static string tokenStatic = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjIsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzA5MzExMjksImV4cCI6MjUxOTg3MTEyOX0.f7sPuL-bNUaxbY-D3NFs2PAM3KlghRBP4YRnfU_-jhU";
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -191,8 +191,8 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         // Aquí podrías añadir una comprobación adicional si la imagen se ha subido correctamente usando otro mecanismo (como una variable global o un estado persistente).
         // Si la foto se subió, se sigue adelante con la actualización del estatus.
 
-        string url = "http://172.206.251.10/api/status/push/";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/status/push/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
         string responseContent;
 
         using (var client = new WebClient())

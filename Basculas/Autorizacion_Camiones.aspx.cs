@@ -21,8 +21,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            string url = "http://172.206.251.10/api/shipping/status/2?includeAttachments=true";
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
             using (WebClient client = new WebClient())
             {
@@ -118,8 +118,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         }
 
         // Token y endpoint
-        string url = "http://172.206.251.10/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
         using (WebClient client = new WebClient())
         {
@@ -279,8 +279,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     private string GetImageFromApi(string codigoGeneracion)
     {
         // Simulación de la llamada a la API para obtener la URL de la imagen (puedes usar la lógica que ya tienes)
-        string url = "http://172.206.251.10/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
         using (WebClient client = new WebClient())
         {
@@ -366,8 +366,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             return "Error: La transacción no puede estar vacía.";
         }
 
-        string url = "http://172.206.251.10/api/status/push/";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/status/push/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
         string responseContent;
 
         using (var client = new WebClient())
@@ -415,8 +415,8 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         Console.WriteLine("Datos enviados: codigoGeneracion = " + codigoGeneracion + ", tarjeta = " + tarjeta);
         
         // Token y endpoint
-        string url = "http://172.206.251.10/api/shipping/setMagneticCard/";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/shipping/setMagneticCard/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
         string responseContent;
 
         using (var client = new WebClient())

@@ -229,7 +229,7 @@
     .modal-dialog 
     {
         position: absolute;
-        top: 50px; /* Distancia desde arriba */
+        top: 5px; /* Distancia desde arriba */
         left: 175px; /* Distancia desde la izquierda */
         margin: 0; /* Elimina márgenes predeterminados */
 
@@ -606,28 +606,27 @@
                                                 <!-- Contenedor de imágenes y checkboxes en fila -->
                                                 <div id="tipoUnidad" style="display: flex; flex-direction: row; align-items: center; gap: 15px;">
 
-                                                <!-- Imagen de camión ícono (tamaño reducido) -->
-                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
-                                                <!-- Imagen de camión de volteo (más ancha) -->
-                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
+                                                    <!-- Imagen de camión ícono (tamaño reducido) -->
+                                                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
+                                                    <!-- Imagen de camión de volteo (más ancha) -->
+                                                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
 
-                                                <!-- Contenedor de checkboxes -->
-                                                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
-                                                    <!-- Checkbox para PLANA -->
-                                                    <div class="form-check" style="margin-bottom: 5px;">
-                                                        <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                        <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
-                                                    </div>
+                                                    <!-- Contenedor de checkboxes -->
+                                                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
+                                                        <!-- Checkbox para PLANA -->
+                                                        <div class="form-check" style="margin-bottom: 5px;">
+                                                            <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                            <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
+                                                        </div>
 
-                                                    <!-- Checkbox para VOLTEO -->
-                                                    <div class="form-check">
-                                                        <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                        <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
+                                                        <!-- Checkbox para VOLTEO -->
+                                                        <div class="form-check">
+                                                            <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                            <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                        </div>
 
                                         <!-- Destino -->
                                         <div class="form-group" style="flex: 1.3; text-align: left; margin-left: 100px; padding: 0; margin-top: -15px; width: 100%; max-width: none;">
@@ -643,7 +642,7 @@
                                     <div class="container" style="position: relative;">
                                         <div class="form-row" style="align-items: flex-start; margin-top: 100px; margin-right: 50px; position: absolute; top: -110px; left: 0;">
                                             <!-- Fecha -->
-                                            <div class="form-group" style="flex: 0.4; margin-right: 35px; margin-left: -773px;">
+                                            <div class="form-group" style="flex: 0.4; margin-right: 35px; margin-left: -730px;">
                                                 <label for="txtFecha" style="font-size: 14px; margin-bottom: 5px; margin-top: 18px; display: block; width: 160px;">
                                                     <strong>FECHA PRECHEQUEO:</strong>
                                                 </label>
@@ -652,11 +651,11 @@
                                                 </p>
                                             </div>
                                             <!-- Transportista -->
-                                            <div class="form-group" style="flex: 0 0 300px; margin-left: -100px; margin-right: 0; margin-top: 15px;">
+                                            <div class="form-group" style="flex: 0 0 300px; margin-left: -90px; margin-right: 0; margin-top: 15px;">
                                                 <label for="txt_transporte" style="font-size: 14px; margin-bottom: 5px;">
                                                     <strong>EMPRESA DE TRANSPORTE:</strong>
                                                 </label>
-                                                <p style="font-size: 14px; margin: 0; margin-top: -5px; flex: 1; width: 250px;">
+                                                <p style="font-size: 14px; margin: 0; margin-top: -5px; flex: 1; width: 275px;">
                                                     <asp:Literal ID="txt_transporte" runat="server" Mode="PassThrough" />
                                                 </p>
                                             </div>
@@ -719,50 +718,59 @@
                 </div>
             
 
-                        <!-- Segundo Formulario (Captura de Fotografía) -->
-                        <div class="carousel-item" style="background-color: #f9f9f9; max-width: 500px; margin: 0 auto; border-radius: 30px; overflow: hidden;">
-                            <!-- Modal Header -->
-                            <div class="modal-header" style="background-color: transparent; flex-shrink: 0; display: flex; justify-content: center; align-items: center; padding: 0.5rem; border-bottom: 1px solid #e0e0e0; border-radius: 8px 8px 0 0; width: 100%; height: 40px;">
-                                <h5 class="modal-title" style="margin: 0; font-size: 1.2rem; font-weight: bold; color: #2c3e50; text-align: center;">
-                                    <span style="display: inline-block; padding: 0.3rem 0.8rem; background-color: #002073; color: #fff; border-radius: 20px; font-size: 1rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                                        Captura de Fotografía
-                                    </span>
-                                </h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; font-size: 1.3rem; color: #7f8c8d; cursor: pointer; transition: color 0.3s;">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                <!-- Segundo Formulario (Captura de Fotografía) -->
+                <div class="carousel-item" style="max-width: 500px; margin: 0 auto; overflow: hidden;">
+                    <!-- Modal Header -->
+                    <div class="modal-header" style="background-color: transparent !important; flex-shrink: 0; display: flex; justify-content: center; align-items: center; padding: 0.5rem; border: none; border-radius: 8px 8px 0 0; width: 100%; height: 40px; position: relative;">
+                        <h5 class="modal-title" style="margin: 0; font-size: 1.2rem; font-weight: bold; color: #2c3e50; text-align: center;">
+                            <span style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); z-index: 1055; padding: 0.3rem 0.8rem; background-color: #002073; color: #fff; border-radius: 20px; font-size: 1rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); text-align: center;">
+                                Captura de Fotografía
+                            </span>
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; font-size: 1.3rem; color: #7f8c8d; cursor: pointer; transition: color 0.3s;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body" style="background-color: #f9f9f9; border-radius: 30px; flex-grow: 1; width: 100%; margin: auto; display: flex; flex-direction: column; justify-content: flex-start; padding: 0.5rem; transform: translateY(-5%);">    
+                        <div class="p-4">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-280 h-210 overflow-hidden border-2 border-gray-300" style="width: 280px; height: 210px;">
+                                    <video id="camera" width="280" height="210"></video>
+                                    <canvas id="canvas" width="280" height="210"></canvas>
+                                    <img id="capturedPhoto" src="" alt="Captured Photo" style="width: 100%; height: 100%; display: none;" />
+                                </div>
                             </div>
 
-                            <div class="modal-body" style="flex-grow: 1; width: 90%; margin: auto; display: flex; flex-direction: column; justify-content: flex-start; padding: 0.5rem; transform: translateY(-5%);">    
-                                <div class="p-4">
-                                    <div class="flex justify-center mb-4">
-                                        <div class="w-280 h-210 overflow-hidden border-2 border-gray-300" style="width: 280px; height: 210px;">
-                                            <video id="camera" width="280" height="210"></video>
-                                            <canvas id="canvas" width="280" height="210"></canvas>
-                                            <img id="capturedPhoto" src="" alt="Captured Photo" style="width: 100%; height: 100%; display: none;" />
-                                        </div>
+                            <!-- License and Motorista Section -->
+                            <asp:UpdatePanel ID="UpdatePanelModal2" runat="server">
+                                <ContentTemplate>
+                                    <div style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
+                                        <!-- License and Motorista Section -->
+                                        <asp:Literal ID="txt_licencia" runat="server" Mode="PassThrough" />
+                                        <br />
+                                        <asp:Literal ID="txt_motorista" runat="server" Mode="PassThrough" />
                                     </div>
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
 
-                                    <!-- License and Motorista Section -->
-                                    <asp:UpdatePanel ID="UpdatePanelModal2" runat="server">
-                                        <ContentTemplate>
-                                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
-                                                <!-- License and Motorista Section -->
-                                                <asp:Literal ID="txt_licencia" runat="server" Mode="PassThrough" />
-                                                <br />
-                                                <asp:Literal ID="txt_motorista" runat="server" Mode="PassThrough" />
-                                            </div>
-                                        </ContentTemplate>
-                                    </asp:UpdatePanel>
-
-                                    <!-- Capture Button -->
-                                    <div class="flex justify-center mt-2">
+                                    <div class="flex justify-center mt-2" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                        <span style="position: absolute; left: 0; right: auto; height: 2.5px; width: 33%; background-color: #00166E; top: 50%; transform: translateY(-45%);"></span>
                                         <button type="button" id="takePhoto" class="px-3 py-1.5 bg-orange-500 text-white font-bold rounded shadow hover:bg-orange-600">
                                             <i class="fas fa-camera" aria-hidden="true"></i> Capturar
                                         </button>
-                                    </div> 
-                                    <button type="button" class="btn" id="backBtn" style="width: 25%; margin-left: 100px; margin-top: 10px; background-color: #888281; color: white;">Volver</button>
-                                    <button type="button" class="btn" id="changeStatusButton" onclick="changeStatus()" style="width: 25%; margin-top: 10px; background-color: #002174; color: white;">Continuar</button>
+                                        <span style="position: absolute; right: 0; left: auto; height: 2.5px; width: 33%; background-color: #00166E; top: 50%; transform: translateY(-50%); border: 2px;"></span>
+                                    </div>
+
+                                    <!-- Contenedor para botones alineados a la derecha -->
+                                    <div class="flex justify-end mt-6" style="display: flex; justify-content: flex-end; gap: 1rem; padding-right: 1rem; margin-top: 2rem;">
+                                        <button type="button" class="btn" id="backBtn" style="width: 25%; height: 2rem; background-color: #888281; color: white; border-radius: 15px; font-size: 0.9rem;">
+                                            <strong>Volver</strong>
+                                        </button>
+                                        <button type="button" class="btn" id="changeStatusButton" onclick="changeStatus()" style="width: 25%; height: 2rem; background-color: #002174; color: white; border-radius: 15px; font-size: 0.9rem;">
+                                            <strong>Continuar</strong>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -807,24 +815,32 @@
 
     document.getElementById('nextBtn').addEventListener('click', function () {
         Swal.fire({
-            title: 'Aviso Importante',
-            text: 'Al proceder con el prechequeo, usted confirma que toda la información proporcionada es precisa y veraz. Al hacer clic en “Aceptar”, usted autoriza y valida que los datos ingresados son correctos y completos. Cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso. Asegúrese de revisar cuidadosamente todos los detalles antes de continuar.',
-            icon: 'warning',
-            showCancelButton: true,
-            cancelButtonText: 'Cancelar',
-            confirmButtonText: 'Aceptar',
-            customClass: {
-                popup: 'custom-alert-wide-container', // Nueva clase específica
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        }).then((result) => {
-            if (result.isConfirmed) 
-            {
-                carousel.next();
-            }
-        });
+    title: 'Aviso Importante',
+    html: `
+        <div style="white-space: pre-line; margin-top: -20px">
+            Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
+            
+            Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
+            
+            En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
+        </div>
+    `,
+    icon: 'warning',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: 'Aceptar',
+    customClass: {
+        popup: 'custom-alert-wide-container', // Nueva clase específica
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then((result) => {
+    if (result.isConfirmed) {
+        carousel.next();
+    }
+});
+
     });
 
     document.getElementById('backBtn').addEventListener('click', function () {

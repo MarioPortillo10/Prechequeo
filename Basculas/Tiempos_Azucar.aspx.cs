@@ -22,10 +22,10 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
-            string url = "http://172.206.251.10/api/shipping/status/7?includeAttachments=true";
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
 
             // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjQsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MjkwMjU5ODcsImV4cCI6MjUxNzk2NTk4N30.S5nkzIJPYKdJ7CsA2K1a-jz4xsuIglTEspao5jv1IBk";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
             // Función para ver las que son de tipo PLANA y que están esperando
             using (WebClient client = new WebClient())
@@ -263,7 +263,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
     {
         // Lógica para solicitar una unidad (por ejemplo, enviar un correo electrónico o realizar// Construir la URL
-        string baseUrl = "http://172.206.251.10/api/queue/call-multiple/";
+        string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/call-multiple/";
         string url = baseUrl + Tipo_Unidad + "/" + currentValue;
 
         // Token de autenticación
