@@ -31,13 +31,12 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
        
     }
 
-
     protected void lnkBuscar_Click(object sender, EventArgs e)
     {
-        Response.Write("La función lnkBuscar_Click se está ejecutando."); // Imprime en la página para depurar
-
+        
         string transaccion = txtTransaccion.Text.Trim();
         string url = this.baseUrl + "shipping/" + transaccion;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
         using (WebClient client = new WebClient())
         {
@@ -91,7 +90,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                 txt_placaRemolque.Text  = data.vehicle.trailerPlate;
                 txtFecha.Text           = DateTime.Now.ToString("dd-MM-yyyy");
                 txtHora.Text            = DateTime.Now.ToString("hh:mm tt", CultureInfo.InvariantCulture);
-                
 
                 // Lógica para los checkboxes
                 chkPlana.Checked = data.truckType == "PLANA";
@@ -106,6 +104,8 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             }
             catch (WebException webEx)
             {
+                this.LogEvent(string.Format("Error en la solicitud: {0}", webEx.Message));
+
                 var response = webEx.Response as HttpWebResponse;
 
                 if (response != null && response.StatusCode == HttpStatusCode.NotFound)
@@ -113,7 +113,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "notFoundAlert", 
                         "Swal.fire('Error', 'El código de generación ingresado no existe.', 'error').then(() => { location.reload(); });", true);
                 }
-
             }
             catch (Exception ex)
             {
@@ -154,40 +153,41 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         File.AppendAllText(logFilePath, formattedLog);
     }
 
-    public static void LogEventS(object message, HttpContext context)
+    public static void LogEventS(object message)
     {
-        string logFilePath = context.Server.MapPath("~/Logs/MyAppLog.txt");
-        string logDirectory = Path.GetDirectoryName(logFilePath);
+        // Obtén la ruta completa al archivo de log
+        string logDirectory = HttpContext.Current.Server.MapPath("~/Logs");
 
-        // Crear el directorio si no existe
+        // Asegúrate de que el directorio exista, si no, créalo
         if (!Directory.Exists(logDirectory))
         {
             Directory.CreateDirectory(logDirectory);
         }
 
-        // Convertir el mensaje a string
-        string logMessage;
+        // Define la ruta completa al archivo de log
+        string logFilePath = Path.Combine(logDirectory, "MyAppLog.txt");
+
+        // Añadir la fecha y hora del log
+        string logMessage = string.Format("{0} - {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), message);
+
+        // Escribir en el archivo de log
         try
         {
-            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+            // Usamos File.AppendAllText para añadir el mensaje al final del archivo
+            File.AppendAllText(logFilePath, logMessage + Environment.NewLine);
         }
-        catch
+        catch (Exception ex)
         {
-            // Si la serialización falla, usar el método ToString() o "null" si es nulo
-            logMessage = (message != null) ? message.ToString() : "null";
+            // En caso de que haya un error al escribir en el archivo, se captura la excepción
+            System.Diagnostics.Debug.WriteLine("Error al escribir en el log: " + ex.Message);
         }
-
-        // Formatear el mensaje de log
-        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
-
-        // Escribir el log en el archivo
-        File.AppendAllText(logFilePath, formattedLog);
     }
 
     [WebMethod]
     public static string ChangeTransactionStatus(string codeGen, int predefinedStatusId, string imageData)
     {
         System.Diagnostics.Debug.WriteLine("Inicio de ChangeTransactionStatus");
+        LogEventS("Funcion para cambiar estatus");
 
         // Validar que la transacción no esté vacía
         if (string.IsNullOrEmpty(codeGen))
@@ -206,46 +206,55 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         // Aquí podrías añadir una comprobación adicional si la imagen se ha subido correctamente usando otro mecanismo (como una variable global o un estado persistente).
         // Si la foto se subió, se sigue adelante con la actualización del estatus.
 
-        string url = "http://192.168.200.112:3000/api/status/push/";
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9zbmVzIiwic3ViIjozLCJyb2xlcyI6WyJib3QiXSwiaWF0IjoxNzI5ODkxNDQ1LCJleHAiOjI1MTg4MzE0NDV9.iTVACWXaGz7xiKu59autzZZ-0OCv0cep37zQBxkSKOs";
+        string url = "https://apiclientes.almapac.com:9010/api/status/push/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzM0MTYwMDUsImV4cCI6MjUyMjM1NjAwNX0.Pl21ggXNCFcnLFl0moDHKbC19W3vM6U_H-lFXPltlTU";
         string responseContent;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;  // Solo TLS 1.2, más seguro
 
         using (var client = new WebClient())
         {
+            // Log de la solicitud
+            LogEventS("Realizando solicitud POST a la URL: " + url);
+            LogEventS("Método de solicitud: POST");
+            LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
             System.Diagnostics.Debug.WriteLine("Configurando cliente de WebClient");
 
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
+            
             var requestBody = new { codeGen = codeGen, predefinedStatusId = predefinedStatusId, imageData = imageData };
             var json = JsonConvert.SerializeObject(requestBody);
             System.Diagnostics.Debug.WriteLine("Cuerpo de la solicitud JSON: " + json);
 
+            // Log de la respuesta
+            LogEventS("Cuerpo de la solicitud JSON:");
+            LogEventS(json);  // Aquí loggeas el JSON serializado
+
             try
             {
-                // Validar si la imagen está vacía nuevamente antes de enviar la solicitud
-                if (string.IsNullOrEmpty(imageData) || imageData == "data:,")
-                {
-                    return "Error: No se puede cambiar el estado sin haber subido una foto.";
-                }
-
                 System.Diagnostics.Debug.WriteLine("Enviando solicitud a la API: " + url);
                 responseContent = client.UploadString(url, "POST", json);
                 System.Diagnostics.Debug.WriteLine("Respuesta de la API: " + responseContent);
             }
             catch (WebException webEx)
             {
+                LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+                LogEventS("Mensaje de excepción: " + webEx.Message);
+                LogEventS("Pila de llamadas: " + webEx.StackTrace);
+                // Asegurarse de que estamos entrando en el catch
                 System.Diagnostics.Debug.WriteLine("Error en la solicitud: " + webEx.Message);
 
                 using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
                 {
-                    string serverResponse = reader.ReadToEnd();
+                    string serverResponse = reader.ReadToEnd() ?? "No se recibió respuesta del servidor.";
                     System.Diagnostics.Debug.WriteLine("Respuesta del servidor en error: " + serverResponse);
                     return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + serverResponse;
                 }
             }
             catch (Exception ex)
             {
+                LogEventS("Error inesperado: " + ex.Message);
+                LogEventS("Pila de llamadas: " + ex.StackTrace);
                 System.Diagnostics.Debug.WriteLine("Error inesperado: " + ex.Message);
                 return "Error inesperado: " + ex.Message;
             }
@@ -256,9 +265,11 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     }
 
 
+
     [WebMethod]
     public static string UploadPhoto(string imageData, string codeGen)
     {
+        LogEventS("Vamo a mandar una picture");
         try
         {
             if (string.IsNullOrEmpty(imageData)) 
@@ -276,13 +287,21 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
 
             // Log para depuración
             System.Diagnostics.Debug.WriteLine("Datos recibidos para la foto: " + imageData);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
             using (WebClient client = new WebClient())
             {
+                // Log de la solicitud
+                LogEventS("Realizando solicitud POST a la URL: " + baseUrlStatic + "shipping/upload");
+                LogEventS("Método de solicitud: POST");
+                LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
                 client.Headers[HttpRequestHeader.Authorization] = "Bearer " + tokenStatic;
 
                 string uploadResponse = client.UploadString(baseUrlStatic + "shipping/upload", "POST", JsonConvert.SerializeObject(uploadPayload));
+                //Log de la respuesta
+                //LogEventS("Respuesta recibida:");
+                //LogEventS(uploadResponse);
             }
 
             // Usa HttpContext.Items para almacenar la información solo para el ciclo de vida de la solicitud
@@ -292,12 +311,13 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+            LogEventS("Mensaje de excepción: " + ex.Message);
+            LogEventS("Pila de llamadas: " + ex.StackTrace);
             System.Diagnostics.Debug.WriteLine("Error al subir la foto: " + ex.Message);
             return "error";
         }
     }
-
-
 
     public class Post
     {
