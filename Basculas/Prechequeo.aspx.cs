@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Web.Services;
 using System.Globalization;
+using System.Text;
 
 
 public partial class Basculas_Prechequeo : System.Web.UI.Page
@@ -33,7 +34,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
 
     protected void lnkBuscar_Click(object sender, EventArgs e)
     {
-        
         string transaccion = txtTransaccion.Text.Trim();
         string url = this.baseUrl + "shipping/" + transaccion;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
@@ -41,6 +41,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         using (WebClient client = new WebClient())
         {
             client.Headers.Add("Authorization", "Bearer " + this.token);
+            client.Encoding = Encoding.UTF8;
             try
             {
                 // Log de la solicitud
@@ -187,19 +188,19 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     public static string ChangeTransactionStatus(string codeGen, int predefinedStatusId, string imageData)
     {
         System.Diagnostics.Debug.WriteLine("Inicio de ChangeTransactionStatus");
-        LogEventS("Funcion para cambiar estatus");
+        LogEventS("Funcion para cambiar estatus; Hola");
 
         // Validar que la transacción no esté vacía
         if (string.IsNullOrEmpty(codeGen))
         {
-            System.Diagnostics.Debug.WriteLine("Error: La transacción no puede estar vacía.");
+            LogEventS("Error: La transacción no puede estar vacía.");
             return "Error: La transacción no puede estar vacía.";
         }
 
         // Verificar si la foto fue subida
         if (string.IsNullOrEmpty(imageData) || imageData == "data:,")
         {
-            System.Diagnostics.Debug.WriteLine("Error: La imagen no fue recibida.");
+            LogEventS("Error: La imagen no fue recibida.");
             return "Error: La imagen no fue recibida. Por favor, suba una foto antes de cambiar el estatus.";
         }
 
@@ -209,58 +210,56 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         string url = "https://apiclientes.almapac.com:9010/api/status/push/";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzM0MTYwMDUsImV4cCI6MjUyMjM1NjAwNX0.Pl21ggXNCFcnLFl0moDHKbC19W3vM6U_H-lFXPltlTU";
         string responseContent;
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;  // Solo TLS 1.2, más seguro
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Ssl3;
+
 
         using (var client = new WebClient())
         {
             // Log de la solicitud
             LogEventS("Realizando solicitud POST a la URL: " + url);
-            LogEventS("Método de solicitud: POST");
             LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
-            System.Diagnostics.Debug.WriteLine("Configurando cliente de WebClient");
+            LogEventS("Configurando cliente de WebClient");
 
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            client.Encoding = Encoding.UTF8;
             
             var requestBody = new { codeGen = codeGen, predefinedStatusId = predefinedStatusId, imageData = imageData };
             var json = JsonConvert.SerializeObject(requestBody);
-            System.Diagnostics.Debug.WriteLine("Cuerpo de la solicitud JSON: " + json);
+            LogEventS("Cuerpo de la solicitud JSON: " + json);
 
             // Log de la respuesta
-            LogEventS("Cuerpo de la solicitud JSON:");
-            LogEventS(json);  // Aquí loggeas el JSON serializado
+            //LogEventS("Cuerpo de la solicitud JSON:");
+            //LogEventS(json);  // Aquí loggeas el JSON serializado
 
             try
             {
-                System.Diagnostics.Debug.WriteLine("Enviando solicitud a la API: " + url);
+                LogEventS("Enviando solicitud a la API: " + url);
                 responseContent = client.UploadString(url, "POST", json);
-                System.Diagnostics.Debug.WriteLine("Respuesta de la API: " + responseContent);
+                LogEventS("Respuesta de la API: ");
+                LogEventS(responseContent);
             }
             catch (WebException webEx)
             {
                 LogEventS("Error al realizar la solicitud o procesar la respuesta.");
-                LogEventS("Mensaje de excepción: " + webEx.Message);
-                LogEventS("Pila de llamadas: " + webEx.StackTrace);
-                // Asegurarse de que estamos entrando en el catch
-                System.Diagnostics.Debug.WriteLine("Error en la solicitud: " + webEx.Message);
+                LogEventS(webEx);
 
                 using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
                 {
                     string serverResponse = reader.ReadToEnd() ?? "No se recibió respuesta del servidor.";
-                    System.Diagnostics.Debug.WriteLine("Respuesta del servidor en error: " + serverResponse);
+                    LogEventS("Respuesta del servidor en error: " + serverResponse);
                     return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + serverResponse;
                 }
             }
             catch (Exception ex)
             {
-                LogEventS("Error inesperado: " + ex.Message);
-                LogEventS("Pila de llamadas: " + ex.StackTrace);
-                System.Diagnostics.Debug.WriteLine("Error inesperado: " + ex.Message);
+                LogEventS("Error Ccatch");
+                LogEventS(ex);
                 return "Error inesperado: " + ex.Message;
             }
         }
 
-        System.Diagnostics.Debug.WriteLine("Cambio de estatus realizado con éxito");
+        LogEventS("Cambio de estatus realizado con éxito");
         return "Cambio de estatus realizado con éxito";
     }
 

@@ -282,34 +282,34 @@ protected void Page_Load(object sender, EventArgs e)
 
     // Método para escribir en el Visor de eventos
     public static void LogEventS(object message)
-{
-    string logFilePath = "~/Logs/MyAppLog.txt"; // Ruta absoluta
-    string logDirectory = Path.GetDirectoryName(logFilePath);
-
-    // Crear el directorio si no existe
-    if (!Directory.Exists(logDirectory))
     {
-        Directory.CreateDirectory(logDirectory);
-    }
+        string logFilePath = "~/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logDirectory = Path.GetDirectoryName(logFilePath);
 
-    // Convertir el mensaje a string
-    string logMessage;
-    try
-    {
-        logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
-    }
-    catch
-    {
-        // Si la serialización falla, usar el método ToString() o "null" si es nulo
-        logMessage = (message != null) ? message.ToString() : "null";
-    }
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
 
-    // Formatear el mensaje de log
-    string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
 
-    // Escribir el log en el archivo
-    File.AppendAllText(logFilePath, formattedLog);
-}
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
 
 
 

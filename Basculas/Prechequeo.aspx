@@ -606,27 +606,28 @@
                                                 <!-- Contenedor de imágenes y checkboxes en fila -->
                                                 <div id="tipoUnidad" style="display: flex; flex-direction: row; align-items: center; gap: 15px;">
 
-                                                    <!-- Imagen de camión ícono (tamaño reducido) -->
-                                                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
-                                                    <!-- Imagen de camión de volteo (más ancha) -->
-                                                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
+                                                <!-- Imagen de camión ícono (tamaño reducido) -->
+                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
+                                                <!-- Imagen de camión de volteo (más ancha) -->
+                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
 
-                                                    <!-- Contenedor de checkboxes -->
-                                                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
-                                                        <!-- Checkbox para PLANA -->
-                                                        <div class="form-check" style="margin-bottom: 5px;">
-                                                            <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                            <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
-                                                        </div>
+                                                <!-- Contenedor de checkboxes -->
+                                                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
+                                                    <!-- Checkbox para PLANA -->
+                                                    <div class="form-check" style="margin-bottom: 5px;">
+                                                        <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                        <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
+                                                    </div>
 
-                                                        <!-- Checkbox para VOLTEO -->
-                                                        <div class="form-check">
-                                                            <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                            <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
-                                                        </div>
+                                                    <!-- Checkbox para VOLTEO -->
+                                                    <div class="form-check">
+                                                        <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
+                                                        <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
                                                     </div>
                                                 </div>
                                             </div>
+
+                                        </div>
 
                                         <!-- Destino -->
                                         <div class="form-group" style="flex: 1.3; text-align: left; margin-left: 100px; padding: 0; margin-top: -15px; width: 100%; max-width: none;">
@@ -807,57 +808,58 @@
 <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    var carouselElement = document.getElementById('carouselForms');
-    var carousel = new bootstrap.Carousel(carouselElement, {
-        interval: false
+    document.addEventListener('DOMContentLoaded', function () 
+    {
+        var carouselElement = document.getElementById('carouselForms');
+        var carousel = new bootstrap.Carousel(carouselElement, 
+        {
+            interval: false
+        });
+
+    document.getElementById('nextBtn').addEventListener('click', function () 
+    {
+        Swal.fire({
+            title: 'Aviso Importante',
+            html: `
+                <div style="white-space: pre-line; margin-top: -20px">
+                    Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
+                    
+                    Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
+                    
+                    En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
+                </div>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+                popup: 'custom-alert-wide-container', // Nueva clase específica
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                carousel.next();
+            }
+        });
     });
 
-    document.getElementById('nextBtn').addEventListener('click', function () {
-    Swal.fire({
-        title: 'Aviso Importante',
-        html: `
-            <div style="white-space: pre-line; margin-top: -20px">
-                Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
-                
-                Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
-                
-                En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
-            </div>
-        `,
-        icon: 'warning',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        confirmButtonText: 'Aceptar',
-        customClass: {
-            popup: 'custom-alert-wide-container', // Nueva clase específica
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Acción al confirmar
-            carousel.next();
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            // Acción al cancelar: cerrar la modal
-            $('#editModal').modal('hide'); // Bootstrap 4: cierra la modal
-        }
-    });
-});
-
-
-
-    document.getElementById('backBtn').addEventListener('click', function () {
+    document.getElementById('backBtn').addEventListener('click', function () 
+    {
         carousel.prev();
     });
 
-    $('#editModal').on('hidden.bs.modal', function () {
+    $('#editModal').on('hidden.bs.modal', function () 
+    {
         carousel.to(0);
     });
 
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) {
-        element.addEventListener('click', function () {
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) 
+    {
+        element.addEventListener('click', function () 
+        {
             var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
             modal.hide();
         });
@@ -865,30 +867,35 @@
 });
 
 
-   document.addEventListener("DOMContentLoaded", function () {
-    const txtTransaccion = document.getElementById("<%= txtTransaccion.ClientID %>");
-    const lnkBuscar = document.getElementById("<%= lnkBuscar.ClientID %>");
+    document.addEventListener("DOMContentLoaded", function () 
+    {
+        const txtTransaccion = document.getElementById("<%= txtTransaccion.ClientID %>");
+        const lnkBuscar = document.getElementById("<%= lnkBuscar.ClientID %>");
 
-    // Colocar el cursor en el `input` al cargar la página
-    txtTransaccion.focus();
-
-    // Mantener el cursor en el `input` después de cada ingreso
-    txtTransaccion.addEventListener("blur", function () {
+        // Colocar el cursor en el `input` al cargar la página
         txtTransaccion.focus();
-    });
 
-    // Detectar el evento `Enter` y ejecutar las acciones correspondientes
-    txtTransaccion.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Evitar la recarga de página o submit por defecto
+        // Mantener el cursor en el `input` después de cada ingreso
+        txtTransaccion.addEventListener("blur", function () 
+        {
+            txtTransaccion.focus();
+        });
 
-            // Simular el clic en el botón asociado
-            if (lnkBuscar) {
-                lnkBuscar.click();  
+        // Detectar el evento `Enter` y ejecutar las acciones correspondientes
+        txtTransaccion.addEventListener("keypress", function (event) 
+        {
+            if (event.key === "Enter") 
+            {
+                event.preventDefault(); // Evitar la recarga de página o submit por defecto
+
+                // Simular el clic en el botón asociado
+                if (lnkBuscar) 
+                {
+                    lnkBuscar.click();
+                }
             }
-        }
+        });
     });
-});
 
 
     window.onload = function() {
@@ -1066,80 +1073,58 @@ function changeStatus() {
         location.reload();
     }
 
-    function checkInput() {
-    var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
-    
-    if (txtTransaccion === '') {
-        // Mostrar la alerta si el campo está vacío
-        Swal.fire({
-            html: `
-                <div class="swal2-icon-custom">
-                    <div class="swal2-x-mark">
-                        <div class="swal2-x-mark-line"></div>
-                        <div class="swal2-x-mark-line"></div>
-                    </div>
-                </div>
-                <div class="swal2-title">ERROR</div>
-                <div class="custom-divider"></div>
-                El código de generación ingresado no existe.
-            `,
-            confirmButtonText: 'OK',
-            customClass: {
-                popup: 'swal2-popup',
-                confirmButton: 'swal2-styled swal2-confirm'
-            },
-            showConfirmButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('txtTransaccion').value = ''; // Limpiar el campo
-            }
-        }).catch((error) => {
-            console.error('Error en SweetAlert2:', error);
-        });
-
-        return false; // No permitir la ejecución de la función del servidor
-    }
-
-    // Llamada AJAX para verificar la respuesta de la API
-    $.ajax({
-        url: 'https://apiclientes.almapac.com:9010/api/shipping/' + txtTransaccion + '', // URL de la API
-        type: 'GET', // Tipo de solicitud (puede cambiar dependiendo de tu API)
-        success: function(response) {
-            console.log('Respuesta de la API:', response);
+    function checkInput() 
+    {
+        
+        var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
             
-            if (response && response.valido) { // Asegúrate de que la respuesta tenga una estructura esperada
-                Swal.fire({
-                    title: 'Datos recibidos',
-                    text: 'Los datos se han cargado correctamente.',
-                    confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    // Mostrar la modal si la respuesta es válida
-                    $('#myModal').modal('show'); // Asegúrate de que la modal esté correctamente inicializada en tu página
-                });
-            } else {
-                Swal.fire({
-                    title: 'ERROR',
-                    text: 'Los datos de la transacción no son válidos.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error en la llamada a la API:', error);
+        if (txtTransaccion === '') 
+        {
+            // Mostrar la alerta al cargar la página
             Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al intentar obtener los datos.',
-                icon: 'error',
-                confirmButtonText: 'OK'
+                html: `
+                    <div class="swal2-icon-custom">
+                        <div class="swal2-x-mark">
+                            <div class="swal2-x-mark-line"></div>
+                            <div class="swal2-x-mark-line"></div>
+                        </div>
+                    </div>
+                    <div class="swal2-title">ERROR</div>
+                    <div class="custom-divider"></div>
+                    El código de generación ingresado no existe.
+                `,
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-popup',
+                    confirmButton: 'swal2-styled swal2-confirm'
+                },
+                showConfirmButton: true
+            }).then((result) => {
+            // Verificar si se hizo clic en "OK" para limpiar el campo
+            if (result.isConfirmed) 
+            {
+                // Limpiar el valor del input
+                document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
+            }
+            }).catch((error) => {
+                console.error('Error en SweetAlert2:', error);
             });
+
+            return false;
         }
-    });
 
-    return true; // Permitir la ejecución de la función del servidor
-}
+        var dataFound = document.getElementById('dataFound').value;
 
-
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () 
+        {
+            if (dataFound === 'true') 
+            { 
+                $('#editModal').modal('show');
+            }
+        });
+        
+        return true;
+    }
 </script>
 </body>
 </html>
