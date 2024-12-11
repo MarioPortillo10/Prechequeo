@@ -19,7 +19,6 @@ using System.Web.Services;
 using System.Globalization;
 using System.Text;
 
-
 public partial class Basculas_Prechequeo : System.Web.UI.Page
 {
     string cod_rol = "";
@@ -44,17 +43,9 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             client.Encoding = Encoding.UTF8;
             try
             {
-                // Log de la solicitud
-                this.LogEvent("Realizando solicitud GET a la URL: " + url);
-                this.LogEvent("Método de solicitud: GET");
-                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 string responseBody = client.DownloadString(url);
                 var data = JsonConvert.DeserializeObject<Post>(responseBody);
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));  // Imprime el objeto completo
-
-                // Log de la respuesta
-                this.LogEvent("Respuesta recibida:");
-                this.LogEvent(responseBody);
 
                 if (data == null || string.IsNullOrEmpty(data.transporter))
                 {
@@ -91,22 +82,22 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                 txt_placaRemolque.Text  = data.vehicle.trailerPlate;
                 txtFecha.Text           = DateTime.Now.ToString("dd-MM-yyyy");
                 txtHora.Text            = DateTime.Now.ToString("hh:mm tt", CultureInfo.InvariantCulture);
+                
 
                 // Lógica para los checkboxes
-                chkPlana.Checked = data.truckType == "PLANA";
+                chkPlana.Checked = data.truckType == "PLANA" || data.truckType == "RASTRA";
                 chkVolteo.Checked = data.truckType == "VOLTEO";
 
-                // Mostrar/Ocultar imágenes dependiendo de la selección
-                //imgPlana.Style["display"] = chkPlana.Checked ? "block" : "none";
-                //imgVolteo.Style["display"] = chkVolteo.Checked ? "block" : "none";
+                // Control de visibilidad de las imágenes
+               imgPlanaContainer.Style["display"] = (data.truckType == "PLANA" || data.truckType == "RASTRA") ? "block" : "none";
+                imgVolteoContainer.Style["display"] = data.truckType == "VOLTEO" ? "block" : "none";
+
 
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "openModal", 
                     "$('#editModal').modal('show');", true);
             }
             catch (WebException webEx)
             {
-                this.LogEvent(string.Format("Error en la solicitud: {0}", webEx.Message));
-
                 var response = webEx.Response as HttpWebResponse;
 
                 if (response != null && response.StatusCode == HttpStatusCode.NotFound)
@@ -114,12 +105,12 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "notFoundAlert", 
                         "Swal.fire('Error', 'El código de generación ingresado no existe.', 'error').then(() => { location.reload(); });", true);
                 }
+
             }
             catch (Exception ex)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "generalErrorAlert", 
                     "swal('Error', 'Ocurrió un error: " + ex.Message + "', 'error');", true);
-                this.LogEvent(ex);
             }
         }
     }

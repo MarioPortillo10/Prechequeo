@@ -76,62 +76,62 @@ protected void Page_Load(object sender, EventArgs e)
                 }
 
                 // Filtrar por tipos de camiones
-                        var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
-                        var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+                var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
 
-                        // Contar registros por tipo
-                        lblCountP.Text = truckTypeP.Count.ToString();
-                        lblCountV.Text = truckTypeV.Count.ToString();
+                // Contar registros por tipo
+                lblCountP.Text = truckTypeP.Count.ToString();
+                lblCountV.Text = truckTypeV.Count.ToString();
 
-                        // Crear una lista de códigos de ingenio válidos
-                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+                // Crear una lista de códigos de ingenio válidos
+                var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
 
-                        // Inicializar los conteos de ingenios
-                        var ingenioCounts = new Dictionary<string, int>();
+                // Inicializar los conteos de ingenios
+                var ingenioCounts = new Dictionary<string, int>();
 
-                        // Contar ingenios en todos los registros filtrados
-                        foreach (var item in filteredData)
+                // Contar ingenios en todos los registros filtrados
+                foreach (var item in filteredData)
+                {
+                    var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                    if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                    {
+                        if (ingenioCounts.ContainsKey(ingenioNavCode))
                         {
-                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
-                            {
-                                if (ingenioCounts.ContainsKey(ingenioNavCode))
-                                {
-                                    ingenioCounts[ingenioNavCode]++;
-                                }
-                                else
-                                {
-                                    ingenioCounts[ingenioNavCode] = 1;
-                                }
-                            }
+                            ingenioCounts[ingenioNavCode]++;
                         }
-
-                        // Procesar e insertar los conteos en las etiquetas correspondientes
-                        int i = 1;
-                        foreach (var ingenio in validIngenios)
+                        else
                         {
-                            // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
-                            var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
-                            if (lblIngenioQuantity != null)
-                            {
-                                // Mostrar el conteo de ingenios o 0 si no existe
-                                lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
-                            }
-                            i++;
+                            ingenioCounts[ingenioNavCode] = 1;
                         }
+                    }
+                }
 
-                        // Vincular los datos filtrados a los Repeaters correspondientes
-                        rptRutas1.DataSource = truckTypeP;
-                        rptRutas1.DataBind();
+                // Procesar e insertar los conteos en las etiquetas correspondientes
+                int i = 1;
+                foreach (var ingenio in validIngenios)
+                {
+                    // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
+                    var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
+                    if (lblIngenioQuantity != null)
+                    {
+                        // Mostrar el conteo de ingenios o 0 si no existe
+                        lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                    }
+                    i++;
+                }
 
-                        rptRutas2.DataSource = truckTypeV;
-                        rptRutas2.DataBind();
+                // Vincular los datos filtrados a los Repeaters correspondientes
+                rptRutas1.DataSource = truckTypeP;
+                rptRutas1.DataBind();
+
+                rptRutas2.DataSource = truckTypeV;
+                rptRutas2.DataBind();
 
                 int countP = 0;
                 int countV = 0;
                 foreach (var item in filteredData)
                 {
-                    if (item.vehicle.truckType == "P")
+                    if (item.vehicle.truckType == "P" || item.vehicle.truckType == "R")
                     {
                         countP++;
                     }
@@ -176,6 +176,9 @@ protected void Page_Load(object sender, EventArgs e)
                 // Manejo de errores
                 lblV.Text = "0";
                 lblP.Text = "0";
+                lblCountP.Text = "0";
+                lblCountV.Text = "0";
+
 
                 // Puedes loguear o mostrar detalles del error para depuración.
                 Console.WriteLine("Error: " + ex.Message);
@@ -242,7 +245,6 @@ protected void Page_Load(object sender, EventArgs e)
         return "Respuesta del servidor: " + responseContent;
         LogEventS(responseContent);
     }
-
 
     private void DataBind()
     {

@@ -91,9 +91,9 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
             using (WebClient client = new WebClient())
             {
                 // Log de la solicitud
-                LogEventS("Realizando solicitud GET a la URL: " + url);
-                LogEventS("Método de solicitud: GET");
-                LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
+                //LogEventS("Realizando solicitud GET a la URL: " + url);
+                //LogEventS("Método de solicitud: GET");
+                //LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
             
                 client.Headers.Add("Authorization", "Bearer " + token);
 
@@ -104,8 +104,8 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                 var data = JsonConvert.DeserializeObject<Post>(responseBody);
 
                 // Log de la respuesta
-                LogEventS("Respuesta recibida:");
-                LogEventS(responseBody);
+                //LogEventS("Respuesta recibida:");
+                //LogEventS(responseBody);
 
                 // Validar que haya información de sellos en la respuesta
                 if (data == null || data.shipmentSeals == null || !data.shipmentSeals.Any())
@@ -157,9 +157,9 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         {
             return string.Format("Error: {0}", ex.Message);
             // Log detallado del error
-            LogEventS("Error al realizar la solicitud o procesar la respuesta.");
-            LogEventS("Mensaje de excepción: " + ex.Message);
-            LogEventS("Pila de llamadas: " + ex.StackTrace);
+            //LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+            //LogEventS("Mensaje de excepción: " + ex.Message);
+            //LogEventS("Pila de llamadas: " + ex.StackTrace);
         }
     }
 

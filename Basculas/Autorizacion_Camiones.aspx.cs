@@ -12,6 +12,7 @@ using System.IO;
 using System;
 using System.Net;
 using System.Web.Services;
+using System.Text;
 
 
 
@@ -31,50 +32,53 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             {
                 // Añadir el token al encabezado de autorización
                 client.Headers.Add("Authorization", "Bearer " + token);
-
+                client.Encoding = Encoding.UTF8;
                 try
                 {
-                    
                     // Realizar la solicitud GET y leer la respuesta
                     string responseBody = client.DownloadString(url);
 
-                    // Log de la respuesta
-                
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-                    
-                    // Verificar si hay datos para mostrar
-                    if (data != null && data.Count > 0)
+
+                    // Filtrar registros válidos
+                    var filteredData = new List<Post>();
+                    foreach (var item in data)
                     {
-                        // Filtrar registros válidos
-                        var filteredData = new List<Post>();
-                        foreach (var item in data)
+                        if (item.statuses != null 
+                            && item.statuses.Count > 0 
+                            && item.statuses[item.statuses.Count - 1].id == 2 // Verificar que el último estatus tenga id = 2
+                            && item.vehicle != null // Verificar que el vehículo no sea nulo
+                            && !string.IsNullOrEmpty(item.vehicle.truckType) // Validar que el tipo de camión exista
+                            && item.ingenio != null) // Validar que el ingenio no sea nulo
                         {
-                            if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2 && item.vehicle != null)
-                            {
-                                filteredData.Add(item);
-                            }
+                            filteredData.Add(item);
                         }
+                    }
 
-                        // Filtrar por tipos de camiones
-                        var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P").ToList();
-                        var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+                    // Filtrar por tipos de camiones
+                    var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                    var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
 
-                        // Contar registros por tipo
-                        lblCountP.Text = truckTypeP.Count.ToString();
-                        lblCountV.Text = truckTypeV.Count.ToString();
+                    // Contar registros por tipo
+                    lblCountP.Text = truckTypeP.Count.ToString();
+                    lblCountV.Text = truckTypeV.Count.ToString();
 
-                    
-                        // Crear una lista de códigos de ingenio válidos
-                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+                    // Crear una lista de códigos de ingenio válidos
+                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
 
-                        // Inicializar los conteos de ingenios
-                        var ingenioCounts = new Dictionary<string, int>();
+                    // Inicializar los conteos de ingenios
+                    var ingenioCounts = new Dictionary<string, int>();
 
-                        // Contar ingenios en todos los registros filtrados
-                        foreach (var item in filteredData)
+                    // Contar ingenios en todos los registros filtrados
+                    foreach (var item in filteredData)
+                    {
+                        // Verificar que el último estatus tenga id = 2
+                        if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2)
                         {
                             var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+
+                            // Verificar que el ingenioNavCode esté en la lista de ingenios válidos
                             if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
                             {
                                 if (ingenioCounts.ContainsKey(ingenioNavCode))
@@ -87,39 +91,37 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                                 }
                             }
                         }
-
-
-                        // Procesar e insertar los conteos en las etiquetas correspondientes
-                        int i = 1;
-                        foreach (var ingenio in validIngenios)
-                        {
-                            var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
-                            if (lblIngenioQuantity != null)
-                            {
-                                lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
-                            }
-                            i++;
-                        }
-
-                        // Vincular los datos filtrados a los Repeaters correspondientes
-                        rptRutas1.DataSource = truckTypeP;
-                        rptRutas1.DataBind();
-
-                        rptRutas2.DataSource = truckTypeV;
-                        rptRutas2.DataBind();
                     }
+
+
+                    // Procesar e insertar los conteos en los controles correspondientes
+                    int i = 1;
+                    foreach (var ingenio in validIngenios)
+                    {
+                        // Usar string.Format en lugar de interpolación de cadenas
+                        var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i)) as TextBox;
+                        if (txtIngenioQuantity != null)
+                        {
+                            txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                        }
+                        i++;
+                    }
+
+
+                    // Vincular los datos filtrados a los Repeaters correspondientes
+                    rptRutas1.DataSource = truckTypeP;
+                    rptRutas1.DataBind();
+
+                    rptRutas2.DataSource = truckTypeV;
+                    rptRutas2.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    // Log detallado del error
-                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
-                    this.LogEvent("Mensaje de excepción: " + ex.Message);
-                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
-
                     // Manejar errores de solicitud o deserialización
                     // lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
                 }
             }
+   
         }
     }
 
@@ -181,7 +183,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                 }
                 else
                 {
-                    return "Error: los datos ingresados no coinciden con la información del servidor.";
+                    return "Los datos ingresados no coinciden con la información en la Nota de remisión.";
                 }
             }
             catch (WebException webEx)

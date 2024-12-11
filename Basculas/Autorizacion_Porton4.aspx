@@ -206,194 +206,205 @@
     </asp:SqlDataSource>
 
     <!-- Header -->
-<header class="header bg-gradient-to-r from-white to-gray-200 py-4">
-    <div class="container mx-auto flex items-center justify-between">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" alt="Almapac Logo" class="h-12">
-        </div>
-
-        <!-- Navbar Toggler for Mobile View -->
-        <button id="menu-toggle" class="md:hidden text-gray-600 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-
-        <!-- Navbar Links -->
-        <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
-            <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
-                <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
-            </a>
-            <div class="relative group">
-                <a href="#" class="hover:text-orange-600 px-2 py-1 flex items-center">
-                    <span>Rutas</span>
-                    <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z"/></svg>
-                </a>
-                <!-- Dropdown Menu -->
-                <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg group-hover:block hidden">
-                    <a href="Rutas_Transacciones.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                        <i class="fas fa-road mr-2"></i>Rutas Transacciones
-                    </a>
-                    <a href="Rutas_Actividades.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                        <i class="fas fa-road mr-2"></i>Rutas Actividades
-                    </a>
-                </div>
+    <header class="header bg-gradient-to-r from-white to-gray-200 py-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" alt="Almapac Logo" class="h-12">
             </div>
 
-            <div class="relative group">
-                <a href="#" class="bg-primary text-white flex items-center px-2 py-1 rounded">
-                    <span>Monitoreo</span>
-                    <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z"/></svg>
+            <!-- Navbar Toggler for Mobile View -->
+            <button id="menu-toggle" class="md:hidden text-gray-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Navbar Links -->
+            <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
+                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
+                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
                 </a>
-                <!-- Dropdown Menu -->
-                <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg group-hover:block hidden">
-                    <a href="Autorizacion_Camiones.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                        <i class="fa fa-truck mr-2"></i> Chequeo de Informacion
-                    </a>
-                    <a href="Autorizacion_ingreso.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                        <i class="fas fa-unlock mr-2"></i> Autorizacion Ingreso
-                    </a>
-                    <a href="Autorizacion_Porton4.aspx" class="block px-4 py-2 bg-primary text-white flex items-center px-2 py-1 rounded">
-                        <i class="fas fa-check-square mr-2"></i> Chequeo de Entrada
-                    </a>
-                    <a href="Lista_Negra.aspx" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                        <i class="fas fa-list-alt mr-2"></i> Lista Negra Motorista
-                    </a>
+
+                <div class="relative group hover:bg-gray-100 p-2 rounded">
+                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
+                        <span>Rutas</span>
+                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
+                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
+                        </div>
+                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-road mr-2"></i>Rutas Actividades
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <a href="Tiempos_Azucar.aspx">
-                <i class="fas fa-clock mr-2"></i> Recepcion Azucar
+
+                <div class="relative group hover:bg-gray-100 p-2 rounded">
+                    <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
+                        <span>Monitoreo</span>
+                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Autorizacion_Camiones.aspx" style="text-decoration: none;">
+                                <i class="fa fa-truck mr-2"></i>Chequeo de Informacion
+                            </a>
+                        </div>
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Autorizacion_ingreso.aspx" style="text-decoration: none;">
+                                <i class="fas fa-unlock mr-2"></i>Autorización Ingreso
+                            </a>
+                        </div>
+                        <div class="block px-4 py-2 bg-primary text-white rounded hover:bg-opacity-80">
+                            <a href="Autorizacion_Porton4.aspx" style="text-decoration: none;">
+                                <i class="fas fa-check-square mr-2"></i>Autorización Portón 4
+                            </a>
+                        </div>
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Lista_Negra.aspx" style="text-decoration: none;">
+                                <i class="fas fa-list-alt mr-2"></i>Lista Negra Motorista
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-600 flex items-center" style="text-decoration: none;">
+                    <i class="fas fa-clock mr-2"></i>Recepción Azúcar
+                </a>
+            </nav>
+
+            <!-- Logout Button -->
+            <a href="login.aspx" class="login-button" style="text-decoration:none">
+                <i class="fas fa-user"></i> Cerrar Sesión
             </a>
-        </nav>
 
-        <!-- Logout Button -->
-        <a href="login.aspx" class="login-button" style="text-decoration:none">
-            <i class="fas fa-user"></i> Cerrar Sesión
-        </a>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden px-4 py-2 space-y-2 bg-gray-100">
-            <a href="Default.aspx" class="block text-gray-700 hover:text-orange-600">Pre-Transacciones</a>
-            <a href="Rutas_Transacciones.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Transacciones</a>
-            <a href="Rutas_Actividades.aspx" class="block text-gray-700 hover:text-orange-600">Rutas Actividades</a>
-
-            <a href="Autorizacion_Camiones.aspx" class="block text-gray-700 hover:text-orange-600">Chequeo de Informacion</a>
-            <a href="Autorizacion_ingreso.aspx" class="block text-gray-700 hover:text-orange-600">Autorizacion Ingreso</a>
-            <a href="Autorizacion_Porton4.aspx" class="block text-gray-700 bg-primary text-white">Chequeo de Entrada</a>
-            <a href="Lista_Negra.aspx" class="block text-gray-700 hover:text-orange-600">Lista Negra Motorista</a>
-            <a href="Tiempos_Azucar.aspx" class="block text-gray-700 hover:text-orange-600">Recepcion Azucar</a>
-            <a href="login.aspx" class="block text-gray-700 hover:text-orange-600">Cerrar Sesión</a>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden px-4 py-2 space-y-2 bg-gray-100">
+                <a href="Default.aspx" class="block text-gray-700 hover:text-orange-600">Pre-Transacciones</a>
+                <div class="block text-gray-700">Rutas Transacciones</div>
+                <div class="block text-gray-700">Rutas Actividades</div>
+                <div class="block text-gray-700 bg-primary text-white">Chequeo de Información</div>
+                <a href="Autorizacion_ingreso.aspx" class="block text-gray-700 hover:text-orange-600">Autorización Ingreso</a>
+                <a href="Autorizacion_Porton4.aspx" class="block text-gray-700 hover:text-orange-600">Autorización Portón 4</a>
+                <a href="Lista_Negra.aspx" class="block text-gray-700 hover:text-orange-600">Lista Negra Motorista</a>
+                <a href="Tiempos_Azucar.aspx" class="block text-gray-700 hover:text-orange-600">Recepción Azúcar</a>
+                <a href="login.aspx" class="block text-gray-700 hover:text-orange-600">Cerrar Sesión</a>
+            </div>
         </div>
+    </header>
+    
 
-        <!-- JavaScript to handle the dropdown for mobile version -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const dropdowns = document.querySelectorAll('.group');
-                dropdowns.forEach(dropdown => {
-                    dropdown.addEventListener('click', function() {
-                        const menu = dropdown.querySelector('.group-hover\\:block');
-                        menu.classList.toggle('hidden');
-                    });
-                });
-            });
-        </script>
-</header>
-  <!-- Banner -->
-  <section class="custom-banner text-center">
-    <h1>Chequeo de entrada</h1>
-  </section>
+    <!-- Banner -->
+    <section class="custom-banner text-center">
+        <h1>Chequeo de entrada</h1>
+    </section>
 
     <!-- Main Content -->
-    <main class="container mx-auto py-8">
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
-            <div class="row justify-content-center" style="margin: 20px;">
-                <asp:Repeater ID="rptRutas" runat="server">
-                    <ItemTemplate>
-                        <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-                            <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 380px;">
-                                <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" data-toggle="modal" data-target="#rutaModal" data-codigo-generacion='<%# Eval("codeGen") %>'>
-                                    <div style="position: relative;">
-                                        <!-- Badge de tipo de camión, centrado y más abajo -->
-                                        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 155%);">
-                                            <span class="badge 
-                                                <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
-                                                    Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
-                                                    "bg-secondary" %> 
-                                                text-white px-3 py-2 rounded-pill">
-                                                <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
-                                                    Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
-                                            </span>
-                                        </div>
+    <div class="container">
+        <div class="row mt-3"> <!-- Agregado mt-3 para un margen superior -->
+            <asp:Repeater ID="rptRutas" runat="server">
+                <ItemTemplate>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 d-flex align-items-stretch">
+                        <div class="card border rounded-4 w-100" 
+                            style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); height: 380px; margin-top: 10px; font-family: Gilroy-Bold, sans-serif;"> <!-- Agregado margin-top -->
+                            <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" data-toggle="modal" data-target="#rutaModal" data-codigo-generacion='<%# Eval("codeGen") %>'>
+                                <div style="position: relative;">
+                                    <!-- Badge centrado y abajo -->
+                                    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4">
+                                        <span class="badge 
+                                            <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                "bg-secondary" %> 
+                                            text-white px-3 py-2 rounded-pill">
+                                            <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div class="card-body p-3">
-                                        <!-- Información de la tarjeta con texto más pequeño -->
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exchange-alt text-primary"></i> <strong>Transaccion:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblTransaccion" runat="server"
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("navRecord.id").ToString()) %>' />
-                                        </p>
+                                <div class="card-body p-3">
+                                    <!-- Información de la tarjeta -->
+                                    <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exchange-alt text-primary"></i> <strong>Transacción:</strong></p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblTransaccion" runat="server"
+                                            Text='<%# HttpUtility.HtmlEncode(Eval("navRecord.id").ToString()) %>' />
+                                    </p>
+                                
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-id-card text-primary"></i> <strong>Licencia:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblHoraStatus" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("driver.license").ToString()) %>' />
+                                    </p>
 
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-id-card text-primary"></i> <strong>Licencia:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblHoraStatus" runat="server"
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("driver.license").ToString()) %>' />
-                                        </p>
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-list-ol text-primary"></i> <strong>Placa Cabezal:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblplaca_cabezal" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' />
+                                    </p>
 
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-list-ol text-primary"></i> <strong>Placa Cabezal:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblplaca_cabezal" runat="server"
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' />
-                                        </p>
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-truck text-primary"></i> <strong>Placa Remolque:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblplacaremolque" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' />
+                                    </p>
 
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Placa Remolque:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblplacaremolque" runat="server"
-                                                Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' />
-                                        </p>
+                                    <!-- Línea divisoria -->
+                                    <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
 
-                                        <!-- Línea divisoria con grosor y color especificados -->
-                                        <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar text-primary"></i> <strong>Fecha Autorizacion:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblNombre" runat="server"
-                                                 Text='<%# Eval("statuses[3].date") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[3].date")).ToString("dd/MM/yyyy")
-                                                            : "No disponible" %>' />
-                                        </p>
-
-                                        <!-- Información adicional de la tarjeta -->
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Autorizacion:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblIngenio" runat="server"
-                                                Text='<%# Eval("statuses[3].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[3].time")).ToString("HH:mm:ss")
-                                                            : "No disponible" %>' />
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-hourglass-half text-primary"></i> <strong>Tiempo Transcurrido:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblTimeDifference" runat="server"
-                                                Text='<%# Eval("statuses[3].time") != null 
-                                                    ? (DateTime.Now - Convert.ToDateTime(Eval("statuses[3].time"))).TotalMinutes.ToString("0") + " minutos atrás"
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-calendar text-primary"></i> <strong>Fecha Autorización:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblNombre" runat="server"
+                                            Text='<%# Eval("statuses[3].date") != null
+                                                    ? Convert.ToDateTime(Eval("statuses[3].date")).ToString("dd/MM/yyyy")
                                                     : "No disponible" %>' />
+                                    </p>
 
-                                        </p>
-                                    </div>
-                                </asp:LinkButton>
-                            </div>
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-clock text-primary"></i> <strong>Hora Autorización:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblIngenio" runat="server"
+                                            Text='<%# Eval("statuses[3].time") != null
+                                                    ? Convert.ToDateTime(Eval("statuses[3].time")).ToString("HH:mm:ss")
+                                                    : "No disponible" %>' />
+                                    </p>
+
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-hourglass-half text-primary"></i> <strong>Tiempo Transcurrido:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblTimeDifference" runat="server"
+                                            Text='<%# Eval("statuses[3].time") != null 
+                                                    ? (DateTime.Now - Convert.ToDateTime(Eval("statuses[3].time"))).TotalMinutes.ToString("0") + " minutos"
+                                                    : "No disponible" %>' />
+                                    </p>
+                                </div>
+                            </asp:LinkButton>
                         </div>
+                    </div>
                 </ItemTemplate>
             </asp:Repeater>
         </div>
-    </main>
+    </div>
+
+
 
     <!-- Footer -->
-    <footer class="text-center py-4 text-sm text-gray-600" 
+    <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        © 2024 Almacenadora del Pacífico
+        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
 
 

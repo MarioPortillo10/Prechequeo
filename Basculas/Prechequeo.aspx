@@ -599,75 +599,81 @@
 
                                                 <!-- Tipo -->
                                                 <div class="form-group1" style="flex: 0 0 auto; text-align: left; margin-left: 30px; padding: 0; display: flex; flex-direction: column; align-items: flex-start;">
-                                                <label for="tipoUnidad" style="font-size: 20px; display: block; margin-bottom: 10px;">
-                                                    <strong>TIPO:</strong>
-                                                </label>
+                                                    <label for="tipoUnidad" style="font-size: 20px; display: block; margin-bottom: 10px;">
+                                                        <strong>TIPO:</strong>
+                                                    </label>
                                                 
-                                                <!-- Contenedor de imágenes y checkboxes en fila -->
-                                                <div id="tipoUnidad" style="display: flex; flex-direction: row; align-items: center; gap: 15px;">
+                                                    <!-- Contenedor de imágenes y checkboxes en fila -->
+                                                    <div id="tipoUnidad" style="display: flex; flex-direction: row; align-items: center; gap: 15px;">
+                                                        <!-- Imagen de camión ícono (PLANA) -->
+                                                        <div id="imgPlanaContainer" runat="server" style="display: none;">
+                                                            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" 
+                                                                alt="Camión Ícono" 
+                                                                style="width: 45px; height: auto; margin-top: -75px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
+                                                        </div>
+                                                        <!-- Imagen de camión de volteo -->
+                                                        <div id="imgVolteoContainer" runat="server" style="display: none;">
+                                                            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" 
+                                                                alt="Camión de Volteo" 
+                                                                style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -65px; margin-left: 65px;">
+                                                        </div>
 
-                                                <!-- Imagen de camión ícono (tamaño reducido) -->
-                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20icono.png?raw=true" alt="Camión Ícono" style="width: 45px; height: auto; margin-top: -105px; margin-left: 60px; filter: sepia(1) saturate(5) hue-rotate(200deg);">
-                                                <!-- Imagen de camión de volteo (más ancha) -->
-                                                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/camion%20de%20volteo.png?raw=true" alt="Camión de Volteo" style="width: 40px; height: 20px; transform: scaleX(-1); margin-top: -107px; margin-left: -5px;">
-
-                                                <!-- Contenedor de checkboxes -->
-                                                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -175px;">
-                                                    <!-- Checkbox para PLANA -->
-                                                    <div class="form-check" style="margin-bottom: 5px;">
-                                                        <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                        <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
+                                                        <!-- Contenedor de checkboxes -->
+                                                        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: -125px;">
+                                                            <!-- Checkbox para PLANA -->
+                                                            <div class="form-check" style="margin-bottom: 5px;">
+                                                                <input type="checkbox" id="chkPlana" runat="server" class="form-check-input" disabled 
+                                                                    style="font-size: 16px; margin-left: -15px;"/>
+                                                                <label for="chkPlana" class="form-check-label" style="font-size: 16px; margin-left: 5px;">PLANA</label>
+                                                            </div>
+                                                            <!-- Checkbox para VOLTEO -->
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled 
+                                                                    style="font-size: 16px; margin-left: -15px;"/>
+                                                                <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                </div>
 
-                                                    <!-- Checkbox para VOLTEO -->
-                                                    <div class="form-check">
-                                                        <input type="checkbox" id="chkVolteo" runat="server" class="form-check-input" disabled style="font-size: 16px; margin-left: -15px;"/>
-                                                        <label for="chkVolteo" class="form-check-label" style="font-size: 16px; margin-left: 5px; margin-bottom: 5px;">VOLTEO</label>
+                                                <!-- Destino -->
+                                                <div class="form-group" style="flex: 1.3; text-align: left; margin-left: 100px; padding: 0; margin-top: -15px; width: 100%; max-width: none;">
+                                                    <label for="txt_ingenio" style="font-size: 20px; display: block; margin-bottom: 5px;">
+                                                        <strong>DESTINO:</strong>
+                                                    </label>
+                                                    <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" 
+                                                        style="height: 30px; width: 135px; max-width: none;">
+                                                </div>
+                                            </div>
+
+                                            <div class="container fecha-prechequeo-container" style="position: fixed; top: 325px; left: 50px; z-index: 1000;">
+                                                <div class="form-row" style="align-items: flex-start; margin-right: 50px;">
+                                                    <!-- Fecha -->
+                                                    <div class="form-group fecha-prechequeo" style="flex: 0.4; margin-right: 25px;">
+                                                        <label for="txtFecha" style="font-size: 14px; margin-bottom: 5px; margin-top: 18px; margin-left: 35px; display: block; width: 160px;">
+                                                            <strong>FECHA PRECHEQUEO:</strong>
+                                                        </label>
+                                                        <p style="font-size: 14px; margin: 0; margin-top: -5px; margin-left: 35px;">
+                                                            <asp:Literal ID="txtFecha" runat="server" Mode="PassThrough" />
+                                                        </p>
+                                                    </div>
+                                                    <!-- Transportista -->
+                                                    <div class="form-group transporte" style="flex: 0 0 300px; margin-top: 15px;">
+                                                        <label for="txt_transporte" style="font-size: 14px; margin-bottom: 5px; margin-left: -55px;">
+                                                            <strong>EMPRESA DE TRANSPORTE:</strong>
+                                                        </label>
+                                                        <p style="font-size: 14px; margin: 0; margin-top: -5px; flex: 1; width: 300px; margin-left: -55px;">
+                                                            <asp:Literal ID="txt_transporte" runat="server" Mode="PassThrough" />
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                        </div>
-
-                                        <!-- Destino -->
-                                        <div class="form-group" style="flex: 1.3; text-align: left; margin-left: 100px; padding: 0; margin-top: -15px; width: 100%; max-width: none;">
-                                            <label for="txt_ingenio" style="font-size: 20px; display: block; margin-bottom: 5px;">
-                                                <strong>DESTINO:</strong>
-                                            </label>
-                                            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" 
-                                                style="height: 30px; width: 135px; max-width: none;">
-                                        </div>
-                                    </div>
-
-
-                                    <div class="container" style="position: relative;">
-                                        <div class="form-row" style="align-items: flex-start; margin-top: 100px; margin-right: 50px; position: absolute; top: -110px; left: 0;">
-                                            <!-- Fecha -->
-                                            <div class="form-group" style="flex: 0.4; margin-right: 35px; margin-left: -730px;">
-                                                <label for="txtFecha" style="font-size: 14px; margin-bottom: 5px; margin-top: 18px; display: block; width: 160px;">
-                                                    <strong>FECHA PRECHEQUEO:</strong>
-                                                </label>
-                                                <p style="font-size: 14px; margin: 0; margin-top: -5px;">
-                                                    <asp:Literal ID="txtFecha" runat="server" Mode="PassThrough" />
-                                                </p>
-                                            </div>
-                                            <!-- Transportista -->
-                                            <div class="form-group" style="flex: 0 0 300px; margin-left: -90px; margin-right: 0; margin-top: 15px;">
-                                                <label for="txt_transporte" style="font-size: 14px; margin-bottom: 5px;">
-                                                    <strong>EMPRESA DE TRANSPORTE:</strong>
-                                                </label>
-                                                <p style="font-size: 14px; margin: 0; margin-top: -5px; flex: 1; width: 275px;">
-                                                    <asp:Literal ID="txt_transporte" runat="server" Mode="PassThrough" />
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <!-- Fila para Hora, Placa Camión y Placa Remolque -->
                                     <div class="container" style="position: relative;">
-                                        <div class="form-row-container" style="position: absolute; top: 100px; right: 405px; display: flex; justify-content: flex-start; margin-bottom: 15px;">
+                                        <div class="form-row-container" style="position: absolute; top: 100px; right: 460px; display: flex; justify-content: flex-start; margin-bottom: 15px;">
                                             <!-- Hora -->
-                                            <div class="form-group" style="flex: 0.4; margin-top: -2px; margin-left: 10px;"> <!-- Reducido el margen derecho -->
+                                            <div class="form-group" style="flex: 0.4; margin-top: -2px; margin-left: 90px;"> <!-- Reducido el margen derecho -->
                                                 <label for="txtHora" style="font-size: 14px; margin-bottom: 0px; width: 150px;">
                                                     <strong>HORA PRECHEQUEO:</strong>
                                                 </label>
@@ -677,7 +683,7 @@
                                             </div>
 
                                             <!-- Cabezal -->
-                                            <div class="form-group" style="flex: 2; margin-left: 60px;"> <!-- Reducido el margen derecho -->
+                                            <div class="form-group" style="flex: 2; margin-left: 25px;"> <!-- Reducido el margen derecho -->
                                                 <label for="txt_placaCamion" style="font-size: 14px; margin-bottom: 0px; display: block;">
                                                     <strong>CABEZAL:</strong>
                                                 </label>
@@ -687,7 +693,7 @@
                                             </div>
 
                                             <!-- Remolque -->
-                                            <div class="form-group" style="flex: 1; margin-left: 115px;"> <!-- Sin margen derecho para acercar más -->
+                                            <div class="form-group" style="flex: 1; margin-left: 105px;"> <!-- Sin margen derecho para acercar más -->
                                                 <label for="txt_placaRemolque" style="font-size: 14px; margin-bottom: 0px; display: block;">
                                                     <strong>REMOLQUE:</strong>
                                                 </label>
@@ -758,7 +764,7 @@
                                     <div class="flex justify-center mt-2" style="position: relative; display: flex; align-items: center; justify-content: center;">
                                         <span style="position: absolute; left: 0; right: auto; height: 2.5px; width: 33%; background-color: #00166E; top: 50%; transform: translateY(-45%);"></span>
                                         <button type="button" id="takePhoto" class="px-3 py-1.5 bg-orange-500 text-white font-bold rounded shadow hover:bg-orange-600">
-                                            <i class="fas fa-camera" aria-hidden="true"></i> Capturar
+                                            <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/deca1fc768771fa51f12c44c2102f294c43a15c4/Imagenes/photo-camera-svgrepo-com.svg" alt="Camera Icon" style="width: 1.2em; height: 1.2em; filter: invert(1); display: inline-block; vertical-align: middle;" aria-hidden="true" /> Capturar
                                         </button>
                                         <span style="position: absolute; right: 0; left: auto; height: 2.5px; width: 33%; background-color: #00166E; top: 50%; transform: translateY(-50%); border: 2px;"></span>
                                     </div>
@@ -766,7 +772,7 @@
                                     <!-- Contenedor para botones alineados a la derecha -->
                                     <div class="flex justify-end mt-6" style="display: flex; justify-content: flex-end; gap: 1rem; padding-right: 1rem; margin-top: 2rem;">
                                         <button type="button" class="btn" id="backBtn" style="width: 25%; height: 2rem; background-color: #888281; color: white; border-radius: 15px; font-size: 0.9rem;">
-                                            <strong>Volver</strong>
+                                            <strong> <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</strong>
                                         </button>
                                         <button type="button" class="btn" id="changeStatusButton" onclick="changeStatus()" style="width: 25%; height: 2rem; background-color: #002174; color: white; border-radius: 15px; font-size: 0.9rem;">
                                             <strong>Continuar</strong>
@@ -811,115 +817,51 @@
     document.addEventListener('DOMContentLoaded', function () 
     {
         var carouselElement = document.getElementById('carouselForms');
-        var carousel = new bootstrap.Carousel(carouselElement, 
-        {
+        var carousel = new bootstrap.Carousel(carouselElement, {
             interval: false
         });
 
-    document.getElementById('nextBtn').addEventListener('click', function () 
-    {
-        Swal.fire({
-            title: 'Aviso Importante',
-            html: `
-                <div style="white-space: pre-line; margin-top: -20px">
-                    Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
-                    
-                    Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
-                    
-                    En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con Almapac.
-                </div>
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            cancelButtonText: 'Cancelar',
-            confirmButtonText: 'Aceptar',
-            customClass: {
-                popup: 'custom-alert-wide-container', // Nueva clase específica
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        }).then((result) => {
-            if (result.isConfirmed) {
-                carousel.next();
-            }
-        });
-    });
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const capturedPhoto = document.getElementById('capturedPhoto');
+        const takePhotoButton = document.getElementById('takePhoto');
+        let stream;
 
-    document.getElementById('backBtn').addEventListener('click', function () 
-    {
-        carousel.prev();
-    });
-
-    $('#editModal').on('hidden.bs.modal', function () 
-    {
-        carousel.to(0);
-    });
-
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) 
-    {
-        element.addEventListener('click', function () 
+        // Configurar acceso a la cámara
+        function startCamera() 
         {
-            var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-            modal.hide();
-        });
-    });
-});
-
-
-    document.addEventListener("DOMContentLoaded", function () 
-    {
-        const txtTransaccion = document.getElementById("<%= txtTransaccion.ClientID %>");
-        const lnkBuscar = document.getElementById("<%= lnkBuscar.ClientID %>");
-
-        // Colocar el cursor en el `input` al cargar la página
-        txtTransaccion.focus();
-
-        // Mantener el cursor en el `input` después de cada ingreso
-        txtTransaccion.addEventListener("blur", function () 
-        {
-            txtTransaccion.focus();
-        });
-
-        // Detectar el evento `Enter` y ejecutar las acciones correspondientes
-        txtTransaccion.addEventListener("keypress", function (event) 
-        {
-            if (event.key === "Enter") 
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(cameraStream => 
             {
-                event.preventDefault(); // Evitar la recarga de página o submit por defecto
+                stream = cameraStream;
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(error => 
+            {
+                console.error('Error al acceder a la cámara:', error);
+            });
+        }
 
-                // Simular el clic en el botón asociado
-                if (lnkBuscar) 
-                {
-                    lnkBuscar.click();
-                }
+        function stopCamera() 
+        {
+            if (stream) 
+            {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                stream = null;
+                console.log('Cámara detenida y liberada');
             }
-        });
-    });
+        }
 
-
-    window.onload = function() {
-    const video = document.getElementById('camera');
-    const canvas = document.getElementById('canvas');
-    const capturedPhoto = document.getElementById('capturedPhoto');
-    const takePhotoButton = document.getElementById('takePhoto');
-    let isPhotoTaken = false; 
-
-    // Configurar acceso a la cámara
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-    .then(stream => {
-        video.srcObject = stream;
-        video.play();
-
-        takePhotoButton.addEventListener('click', (event) => {
+        // Configurar la funcionalidad de captura de foto
+        takePhotoButton.addEventListener('click', (event) => 
+        {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             event.preventDefault();
 
-            // Obtener la imagen capturada en formato base64
             const photo = canvas.toDataURL('image/jpeg');
-
-            // Verificar si la foto está vacía
             if (photo === 'data:,') 
             {
                 Swal.fire({
@@ -932,140 +874,233 @@
                 return;
             }
 
-            // Mostrar la imagen capturada en el contenedor
             capturedPhoto.src = photo;
-            capturedPhoto.style.display = 'block'; // Mostrar la imagen capturada
-
-            // Ocultar el canvas y el video después de tomar la foto
+            capturedPhoto.style.display = 'block';
             canvas.style.display = 'none';
             video.style.display = 'none';
-            isPhotoTaken = true; // Marcar que la foto fue tomada
-
         });
-    })
-    .catch(error => {
-        console.error('Error al acceder a la cámara:', error);
+
+        // Resetear el estado de la cámara y limpiar foto
+        function resetCameraState() 
+        {
+            console.log('Resetting camera state');
+            stopCamera(); // Detener la cámara completamente
+            capturedPhoto.style.display = 'none';
+            capturedPhoto.src = '';
+            canvas.style.display = 'none';
+            video.style.display = 'block';
+
+            // Volver a iniciar la cámara si la modal está abierta
+            startCamera();
+        }
+
+        // Aplicar el reseteo al abrir la modal
+        $('#editModal').on('show.bs.modal', function () 
+        {
+            console.log('Modal is being shown');
+            resetCameraState();
+        });
+
+        // Detener la cámara al cerrar la modal
+        $('#editModal').on('hidden.bs.modal', function () 
+        {
+            console.log('Modal is being hidden');
+            stopCamera();
+        });
+
+        // Resetear la cámara y la foto al cambiar de slide en el carrusel
+        carouselElement.addEventListener('slid.bs.carousel', function () 
+        {
+            console.log('Slide changed');
+            resetCameraState();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function () 
+        {
+            console.log('Next button clicked');
+            Swal.fire({
+                title: 'Aviso Importante',
+                html: `
+                    <div style="white-space: pre-line; margin-top: -20px">
+                        Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
+                        
+                        Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
+                        
+                        En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con ALMAPAC.
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Aceptar',
+                customClass: 
+                {
+                    popup: 'custom-alert-wide-container',
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            }).then((result) => 
+            {
+                if (result.isConfirmed) 
+                {
+                    console.log('Confirm button pressed');
+                    // Reiniciar la cámara después de presionar el botón de confirmación
+                    resetCameraState();
+                    carousel.next();
+                }
+            });
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function () 
+        {
+            console.log('Back button clicked');
+            carousel.prev();
+        });
+
+        document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (element) 
+        {
+            element.addEventListener('click', function () {
+                console.log('Modal dismiss button clicked');
+                var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                modal.hide();
+            });
+        });
     });
-};
 
     // Función para cambiar el estado
-function changeStatus() {
-    const txtTransaccion = document.getElementById('txtTransaccion').value.trim();
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
-    const photo = canvas.toDataURL('image/jpeg'); // Obtén la imagen como base64
+    function changeStatus() 
+    {
+        const txtTransaccion = document.getElementById('txtTransaccion').value.trim();
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const photo = canvas.toDataURL('image/jpeg'); // Obtén la imagen como base64
 
-    // Verificar si el código de transacción está vacío
-    if (txtTransaccion === '') {
-        Swal.fire({
-            title: 'Error',
-            text: 'Por favor, Ingrese un Código de Generación',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Aceptar'
-        });
-        return false;
-    }
+        // Verificar si el código de transacción está vacío
+        if (txtTransaccion === '') 
+        {
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, Ingrese un Código de Generación',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            });
+            return false;
+        }
 
-    // Verificar si la foto ha sido tomada
-    const isCanvasEmpty = !context.getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0);
+        // Verificar si la foto ha sido tomada
+        const isCanvasEmpty = !context.getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0);
 
-    if (isCanvasEmpty) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Por favor, capture una foto antes de cambiar el estado.',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Aceptar'
-        });
-        return false; // No permite continuar si no hay foto
-    }
+        if (isCanvasEmpty) 
+        {
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, capture una foto antes de cambiar el estado.',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            });
+            return false; // No permite continuar si no hay foto
+        }
 
-    const predefinedStatusId = 2; // Cambia esto al ID de estado que deseas
+        const predefinedStatusId = 2; // Cambia esto al ID de estado que deseas
 
-    // Realizar el cambio de estado primero
-    $.ajax({
-        type: "POST",
-        url: "Prechequeo.aspx/ChangeTransactionStatus",
-        data: JSON.stringify({
-            codeGen: txtTransaccion,
-            predefinedStatusId: predefinedStatusId,
-            imageData: photo
-        }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function(response) {
-            const message = response.d;
+        // Realizar el cambio de estado primero
+        $.ajax({
+            type: "POST",
+            url: "Prechequeo.aspx/ChangeTransactionStatus",
+            data: JSON.stringify({
+                codeGen: txtTransaccion,
+                predefinedStatusId: predefinedStatusId,
+                imageData: photo
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(response) 
+            {
+                const message = response.d;
 
-            if (message === "Error: No se puede cambiar el estado sin haber subido una foto.") {
-                Swal.fire({
-                    title: 'Advertencia',
-                    text: message,
-                    icon: 'warning',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Aceptar'
-                });
-            } else if (message === "Cambio de estatus realizado con éxito") {
-                // Si el cambio de estado es exitoso, proceder con la subida de la foto
-                fetch('Prechequeo.aspx/UploadPhoto', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        imageData: photo, 
-                        codeGen: txtTransaccion 
+                if (message === "Error: No se puede cambiar el estado sin haber subido una foto.") 
+                {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        text: message,
+                        icon: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } 
+                else if (message === "Cambio de estatus realizado con éxito") 
+                {
+                    // Si el cambio de estado es exitoso, proceder con la subida de la foto
+                    fetch('Prechequeo.aspx/UploadPhoto', 
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            imageData: photo, 
+                            codeGen: txtTransaccion 
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.d === 'success') {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: 'Prechequeo ha sido realizado y la foto se ha subido correctamente.',
-                            icon: 'success',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    } else {
-                        Swal.fire('Error', 'No se pudo subir la imagen al servidor', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al subir la imagen:', error);
-                    Swal.fire('Error', 'No se pudo conectar con el servidor para subir la imagen', 'error');
-                });
-            } else {
+                    .then(response => response.json())
+                    .then(result => 
+                    {
+                        if (result.d === 'success') 
+                        {
+                            Swal.fire({
+                                title: 'Éxito',
+                                text: 'Prechequeo realizado, por favor presente sus documentos en ventanilla para ser validados',
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Aceptar'
+                            }).then((result) => 
+                            {
+                                if (result.isConfirmed) 
+                                {
+                                    location.reload();
+                                }
+                            });
+                        } 
+                        else 
+                        {
+                            Swal.fire('Error', 'No se pudo subir la imagen al servidor', 'error');
+                        }
+                    })
+                    .catch(error => 
+                    {
+                        console.error('Error al subir la imagen:', error);
+                        Swal.fire('Error', 'No se pudo conectar con el servidor para subir la imagen', 'error');
+                    });
+                } 
+                else 
+                {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al realizar el cambio de estatus.',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function(xhr, status, error) 
+            {
+                console.error("Error cambiando el estado: ", error);
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un problema al realizar el cambio de estatus.',
+                    text: 'Hubo un error al cambiar el estado.',
                     icon: 'error',
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Aceptar'
                 });
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error cambiando el estado: ", error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un error al cambiar el estado.',
-                icon: 'error',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
+        });
 
-    return false; // Prevenir cualquier comportamiento por defecto
-}
-
-
-
+        return false; // Prevenir cualquier comportamiento por defecto
+    }
 
     function closeModal()
     {
@@ -1075,7 +1110,6 @@ function changeStatus() {
 
     function checkInput() 
     {
-        
         var txtTransaccion = document.getElementById('txtTransaccion').value.trim();
             
         if (txtTransaccion === '') 
@@ -1099,14 +1133,16 @@ function changeStatus() {
                     confirmButton: 'swal2-styled swal2-confirm'
                 },
                 showConfirmButton: true
-            }).then((result) => {
-            // Verificar si se hizo clic en "OK" para limpiar el campo
-            if (result.isConfirmed) 
+            }).then((result) => 
             {
-                // Limpiar el valor del input
-                document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
-            }
-            }).catch((error) => {
+                // Verificar si se hizo clic en "OK" para limpiar el campo
+                if (result.isConfirmed) 
+                {
+                    // Limpiar el valor del input
+                    document.getElementById('txtTransaccion').value = ''; // Asegúrate de que el ID sea correcto
+                }
+            }).catch((error) => 
+            {
                 console.error('Error en SweetAlert2:', error);
             });
 
