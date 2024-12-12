@@ -1009,7 +1009,7 @@
         // Realizar el cambio de estado primero
         $.ajax({
             type: "POST",
-            url: "Prechequeo.aspx/ChangeTransactionStatus",
+            url: "Basculas/Prechequeo.aspx/ChangeTransactionStatus",
             data: JSON.stringify({
                 codeGen: txtTransaccion,
                 predefinedStatusId: predefinedStatusId,
