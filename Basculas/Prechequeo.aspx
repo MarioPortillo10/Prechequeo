@@ -1009,7 +1009,7 @@
         // Realizar el cambio de estado primero
         $.ajax({
             type: "POST",
-            url: "Basculas/Prechequeo.aspx/ChangeTransactionStatus",
+            url: "Prechequeo.aspx/ChangeTransactionStatus",
             data: JSON.stringify({
                 codeGen: txtTransaccion,
                 predefinedStatusId: predefinedStatusId,
@@ -1033,53 +1033,45 @@
                 } 
                 else if (message === "Cambio de estatus realizado con éxito") 
                 {
-                    // Si el cambio de estado es exitoso, proceder con la subida de la foto
-                    fetch('Basculas/Prechequeo.aspx/UploadPhoto', 
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
+                    $.ajax({
+                        url: 'Prechequeo.aspx/UploadPhoto',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ 
                             imageData: photo, 
                             codeGen: txtTransaccion 
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(result => 
-                    {
-                        if (result.d === 'success') 
-                        {
-                            Swal.fire({
-                                title: 'Éxito',
-                                text: 'Prechequeo realizado, por favor presente sus documentos en ventanilla para ser validados',
-                                icon: 'success',
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'Aceptar'
-                            }).then((result) => 
-                            {
-                                if (result.isConfirmed) 
-                                {
-                                    location.reload();
-                                }
-                            });
-                        } 
-                        else 
-                        {
-                            Swal.fire('Error', 'No se pudo subir la imagen al servidor', 'error');
+                        }),
+                        success: function (response) {
+                            if (response.d === 'success') {
+                                Swal.fire({
+                                    title: 'Éxito',
+                                    text: 'Prechequeo realizado, por favor presente sus documentos en ventanilla para ser validados',
+                                    icon: 'success',
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Aceptar'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                Swal.fire('Error', response.d || 'No se pudo subir la imagen al servidor', 'error');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error al subir la imagen:', error);
+                            let serverResponse = xhr.responseText ? JSON.parse(xhr.responseText) : { message: 'No se recibió respuesta del servidor.' };
+                            let errorMessage = serverResponse.message || 'No se pudo conectar con el servidor para subir la imagen';
+                            Swal.fire('Error', errorMessage, 'error');
                         }
-                    })
-                    .catch(error => 
-                    {
-                        console.error('Error al subir la imagen:', error);
-                        Swal.fire('Error', 'No se pudo conectar con el servidor para subir la imagen', 'error');
                     });
+
                 } 
                 else 
                 {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Hubo un problema al realizar el cambio de estatus.',
+                        text: message || 'Hubo un problema al realizar el cambio de estatus.',
                         icon: 'error',
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar'
@@ -1089,13 +1081,9 @@
             error: function(xhr, status, error) 
             {
                 console.error("Error cambiando el estado: ", error);
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un error al cambiar el estado.',
-                    icon: 'error',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Aceptar'
-                });
+                let serverResponse = xhr.responseText ? JSON.parse(xhr.responseText) : { message: 'No se recibió respuesta del servidor.' };
+                let errorMessage = serverResponse.message || 'Hubo un error al cambiar el estado.';
+                Swal.fire('Error', errorMessage, 'error');
             }
         });
 
@@ -1163,4 +1151,4 @@
     }
 </script>
 </body>
-</html>
+</html>     

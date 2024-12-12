@@ -186,7 +186,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     [WebMethod]
     public static string ChangeTransactionStatus(string codeGen, int predefinedStatusId, string imageData)
     {
-        System.Diagnostics.Debug.WriteLine("Inicio de ChangeTransactionStatus");
         LogEventS("Funcion para cambiar estatus; Hola");
 
         // Validar que la transacción no esté vacía
@@ -407,4 +406,14 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     {
         
     }
+    
+    protected void Application_BeginRequest(object sender, EventArgs e)
+    {
+        if (!Context.Request.IsSecureConnection)
+        {
+            string redirectUrl = Context.Request.Url.ToString().Replace("http:", "https:");
+            Response.Redirect(redirectUrl, true);
+        }
+    }
+
 }
