@@ -1034,7 +1034,7 @@
                 else if (message === "Cambio de estatus realizado con éxito") 
                 {
                     // Si el cambio de estado es exitoso, proceder con la subida de la foto
-                    fetch('Prechequeo.aspx/UploadPhoto', 
+                    fetch('Basculas/Prechequeo.aspx/UploadPhoto', 
                     {
                         method: 'POST',
                         headers: {
