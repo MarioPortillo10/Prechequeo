@@ -968,6 +968,27 @@
         });
     });
 
+    // Detectar cuando se presiona la tecla Esc
+    document.addEventListener('keydown', function(event) 
+    {
+        if (event.key === 'Escape') 
+        {
+            // Cerrar el modal (si está abierto)
+            $('#editModal').modal('hide');
+
+            // Recargar la página
+            location.reload();
+        }
+    });
+
+    // Detectar el cierre del modal (cuando se cierra de otra manera, por ejemplo, con el botón de cerrar)
+    $('#editModal').on('hidden.bs.modal', function () 
+    {
+        // Recargar la página cuando se cierra el modal
+        location.reload();
+    });
+
+
     // Función para cambiar el estado
     function changeStatus() 
     {
@@ -1151,4 +1172,4 @@
     }
 </script>
 </body>
-</html>     
+</html>
