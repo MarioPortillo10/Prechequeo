@@ -12,7 +12,7 @@ using System.Net;
 using System.Diagnostics;
 using System.IO;
 using System.Web.Services;
-
+using System.Text;
 
 
 public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
@@ -49,7 +49,7 @@ protected void Page_Load(object sender, EventArgs e)
         {
             // Añadir el token al encabezado de autorización
             client.Headers.Add("Authorization", "Bearer " + token);
-
+            client.Encoding = Encoding.UTF8;
             try
             {
                 // *** Primera API ***
@@ -179,8 +179,6 @@ public static string ChangeTransactionStatus(string codeGen)
         // Simulación de la lógica para cambiar el estatus
         string url = "https://apiclientes.almapac.com:9010/api/queue/send/" + codeGen;
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-        
-
         string responseContent;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 

@@ -12,7 +12,7 @@ using System.IO;
 using System;
 using System.Net;
 using System.Web.Services;
-
+using System.Text;
 
 
 public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
