@@ -263,6 +263,9 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public string requiresSweeping { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
+        public int currentStatus { get; set; }
+        public DateTime dateTimeCurrentStatus { get; set; }
+        public DateTime dateTimePrecheckeo { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
