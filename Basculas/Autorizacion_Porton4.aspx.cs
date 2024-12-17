@@ -167,6 +167,25 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         }
     }
 
+    protected string FormatTimeDifference(DateTime dateTimePrecheckeo)
+    {
+        TimeSpan difference = DateTime.Now - dateTimePrecheckeo;
+
+        if (difference.TotalHours >= 1)
+        {
+            // Si la diferencia es mayor o igual a una hora, mostramos horas y minutos
+            int hours = (int)difference.TotalHours;
+            int minutes = difference.Minutes;
+            return string.Format("{0} hora{1} y {2} minuto{3}", hours, hours > 1 ? "s" : "", minutes, minutes != 1 ? "s" : "");
+        }
+        else
+        {
+            // Si la diferencia es menor a una hora, mostramos solo minutos
+            int totalMinutes = (int)difference.TotalMinutes;
+            return string.Format("{0} minuto{1}", totalMinutes, totalMinutes != 1 ? "s" : "");
+        }
+    }
+
     public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
