@@ -331,10 +331,11 @@
 
                                 <div class="card-body p-3">
                                     <!-- Información de la tarjeta -->
-                                    <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exchange-alt text-primary"></i> <strong>Transacción:</strong></p>
+                                    <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exchange-alt text-primary">
+                                        </i> <strong>Transacción:</strong></p>
                                     <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                         <asp:Label ID="lblTransaccion" runat="server"
-                                            Text='<%# HttpUtility.HtmlEncode(Eval("navRecord.id").ToString()) %>' />
+                                            Text='<%# Eval("navRecord.id") != null ? HttpUtility.HtmlEncode(Eval("navRecord.id").ToString()) : "Sin datos" %>' />
                                     </p>
                                 
                                     <p class="text-start" style="font-size: 0.9rem;">
@@ -365,20 +366,7 @@
                                         <i class="fas fa-calendar text-primary"></i> <strong>Fecha Autorización:</strong>
                                     </p>
                                     <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        <asp:Label ID="lblNombre" runat="server"
-                                            Text='<%# Eval("statuses[3].date") != null
-                                                    ? Convert.ToDateTime(Eval("statuses[3].date")).ToString("dd/MM/yyyy")
-                                                    : "No disponible" %>' />
-                                    </p>
-
-                                    <p class="text-start" style="font-size: 0.9rem;">
-                                        <i class="fas fa-clock text-primary"></i> <strong>Hora Autorización:</strong>
-                                    </p>
-                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        <asp:Label ID="lblIngenio" runat="server"
-                                            Text='<%# Eval("statuses[3].time") != null
-                                                    ? Convert.ToDateTime(Eval("statuses[3].time")).ToString("HH:mm:ss")
-                                                    : "No disponible" %>' />
+                                        <asp:Label ID="lblNombre" runat="server"  Text='<%# Eval("dateTimePrecheckeo") %>' />
                                     </p>
 
                                     <p class="text-start" style="font-size: 0.9rem;">
@@ -386,9 +374,9 @@
                                     </p>
                                     <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                         <asp:Label ID="lblTimeDifference" runat="server"
-                                            Text='<%# Eval("statuses[3].time") != null 
-                                                    ? (DateTime.Now - Convert.ToDateTime(Eval("statuses[3].time"))).TotalMinutes.ToString("0") + " minutos"
-                                                    : "No disponible" %>' />
+                                            Text='<%# Eval("dateTimePrecheckeo") != null 
+                                                ? FormatTimeDifference(Convert.ToDateTime(Eval("dateTimePrecheckeo")))
+                                                : "No disponible" %>' />
                                     </p>
                                 </div>
                             </asp:LinkButton>
@@ -629,14 +617,31 @@
                 dataType: "json",
                 success: function(response) 
                 {
-                    console.log("Respuesta de la API: ", response.d); 
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                    console.log("Respuesta de la API: ", response.d);
+                    
+                    // Mostrar un SweetAlert indicando que el cambio fue exitoso
+                    Swal.fire({
+                        title: "Éxito",
+                        text: "El estatus se cambió correctamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar"
+                    }).then(() => {
+                        // Recargar la página después de aceptar
+                        //location.reload();
+                    });
                 },
-                error: function(xhr, status, error) 
-                {
+                error: function(xhr, status, error) {
                     console.error("Error cambiando el estado: ", error);
+
+                    // Mostrar un SweetAlert indicando el error
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo cambiar el estatus. Motivo: " + (xhr.responseText || error),
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
+
             });
         }
 

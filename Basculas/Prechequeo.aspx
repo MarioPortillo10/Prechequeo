@@ -720,7 +720,7 @@
                         <p style="font-size: 38px; color: white; margin-bottom: 75px; margin-left: 47px;">PRECHEQUEO</p>
 
                         <!-- Botón -->
-                        <button type="button" class="btn btn-primary" id="nextBtn">REALIZO PRECHEQUEO</button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">REALIZÓ PRECHEQUEO</button>
                     </div>
                 </div>
             
@@ -923,9 +923,9 @@
                 html: `
                     <div style="white-space: pre-line; margin-top: -20px">
                         Asegúrese de revisar cuidadosamente todos los detalles antes de continuar, ya que cualquier discrepancia o error en la información puede resultar en demoras o rechazos en el proceso.
-                        
+
                         Al hacer clic en Aceptar, usted autoriza y valida que los datos ingresados son correctos y completos.
-                        
+
                         En caso de error, seleccione “Cancelar” y comuníquese con el ingenio para actualizar la información con ALMAPAC.
                     </div>
                 `,
@@ -948,6 +948,12 @@
                     // Reiniciar la cámara después de presionar el botón de confirmación
                     resetCameraState();
                     carousel.next();
+                } 
+                else if (result.isDismissed) 
+                {
+                    console.log('Cancel button pressed');
+                    // Recargar la página cuando se presione "Cancelar"
+                    location.reload();
                 }
             });
         });

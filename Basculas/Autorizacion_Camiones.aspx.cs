@@ -13,7 +13,7 @@ using System;
 using System.Net;
 using System.Web.Services;
 using System.Text;
-
+using System.Diagnostics;
 
 
 public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
@@ -25,9 +25,9 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         {
             string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            
             // Forzar el uso de TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             using (WebClient client = new WebClient())
             {
                 // Añadir el token al encabezado de autorización
@@ -41,24 +41,9 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    // Filtrar registros válidos
-                    var filteredData = new List<Post>();
-                    foreach (var item in data)
-                    {
-                        if (item.statuses != null 
-                            && item.statuses.Count > 0 
-                            && item.statuses[item.statuses.Count - 1].id == 2 // Verificar que el último estatus tenga id = 2
-                            && item.vehicle != null // Verificar que el vehículo no sea nulo
-                            && !string.IsNullOrEmpty(item.vehicle.truckType) // Validar que el tipo de camión exista
-                            && item.ingenio != null) // Validar que el ingenio no sea nulo
-                        {
-                            filteredData.Add(item);
-                        }
-                    }
-
                     // Filtrar por tipos de camiones
-                    var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
-                    var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+                    var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                    var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
 
                     // Contar registros por tipo
                     lblCountP.Text = truckTypeP.Count.ToString();
@@ -71,42 +56,35 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                     var ingenioCounts = new Dictionary<string, int>();
 
                     // Contar ingenios en todos los registros filtrados
-                    foreach (var item in filteredData)
+                    foreach (var item in data)
                     {
-                        // Verificar que el último estatus tenga id = 2
-                        if (item.statuses != null && item.statuses.Count > 0 && item.statuses[item.statuses.Count - 1].id == 2)
+                        var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                        if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
                         {
-                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-
-                            // Verificar que el ingenioNavCode esté en la lista de ingenios válidos
-                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                            if (ingenioCounts.ContainsKey(ingenioNavCode))
                             {
-                                if (ingenioCounts.ContainsKey(ingenioNavCode))
-                                {
-                                    ingenioCounts[ingenioNavCode]++;
-                                }
-                                else
-                                {
-                                    ingenioCounts[ingenioNavCode] = 1;
-                                }
+                                ingenioCounts[ingenioNavCode]++;
+                            }
+                            else
+                            {
+                                ingenioCounts[ingenioNavCode] = 1;
                             }
                         }
                     }
 
-
-                    // Procesar e insertar los conteos en los controles correspondientes
+                    // Procesar e insertar los conteos en las etiquetas correspondientes
                     int i = 1;
                     foreach (var ingenio in validIngenios)
                     {
-                        // Usar string.Format en lugar de interpolación de cadenas
-                        var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i)) as TextBox;
+                        // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
+                        var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i.ToString())) as TextBox;
                         if (txtIngenioQuantity != null)
                         {
+                            // Mostrar el conteo de ingenios o 0 si no existe
                             txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
                         }
                         i++;
                     }
-
 
                     // Vincular los datos filtrados a los Repeaters correspondientes
                     rptRutas1.DataSource = truckTypeP;
@@ -119,12 +97,12 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                 {
                     // Manejar errores de solicitud o deserialización
                     // lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
+                    lblCountP.Text = "0";
+                    lblCountV.Text = "0";
                 }
-            }
-   
+            }    
         }
     }
-
 
     public void LogEvent(object message)
     {
@@ -183,7 +161,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                 }
                 else
                 {
-                    return "Los datos ingresados no coinciden con la información en la Nota de remisión.";
+                    return "Error: los datos ingresados no coinciden con la información del servidor.";
                 }
             }
             catch (WebException webEx)
@@ -232,11 +210,14 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         public string requiresSweeping { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
+        public int currentStatus { get; set; }
+        public DateTime dateTimeCurrentStatus { get; set; }
+        public DateTime dateTimePrecheckeo { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
         public Ingenio ingenio { get; set; }
-        public List<Status> statuses { get; set; }
+        public List<Statuses> statuses { get; set; }
         public List<ShipmentAttachment> shipmentAttachments { get; set; } // Agregado para los adjuntos
     }
 
@@ -280,11 +261,12 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         public DateTime updatedAt { get; set; }
     }
 
-    public class Status
+    public class Statuses
     {
         public int id { get; set; }
         public string status { get; set; }
         public DateTime createdAt { get; set; }
+        public List<object> observation { get; set; } // Asegúrate del tipo de datos
         public string date { get; set; }
         public string time { get; set; }
     }

@@ -317,7 +317,10 @@
                 <div class="grid grid-cols-2 gap-4">
             
                     <!-- Plano -->
-                    <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; max-height: 140px; max-width: 400px;">
+                    <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; max-height: 140px; max-width: 400px; position: relative;">
+                        <!-- Línea vertical fija al lado izquierdo de la tarjeta -->
+                        <div style="position: absolute; top: 8px; left: 10px; width: 10px; height: 85%; background-color: #EAE8EC; border-radius: 5px; "></div>
+
                         <div class="flex flex-col items-center">
                             <!-- Texto en la parte superior -->
                             <span class="text-3xl mb-1">Plano</span>
@@ -329,7 +332,10 @@
                     </div>
 
                     <!-- Volteo -->
-                    <div class="text-white text-center rounded-lg" style="background-color:#242424; padding: 8px; max-height: 135px; max-width: 350px;">
+                    <div class="text-white text-center rounded-lg" style="background-color:#242424; padding: 8px; max-height: 135px; max-width: 350px; position: relative;">
+                        <!-- Línea vertical fija al lado izquierdo de la tarjeta -->
+                        <div style="position: absolute; top: 8px; left: 10px; width: 10px; height: 85%; background-color: #FF5733; border-radius: 5px;"></div>
+
                         <div class="flex flex-col items-center">
                             <!-- Texto en la parte superior -->
                             <span class="text-3xl mb-1">Volteo</span>
@@ -339,32 +345,42 @@
                             </span>
                         </div>
                     </div>
+
                 </div>
             </div>
 
             <div class="bg-white">
                 <h2 class="text-lg font-bold mb-4 text-center">TOTAL UNIDADES</h2>
                 <div class="grid grid-cols-2 gap-4">
-          
+        
                     <!-- Tarjeta de "Solicitar Plano" con altura reducida -->
-                    <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; max-height: 140px; max-width: 400px;">
+                    <div class="text-white text-center rounded-lg" style="background-color: #182A6E; padding: 5px; max-height: 140px; max-width: 300px; position: relative;">
+                        <!-- Línea vertical fija al lado izquierdo de la tarjeta -->
+                        <div style="position: absolute; top: 8px; left: 10px; width: 10px; height: 85%; background-color: #EAE8EC; border-radius: 5px; "></div>
+                        
                         <div class="flex flex-col items-center">
                             <!-- Texto en la parte superior -->
                             <span class="text-3xl mb-1">Plano</span>
 
+                            <!-- Etiqueta ASP.NET -->
                             <span class="text-3xl mt-1 font-bold">
-                               <asp:Label ID="lblCountP" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                <asp:Label ID="lblCountP" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
                             </span>
-                        </div>    
+                        </div>
                     </div>
 
+
                     <!-- Solicitar Volteo -->
-                    <div class="text-white text-center rounded-lg" style="background-color:#242424; padding: 8px; max-height: 135px; max-width: 350px;">
+                    <div class="text-white text-center rounded-lg" style="background-color:#242424; padding: 8px; max-height: 135px; max-width: 350px; position: relative;">
+                        
+                        <!-- Línea vertical fija al lado izquierdo de la tarjeta -->
+                        <div style="position: absolute; top: 8px; left: 10px; width: 10px; height: 85%; background-color: #FF5733; border-radius: 5px;"></div>
+                        
                         <div class="flex flex-col items-center">
                             <!-- Texto en la parte superior -->
                             <span class="text-3xl mb-1">Volteo</span>
                             <div class="text-3xl mt-1 font-bold">
-                               <asp:Label ID="lblCountV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
+                                <asp:Label ID="lblCountV" runat="server" CssClass="text-center font-bold mb-4"></asp:Label>
                             </div>
                         </div>
                     </div>
@@ -379,54 +395,72 @@
         <section>
             <div class="bg-white">
                 <h2 class="text-lg font-bold mb-2 text-center">TOTAL INGENIOS</h2>
-                <div class="flex flex-row gap-1 justify-center items-center flex-wrap">
-                    <!-- Tarjeta 1 -->
-                    <div class="card1">
-                        <h2 class="text-xs font-bold text-black mb-1">COMPAÑIA AZUCARERA SALVADOREÑA</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity2" runat="server" />
-                        </div>
-                    </div>
+                <div style="background-color: #d1d5db; padding: 5px;">
+                    <div class="flex flex-row justify-center items-center flex-wrap">
 
-                    <!-- Tarjeta 2 -->
-                    <div class="card1">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CENTRAL AZUCARERO JIBOA</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity4" runat="server" />
+                        <!-- Tarjeta 1 -->
+                        <div class="card1" style="margin: 20px;">
+                            <h2 class="text-xs font-bold text-black mb-1" 
+                                style="background-color: white; border-radius: 10px; padding: 7px; display: inline-block; width: 160px; text-align: left;">
+                                COMPAÑÍA AZUCARERA <center> SALVADOREÑA</center>
+                            </h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity2" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Tarjeta 3 -->
-                    <div class="card1">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO CHAPARRASTIQUE</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity3" runat="server" />
+                        <!-- Tarjeta 2 -->
+                        <div class="card1" style="margin: 2px;">
+                            <h2 class="text-xs font-bold text-black mb-1"style="background-color: white; padding: 7px; border-radius: 10px; display: inline-block;">INGENIO CENTRAL AZUCARERO JIBOA</h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity4" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Tarjeta 4 -->
-                    <div class="card1">
-                        <h2> </h2>
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO EL ANGEL</h2>
-                        <div class="text-base font-bold">
-                            
-                            <asp:Label ID="lblIngenioQuantity6" runat="server" />
+                        <!-- Tarjeta 3 -->
+                        <div class="card1" style="margin: 2px;">
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 7px; border-radius: 10px; display: inline-block;">INGENIO CHAPARRASTIQUE</h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity3" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
+                                
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Tarjeta 5 -->
-                    <div class="card1">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA CABAÑA</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity1" runat="server" />
+                        <!-- Tarjeta 4 -->
+                        <div class="card1" style="margin: 2px;">
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 7px; border-radius: 10px; display: inline-block;">INGENIO <br>EL ANGEL</h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity6" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Tarjeta 6 -->
-                    <div class="card1">
-                        <h2 class="text-xs font-bold text-black mb-1">INGENIO LA MAGDALENA</h2>
-                        <div class="text-base font-bold">
-                            <asp:Label ID="lblIngenioQuantity5" runat="server" />
+                        <!-- Tarjeta 5 -->
+                        <div class="card1" style="margin: 2px;">
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 7px; border-radius: 10px; display: inline-block;">INGENIO <br>LA CABAÑA</h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity1" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
+                             
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta 6 -->
+                        <div class="card1" style="margin: 2px;">
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 7px; border-radius: 10px; display: inline-block;">INGENIO LA MAGDALENA</h2>
+                            <div class="text-base font-bold">
+                                <asp:TextBox ID="txtIngenioQuantity5" runat="server" ReadOnly="true" 
+                                    Width="50px" CssClass="text-black text-center"
+                                    style="background-color: white; border: 1px; color: black; border-radius: 5px;" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -453,35 +487,24 @@
                                     data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
                                     data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
                                         <div style="position: relative;">
-                                            <!-- Badge de tipo de camión, centrado y más abajo -->
-                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 155%);">
-                                                <span class="badge 
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
-                                                        "bg-secondary" %> 
-                                                    text-white px-3 py-2 rounded-pill">
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->  
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 0; transform: translate(0%, 200%);">
+                                                <span class="badge text-white py-2" 
+                                                    style="padding-left: 90px; padding-right: 90px; border-radius: 10px; font-size: 18px; 
+                                                        background-color: <%# Eval("vehicle.truckType").ToString() == "V" ? "#2D2D2B" : 
+                                                                            Eval("vehicle.truckType").ToString() == "R" ? "#004382" : 
+                                                                            "#004382" %>;">
+                                                        <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                            Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div class="card-body p-3">
+                                        <div class="card-body p-8" style="transform: translate( -10px, 20px );">
                                             <!-- Información de la tarjeta con texto más pequeño -->
                                             <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server"
-                                                    Text='<%# Eval("statuses[2].date") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[2].date")).ToString("dd/MM/yyyy")
-                                                            : "No disponible" %>' />
-                                            </p>
-
-                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
-                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblHoraStatus" runat="server"
-                                                    Text='<%# Eval("statuses[2].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[2].time")).ToString("HH:mm:ss")
-                                                            : "No disponible" %>' />
+                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
                                             </p>
 
                                             <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
@@ -534,37 +557,27 @@
                                     data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
                                     data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
                                         <div style="position: relative;">
-                                            <!-- Badge de tipo de camión, centrado y más abajo -->
-                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 155%);">
-                                                <span class="badge 
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
-                                                        "bg-secondary" %> 
-                                                    text-white px-3 py-2 rounded-pill">
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
+                                            <!-- Badge de tipo de camión, centrado y más abajo -->  
+                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 0; transform: translate(0%, 200%);">
+                                                <span class="badge text-white py-2" 
+                                                    style="padding-left: 90px; padding-right: 90px; border-radius: 10px; font-size: 18px; 
+                                                        background-color: <%# Eval("vehicle.truckType").ToString() == "V" ? "#2D2D2B" : 
+                                                                            Eval("vehicle.truckType").ToString() == "R" ? "#004382" : 
+                                                                            "#2D2D2B" %>;">
+                                                <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                    Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plano" %>
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div class="card-body p-3">
+                                        <div class="card-body p-8" style="transform: translate( -10px, 20px );">
                                             <!-- Información de la tarjeta con texto más pequeño -->
                                             <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-alt text-primary"></i> <strong>Fecha Prechequeo:</strong></p>
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server"
-                                                    Text='<%# Eval("statuses[2].date") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[2].date")).ToString("dd/MM/yyyy")
-                                                            : "No disponible" %>' />
+                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
                                             </p>
 
-                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Hora Prechequeo:</strong></p>
-                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblHoraStatus" runat="server"
-                                                    Text='<%# Eval("statuses[2].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[2].time")).ToString("HH:mm:ss")
-                                                            : "No disponible" %>' />
-                                            </p>
-
+                                            
                                             <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-code text-primary"></i> <strong>Código Generación:</strong></p>
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lblNombre" runat="server"
@@ -725,19 +738,12 @@
                 confirmButton: 'swal-wide-button',
                 cancelButton: 'swal-wide-button'
             }
-        }).then((result) => {
+        }).then((result) => 
+        {
             if (result.isConfirmed) 
             {
-                // Mostrar alerta de éxito con SweetAlert2
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Validación exitosa',
-                    text: 'El camión ha sido autorizado correctamente.', // Mensaje de éxito
-                    confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    // Llamar a changeStatus después de la validación exitosa
-                    changeStatus(codigoGeneracion);
-                });
+               
+                changeStatus(codigoGeneracion);
             }
         });
 
@@ -745,57 +751,60 @@
     }
 
     // Función para cambiar el estatus después de la validación exitosa
-        function changeStatus(codigoGeneracion) 
+    function changeStatus(codigoGeneracion) 
+    {
+        if (!codigoGeneracion || codigoGeneracion.trim() === '') 
         {
-            if (!codigoGeneracion || codigoGeneracion.trim() === '') 
-            {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Por favor, ingrese un Código de Generación',
-                    icon: 'error',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
-                data: JSON.stringify({ codeGen: codigoGeneracion}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) 
-                {
-                    // Mostrar una alerta de éxito usando SweetAlert
-                    Swal.fire({
-                        title: '¡Operación exitosa!',
-                        text: "El Ingreso a sido autorizado", // Mostrar el mensaje de la API
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                        if (result.isConfirmed) 
-                        {
-                            // Recargar la página cuando el usuario presione "Aceptar"
-                            location.reload();
-                        }
-                    });
-                },
-                error: function(xhr, status, error) 
-                {
-                    // Mostrar una alerta de error usando SweetAlert
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un problema al cambiar el estado: ' + error,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, ingrese un Código de Generación',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
             });
+            return;
         }
 
+        $.ajax({
+            type: "POST",
+            url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
+            data: JSON.stringify({ codeGen: codigoGeneracion}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(response) 
+            {
+                // Verificar la respuesta en la consola para depuración
+                console.log("Respuesta de la API:", response.d);  // Esto debería contener el mensaje que la API devuelve.
 
+                // Mostrar una alerta de éxito usando SweetAlert
+                Swal.fire({
+                    title: '¡Operación exitosa!',
+                    text: "El Ingreso a sido autorizado", // Mostrar el mensaje de la API
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) 
+                    {
+                        // Recargar la página cuando el usuario presione "Aceptar"
+                        location.reload();
+                    }
+                });
+            },
+            error: function(xhr, status, error) 
+            {
+                // Verificar el error en la consola para depuración
+                console.error("Error al cambiar el estado:", error);
+
+                // Mostrar una alerta de error usando SweetAlert
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al cambiar el estado: ' + error,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
 </script>
 
 </body>

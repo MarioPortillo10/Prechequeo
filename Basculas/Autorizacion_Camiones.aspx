@@ -282,7 +282,7 @@
             </nav>
 
             <!-- Logout Button -->
-            <a href="login.aspx" class="login-button" style="text-decoration:none">
+            <a href="login.aspx" class="login-button"  style="text-decoration:none">
                 <i class="fas fa-user"></i> Cerrar Sesión
             </a>
 
@@ -358,75 +358,77 @@
         <section>
             <div class="bg-white">
                 <h2 class="text-lg font-bold mb-2 text-center">TOTAL INGENIOS</h2>
-                <div style="background-color: #d1d5db; padding: 10px;">
+                <div style="background-color: #d1d5db; padding: 5px;">
                     <div class="flex flex-row justify-center items-center flex-wrap">
+
                         <!-- Tarjeta 1 -->
-                        <div class="card1" style="margin: 2px; background-color: white;">
-                            <h2 class="text-xs font-bold text-black mb-1">COMPAÑIA AZUCARERA SALVADOREÑA</h2>
+                        <div class="card1" style="margin: 20px;">
+                            <h2 class="text-xs font-bold text-black mb-1" 
+                                style="background-color: white; border-radius: 10px; padding: 5px; display: inline-block; width: 160px; text-align: left;">
+                                COMPAÑÍA AZUCARERA <center> SALVADOREÑA</center>
+                            </h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity2" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
                             </div>
                         </div>
 
                         <!-- Tarjeta 2 -->
                         <div class="card1" style="margin: 2px;">
-                            <h2 class="text-xs font-bold text-black mb-1">INGENIO CENTRAL AZUCARERO JIBOA</h2>
+                            <h2 class="text-xs font-bold text-black mb-1"style="background-color: white; padding: 5px; border-radius: 10px; display: inline-block;">INGENIO CENTRAL AZUCARERO JIBOA</h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity4" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
                             </div>
                         </div>
 
                         <!-- Tarjeta 3 -->
                         <div class="card1" style="margin: 2px;">
-                            <h2 class="text-xs font-bold text-black mb-1">INGENIO CHAPARRASTIQUE</h2>
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 5px; border-radius: 10px; display: inline-block;">INGENIO CHAPARRASTIQUE</h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity3" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
                                 
                             </div>
                         </div>
 
                         <!-- Tarjeta 4 -->
                         <div class="card1" style="margin: 2px;">
-                            <h2 class="text-xs font-bold text-black mb-1">INGENIO EL ANGEL</h2>
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 5px; border-radius: 10px; display: inline-block;">INGENIO <br>EL ANGEL</h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity6" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
                             </div>
                         </div>
 
                         <!-- Tarjeta 5 -->
                         <div class="card1" style="margin: 2px;">
-                            <h2 class="text-xs font-bold text-black mb-1">INGENIO LA CABAÑA</h2>
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 5px; border-radius: 10px; display: inline-block;">INGENIO <br>LA CABAÑA</h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity1" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: none; color: black; border-radius: 5px;" />
                              
                             </div>
                         </div>
 
                         <!-- Tarjeta 6 -->
                         <div class="card1" style="margin: 2px;">
-                            <h2 class="text-xs font-bold text-black mb-1">INGENIO LA MAGDALENA</h2>
+                            <h2 class="text-xs font-bold text-black mb-1" style="background-color: white; padding: 5px; border-radius: 10px; display: inline-block;">INGENIO LA MAGDALENA</h2>
                             <div class="text-base font-bold">
                                 <asp:TextBox ID="txtIngenioQuantity5" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
-                                    style="background-color: white; border: none; color: black;" />
+                                    style="background-color: white; border: 1px; color: black; border-radius: 5px;" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-
 
 
         <div class="row ml-3" style="border: solid 0px;">
@@ -476,10 +478,7 @@
                                             </p>
 
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server"
-                                                    Text='<%# Eval("statuses[1].date") != null && Eval("statuses[1].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy") + " " + DateTime.Parse(Eval("statuses[1].time").ToString()).ToString("HH:mm")
-                                                            : "No disponible" %>' />
+                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo") %>' />
                                             </p>
 
                                             <p class="text-start mb-1" style="font-size: 0.9rem;">
@@ -577,10 +576,7 @@
                                                 <strong>Fecha Prechequeo:</strong>
                                             </p>
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server"
-                                                    Text='<%# Eval("statuses[1].date") != null && Eval("statuses[1].time") != null
-                                                            ? Convert.ToDateTime(Eval("statuses[1].date")).ToString("dd/MM/yyyy") + " " + DateTime.Parse(Eval("statuses[1].time").ToString()).ToString("HH:mm")
-                                                            : "No disponible" %>' />
+                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
                                             </p>
 
 

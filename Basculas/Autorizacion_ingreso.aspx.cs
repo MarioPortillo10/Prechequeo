@@ -27,6 +27,7 @@ public class QueueDataInner
 {
     public int V { get; set; }
     public int P { get; set; }
+    public int R { get; set; }
 }
 
 protected void Page_Load(object sender, EventArgs e)
@@ -51,33 +52,14 @@ protected void Page_Load(object sender, EventArgs e)
 
             try
             {
-                // Log de la solicitud
-                this.LogEvent("Realizando solicitud GET a la URL: " + url1);
-                this.LogEvent("Método de solicitud: GET");
-                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 // *** Primera API ***
                 string responseBody1 = client.DownloadString(url1);
                 var data1 = JsonConvert.DeserializeObject<List<Post>>(responseBody1);
 
-                // Log de la respuesta
-                this.LogEvent("Respuesta recibida:");
-                this.LogEvent(responseBody1);
-
                 // Filtrar y procesar datos de la primera API
-                var filteredData = new List<Post>();
-                foreach (var item in data1)
-                {
-                    if (item.statuses != null && item.statuses.Count > 0 &&
-                        item.statuses[item.statuses.Count - 1].id == 3 &&
-                        item.vehicle != null)
-                    {
-                        filteredData.Add(item);
-                    }
-                }
-
                 // Filtrar por tipos de camiones
-                var truckTypeP = filteredData.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
-                var truckTypeV = filteredData.Where(item => item.vehicle.truckType == "V").ToList();
+                var truckTypeP = data1.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                var truckTypeV = data1.Where(item => item.vehicle.truckType == "V").ToList();
 
                 // Contar registros por tipo
                 lblCountP.Text = truckTypeP.Count.ToString();
@@ -90,10 +72,10 @@ protected void Page_Load(object sender, EventArgs e)
                 var ingenioCounts = new Dictionary<string, int>();
 
                 // Contar ingenios en todos los registros filtrados
-                foreach (var item in filteredData)
+                foreach (var item in data1)
                 {
-                    var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-                    if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                    var ingenioNavCode = (item.ingenio != null) ? item.ingenio.ingenioNavCode : null; // Verificar nulos explícitamente
+                    if (!string.IsNullOrEmpty(ingenioNavCode) && validIngenios.Contains(ingenioNavCode))
                     {
                         if (ingenioCounts.ContainsKey(ingenioNavCode))
                         {
@@ -111,11 +93,11 @@ protected void Page_Load(object sender, EventArgs e)
                 foreach (var ingenio in validIngenios)
                 {
                     // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
-                    var lblIngenioQuantity = this.FindControl(string.Format("lblIngenioQuantity{0}", i.ToString())) as Label;
-                    if (lblIngenioQuantity != null)
+                    var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i.ToString())) as TextBox;
+                    if (txtIngenioQuantity != null)
                     {
                         // Mostrar el conteo de ingenios o 0 si no existe
-                        lblIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                        txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
                     }
                     i++;
                 }
@@ -129,7 +111,8 @@ protected void Page_Load(object sender, EventArgs e)
 
                 int countP = 0;
                 int countV = 0;
-                foreach (var item in filteredData)
+                        
+                foreach (var item in data1)
                 {
                     if (item.vehicle.truckType == "P" || item.vehicle.truckType == "R")
                     {
@@ -144,16 +127,8 @@ protected void Page_Load(object sender, EventArgs e)
                 lblCountP.Text = countP.ToString();
                 lblCountV.Text = countV.ToString();
 
-                // Log de la solicitud
-                this.LogEvent("Realizando solicitud GET a la URL: " + url2);
-                this.LogEvent("Método de solicitud: GET");
-                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 // *** Segunda API ***
                 string responseBody2 = client.DownloadString(url2);
-
-                // Log de la respuesta
-                this.LogEvent("Respuesta recibida:");
-                this.LogEvent(responseBody2);
 
                 // Deserializar respuesta de la segunda API
                 var queueData = JsonConvert.DeserializeObject<QueueData>(responseBody2);
@@ -162,7 +137,7 @@ protected void Page_Load(object sender, EventArgs e)
                 {
                     // Asignar datos a etiquetas
                     lblV.Text = "" + queueData.data.V.ToString();
-                    lblP.Text = "" + queueData.data.P.ToString();
+                    lblP.Text = "" + queueData.data.R.ToString();
                 }
                 else
                 {
@@ -192,59 +167,54 @@ protected void Page_Load(object sender, EventArgs e)
 }
 
     [WebMethod]
-    public static string ChangeTransactionStatus(string codeGen)
+public static string ChangeTransactionStatus(string codeGen)
+{
+    if (string.IsNullOrEmpty(codeGen))
     {
-        if (string.IsNullOrEmpty(codeGen))
-        {
-            return "Error: La transacción no puede estar vacía.";
-        }
+        return "Error: codeGen no puede ser nulo o vacío";
+    }
 
+    try
+    {
+        // Simulación de la lógica para cambiar el estatus
         string url = "https://apiclientes.almapac.com:9010/api/queue/send/" + codeGen;
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        
+
         string responseContent;
-        // Forzar el uso de TLS 1.2
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         using (var client = new WebClient())
         {
-            // Log de la solicitud
-            LogEventS("Realizando solicitud GET a la URL: " + url);
-            LogEventS("Método de solicitud: GET");
-            LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-            var requestBody = new { codeGen = codeGen };
-            var json = JsonConvert.SerializeObject(requestBody);
-            
-            // Log de la respuesta
-            LogEventS("Respuesta recibida:");
-            LogEventS(requestBody);
+            // Realizar la solicitud POST y recibir la respuesta
+            responseContent = client.UploadString(url, "POST", "");  // No se envía cuerpo en la solicitud
 
-            try
-            {
-                responseContent = client.UploadString(url, "POST", json);
-            }
-            catch (WebException webEx)
-            {
-                using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
-                {
-                    return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + reader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                return "Error inesperado: " + ex.Message;
-                // Log detallado del error
-                LogEventS("Error al realizar la solicitud o procesar la respuesta.");
-                LogEventS("Mensaje de excepción: " + ex.Message);
-                LogEventS("Pila de llamadas: " + ex.StackTrace);
-            }
+            // Puedes hacer algo con la respuesta, por ejemplo, imprimirla
+            Console.WriteLine("Respuesta de la API: " + responseContent);
         }
 
-        return "Respuesta del servidor: " + responseContent;
-        LogEventS(responseContent);
+        return "Cambio de estatus exitoso: " + responseContent;
     }
+    catch (WebException webEx)
+    {
+        using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+        {
+            string errorResponse = reader.ReadToEnd();
+            return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + errorResponse;
+        }
+    }
+    catch (Exception ex)
+    {
+        return "Error inesperado: " + ex.Message;
+    }
+
+    
+}
+
+
 
     private void DataBind()
     {
@@ -338,6 +308,9 @@ public class IngenioCount
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public bool mapping { get; set; }
+        public int currentStatus { get; set; }
+        public DateTime dateTimeCurrentStatus { get; set; }
+        public DateTime dateTimePrecheckeo { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
         public Ingenio ingenio { get; set; }

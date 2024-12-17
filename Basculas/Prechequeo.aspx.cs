@@ -63,15 +63,12 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                 }
 
                 // Manejo de estatus de prechequeo
-                if (data.statuses == null || (data.statuses.LastOrDefault() == null || data.statuses.LastOrDefault().id != 1))
+                if (data.currentStatus != 1)
                 {
-                    var lastStatus = data.statuses != null && data.statuses.Length > 0 ? data.statuses[data.statuses.Length - 1] : null;
                     string alertMessage = "Esta transacción ya ha sido prechequeada.";
-
-                    if (lastStatus != null)
-                    {
-                        alertMessage += " Último estado: " + lastStatus.status;
-                    }
+                    
+                    // Concatenar más detalles al mensaje
+                    alertMessage += " Último estado: " + data.currentStatus.ToString() + ".";
 
                     // Añadir un log para verificar el flujo
                     Console.WriteLine("Transacción ya prechequeada: " + alertMessage);
@@ -331,6 +328,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         public string unitMeasure { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
+        public int currentStatus { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
         public Statuses[] statuses { get; set; }
