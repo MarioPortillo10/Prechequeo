@@ -438,13 +438,112 @@
         </div>
     
         <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif; margin-bottom: 50px;">
-            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+            <!-- Columna izquierda -->
+            <div class="w-full h-full bg-white mx-auto" style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column;">
                 <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
                 <div class="row g-4">
-                    <asp:Repeater ID="rptRutas1" runat="server">
+                <asp:Repeater ID="rptRutas1" runat="server">
+                    <ItemTemplate>
+                        <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                            <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 600px; display: flex; flex-direction: column;">
+                                <asp:LinkButton CssClass="btn p-0 w-100" ID="lnk_VerRuta" runat="server"
+                                    data-toggle="modal" data-target="#rutaModal"
+                                    data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
+                                    <div class="position-relative" style="height: 180px;">
+                                        <!-- Imagen responsiva -->
+                                        <asp:Image ID="imgShipment" runat="server"
+                                            ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                        ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                        : "" %>'
+                                            CssClass="img-fluid rounded-top"
+                                            style="width: 100%; height: 100%; object-fit: cover; background-color: #f8f9fa;" />
+
+                                        <!-- Badge de tipo de camión, centrado y más abajo -->
+                                        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 120%);">
+                                            <span class="badge 
+                                                <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
+                                                    Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
+                                                    "bg-secondary" %> 
+                                                text-white px-3 py-2 rounded-pill">
+                                                <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
+                                                    Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plana" %>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body" style="flex-grow: 1; overflow-y: auto;">
+                                        <!-- Contenido responsivo -->
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-calendar-alt text-primary"></i> 
+                                            <strong>Fecha Prechequeo:</strong>
+                                        </p>
+                                        <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
+                                        </p>
+
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-code text-primary"></i> 
+                                            <strong>Código Generación:</strong>
+                                        </p>
+                                        <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblNombre" runat="server" Text='<%# Eval("codeGen") %>' />
+                                        </p>
+
+                                        <hr class="my-3" style="border: 2px solid #ff7300;">
+
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-industry text-primary"></i> 
+                                            <asp:Label ID="lblIngenio" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                        </p>
+
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-cogs text-primary"></i> 
+                                            <strong>Tipo Operación:</strong>
+                                        </p>
+                                        <p class="text-muted mb-2 text-start" style="font-size: 0.9rem;">
+                                            <asp:Label ID="lbloperacion" runat="server"
+                                                Text='<%# Eval("operationType") != null ? 
+                                                        (Eval("operationType").ToString() == "C" ? "Carga" : 
+                                                        Eval("operationType").ToString() == "D" ? "Recepción" : "No disponible")
+                                                        : "No disponible" %>' />
+                                        </p>
+
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-box text-primary"></i> 
+                                            <strong>Producto:</strong>
+                                        </p>
+                                        <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblproducto" runat="server"
+                                                Text='<%# Eval("nameProduct") != null ? 
+                                                        HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) : 
+                                                        "N/A" %>' />
+                                        </p>
+
+                                        <p class="text-start mb-1" style="font-size: 0.9rem;">
+                                            <i class="fas fa-user text-primary"></i> 
+                                            <strong>Motorista:</strong>
+                                        </p>
+                                        <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lbltransporte" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                        </p>
+                                    </div>
+                                </asp:LinkButton>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </div>
+
+
+            </div>
+
+            <div class="w-full h-full bg-white mx-auto" style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column;">
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES VOLTEO</h2>
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas2" runat="server">
                         <ItemTemplate>
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-                                <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 580px;">
+                                <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 600px; overflow: hidden;">
                                     <asp:LinkButton CssClass="btn p-0 w-100" ID="lnk_VerRuta" runat="server"
                                         data-toggle="modal" data-target="#rutaModal"
                                         data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
@@ -470,15 +569,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="card-body">
+                                        <!-- Contenido de la card con altura fija y sin scroll -->
+                                        <div class="card-body" style="height: calc(100% - 180px); padding: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
                                             <!-- Contenido responsivo -->
                                             <p class="text-start mb-1" style="font-size: 0.9rem;">
                                                 <i class="fas fa-calendar-alt text-primary"></i> 
                                                 <strong>Fecha Prechequeo:</strong>
                                             </p>
-
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo") %>' />
+                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
                                             </p>
 
                                             <p class="text-start mb-1" style="font-size: 0.9rem;">
@@ -493,8 +592,7 @@
 
                                             <p class="text-start mb-1" style="font-size: 0.9rem;">
                                                 <i class="fas fa-industry text-primary"></i> 
-                                                <asp:Label ID="lblIngenio" runat="server"
-                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
+                                                <asp:Label ID="lblIngenio" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
                                             </p>
 
                                             <p class="text-start mb-1" style="font-size: 0.9rem;">
@@ -503,8 +601,8 @@
                                             </p>
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.9rem;">
                                                 <asp:Label ID="lbloperacion" runat="server"
-                                                    Text='<%# Eval("operationType") != null ?
-                                                            (Eval("operationType").ToString() == "C" ? "Carga" :
+                                                    Text='<%# Eval("operationType") != null ? 
+                                                            (Eval("operationType").ToString() == "C" ? "Carga" : 
                                                             Eval("operationType").ToString() == "D" ? "Recepción" : "No disponible")
                                                             : "No disponible" %>' />
                                             </p>
@@ -515,8 +613,8 @@
                                             </p>
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lblproducto" runat="server"
-                                                    Text='<%# Eval("nameProduct") != null ?
-                                                            HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) :
+                                                    Text='<%# Eval("nameProduct") != null ? 
+                                                            HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) : 
                                                             "N/A" %>' />
                                             </p>
 
@@ -525,8 +623,7 @@
                                                 <strong>Motorista:</strong>
                                             </p>
                                             <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lbltransporte" runat="server"
-                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                                <asp:Label ID="lbltransporte" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
                                             </p>
                                         </div>
                                     </asp:LinkButton>
@@ -537,103 +634,10 @@
                 </div>
             </div>
 
-            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
-                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES VOLTEO</h2>
-                <div class="row g-4">
-                    <asp:Repeater ID="rptRutas2" runat="server">
-                        <ItemTemplate>
-                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-                                <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 600px;">
-                                    <asp:LinkButton CssClass="btn p-0 w-100" ID="lnk_VerRuta" runat="server"
-                                        data-toggle="modal" data-target="#rutaModal"
-                                        data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
-                                        <div class="position-relative">
-                                            <!-- Imagen responsiva -->
-                                            <asp:Image ID="imgShipment" runat="server"
-                                                ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
-                                                            ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
-                                                            : "" %>'
-                                                CssClass="img-fluid rounded-top"
-                                                style="width: 100%; height: 180px; object-fit: contain; background-color: #f8f9fa;" />
-
-                                            <!-- Badge de tipo de camión, centrado y más abajo -->
-                                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 120%);">
-                                                <span class="badge 
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "bg-success" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "bg-dark" : 
-                                                        "bg-secondary" %> 
-                                                    text-white px-3 py-2 rounded-pill">
-                                                    <%# Eval("vehicle.truckType").ToString() == "V" ? "Volteo" : 
-                                                        Eval("vehicle.truckType").ToString() == "R" ? "Plana" : "Plana" %>
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body">
-                                            <!-- Contenido responsivo -->
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-calendar-alt text-primary"></i> 
-                                                <strong>Fecha Prechequeo:</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblFechaStatus" runat="server" Text='<%# Eval("dateTimePrecheckeo")  %>' />
-                                            </p>
 
 
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-code text-primary"></i> 
-                                                <strong>Código Generación:</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblNombre" runat="server" Text='<%# Eval("codeGen") %>' />
-                                            </p>
 
-                                            <hr class="my-3" style="border: 2px solid #ff7300;">
 
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-industry text-primary"></i> 
-                                                <asp:Label ID="lblIngenio" runat="server"
-                                                    Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' />
-                                            </p>
-
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-cogs text-primary"></i> 
-                                                <strong>Tipo Operación:</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-start" style="font-size: 0.9rem;">
-                                                <asp:Label ID="lbloperacion" runat="server"
-                                                    Text='<%# Eval("operationType") != null ?
-                                                            (Eval("operationType").ToString() == "C" ? "Carga" :
-                                                            Eval("operationType").ToString() == "D" ? "Recepción" : "No disponible")
-                                                            : "No disponible" %>' />
-                                            </p>
-
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-box text-primary"></i> 
-                                                <strong>Producto:</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lblproducto" runat="server"
-                                                    Text='<%# Eval("nameProduct") != null ?
-                                                            HttpUtility.HtmlEncode(Eval("nameProduct").ToString().Replace("_", " ")) :
-                                                            "N/A" %>' />
-                                            </p>
-
-                                            <p class="text-start mb-1" style="font-size: 0.9rem;">
-                                                <i class="fas fa-user text-primary"></i> 
-                                                <strong>Motorista:</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-start" style="font-size: 0.85rem;">
-                                                <asp:Label ID="lbltransporte" runat="server"
-                                                    Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
-                                            </p>
-                                        </div>
-                                    </asp:LinkButton>
-                                </div>
-                            </div>
-                        </ItemTemplate>
-                    </asp:Repeater>
-                </div>
             </div>
         </section>
     </main>
@@ -772,6 +776,18 @@
             var placaCamion         = document.getElementById('txt_placamion').value;
             var tarjeta             = document.getElementById('txt_tarjeta').value
 
+            // Verificar si el campo tarjeta está vacío
+            if (!tarjeta) 
+            {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo tarjeta vacío',
+                    text: 'Por favor, ingrese el número de tarjeta.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return; // Detener la ejecución si el campo tarjeta está vacío
+            }
+            
             $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ValidarDatos",
