@@ -177,6 +177,13 @@
             justify-content: center;
             margin: 0.5rem; /* Espaciado entre tarjetas */
         }
+
+        /* Estilo para los campos con error */
+        .error-field 
+        {
+            border: 2px solid red !important; /* Borde rojo de 2px */
+            background-color: #ffdddd; /* Fondo ligeramente rojo para resaltar el error */
+        }
     </style>
 
 </head>
@@ -543,18 +550,18 @@
                     <asp:Repeater ID="rptRutas2" runat="server">
                         <ItemTemplate>
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-                                <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 600px; overflow: hidden;">
-                                    <asp:LinkButton CssClass="btn p-0 w-100" ID="lnk_VerRuta" runat="server"
-                                        data-toggle="modal" data-target="#rutaModal"
-                                        data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
-                                        <div class="position-relative">
-                                            <!-- Imagen responsiva -->
-                                            <asp:Image ID="imgShipment" runat="server"
-                                                ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
-                                                            ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
-                                                            : "" %>'
-                                                CssClass="img-fluid rounded-top"
-                                                style="width: 100%; height: 180px; object-fit: contain; background-color: #f8f9fa;" />
+                            <div class="card border rounded-4 shadow-sm" style="border-color: #ddd; border-radius: 10px; height: 600px; display: flex; flex-direction: column;">
+                                <asp:LinkButton CssClass="btn p-0 w-100" ID="lnk_VerRuta" runat="server"
+                                    data-toggle="modal" data-target="#rutaModal"
+                                    data-codigo-generacion='<%# Eval("codeGen") %>' OnClick="lnk_VerRuta_Click">
+                                    <div class="position-relative" style="height: 180px;">
+                                        <!-- Imagen responsiva -->
+                                        <asp:Image ID="imgShipment" runat="server"
+                                            ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                        ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                        : "" %>'
+                                            CssClass="img-fluid rounded-top"
+                                            style="width: 100%; height: 100%; object-fit: cover; background-color: #f8f9fa;" />
 
                                             <!-- Badge de tipo de camión, centrado y más abajo -->
                                             <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4" style="left: 50%; transform: translate(-50%, 120%);">
@@ -675,47 +682,82 @@
             </div>
         </div>
 
-         <!-- Modal de Validación -->
-            <div class="modal fade" id="rutaModal" tabindex="-1" role="dialog" aria-labelledby="rutaModalLabel" aria-hidden="true" data-backdrop="static">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="rutaModalLabel">Validación de Información</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
-                            <form>
-                                <div class="form-group">
-                                    <label for="recipient-name" class="col-form-label">Licencia:</label>
-                                    <input type="text" class="form-control" id="txt_licencia" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="message-text" class="col-form-label">Placa Remolque:</label>
-                                    <input type="text" class="form-control" id="txt_placaremolque" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="message-text" class="col-form-label">Placa Camion:</label>
-                                    <input type="text" class="form-control" id="txt_placamion" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
-                                    <input type="number" class="form-control" id="txt_tarjeta"  oninput="this.value = this.value.slice(0, 4)" />
-                                </div>
-                            </form>
-                            <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
-                        </div>
+        <!-- Modal de Validación -->
+        <div class="modal fade" id="rutaModal" tabindex="-1" role="dialog" aria-labelledby="rutaModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rutaModalLabel">Validación de Información</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
+                        <form>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Licencia:</label>
+                                <input type="text" class="form-control" id="txt_licencia" />
+                            </div>
+                           <div class="form-group">
+                                <label for="message-text" class="col-form-label">Placa Remolque:</label>
+                                <input type="text" class="form-control" id="txt_placaremolque" oninput="validarPlacaRemolque()" />
+                                <small class="form-text text-muted" id="placaRemolqueHint">Debe comenzar con "RE" seguido de números, sin espacios.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Placa Camión:</label>
+                                <input type="text" class="form-control" id="txt_placamion" oninput="validarPlacaCamion()" />
+                                <small class="form-text text-muted" id="placaCamionHint">Debe comenzar con "C" seguido de números, sin espacios.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
+                                <input type="number" class="form-control" id="txt_tarjeta"  oninput="this.value = this.value.slice(0, 4)" />
+                            </div>
+                        </form>
+                        <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="btnReportar">Reportar</button>
+                        <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        </div>
         </div>
        </div>
+
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalReportar" aria-labelledby="modalReportarLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reportar Comentario</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formReportar">
+                            <!-- Campo oculto para almacenar codigoGeneracion -->
+                            <input type="hidden" id="codigoGeneracionModal" value="">
+                            
+                            <div class="form-group">
+                                <label for="comentario">Comentario</label>
+                                <textarea class="form-control" id="comentario" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarComentario()">Guardar Comentario</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </form>
 
@@ -767,70 +809,178 @@
             });
         }
 
-
-        function validarInformacion() 
+        // Validación en tiempo real de la placa remolque
+        function validarPlacaRemolque() 
         {
-            var codigoGeneracion    = document.getElementById('codigoGeneracionInput').value;
-            var licencia            = document.getElementById('txt_licencia').value;
-            var placaRemolque       = document.getElementById('txt_placaremolque').value;
-            var placaCamion         = document.getElementById('txt_placamion').value;
-            var tarjeta             = document.getElementById('txt_tarjeta').value
+            var placaRemolque = document.getElementById('txt_placaremolque').value;
+            var hint = document.getElementById('placaRemolqueHint');
+            var regex = /^RE\d+$/;
 
-            // Verificar si el campo tarjeta está vacío
-            if (!tarjeta) 
+            if (regex.test(placaRemolque)) 
             {
+                hint.style.color = 'green';
+                document.getElementById('txt_placaremolque').classList.remove('error-field');
+            } 
+            else 
+            {
+                hint.style.color = 'red';
+                document.getElementById('txt_placaremolque').classList.add('error-field');
+            }
+        }
+
+        // Validación en tiempo real de la placa camión
+        function validarPlacaCamion() 
+        {
+            var placaCamion = document.getElementById('txt_placamion').value;
+            var hint = document.getElementById('placaCamionHint');
+            var regex = /^C\d+$/;
+
+            if (regex.test(placaCamion)) 
+            {
+                hint.style.color = 'green';
+                document.getElementById('txt_placamion').classList.remove('error-field');
+            } 
+            else 
+            {
+                hint.style.color = 'red';
+                document.getElementById('txt_placamion').classList.add('error-field');
+            }
+        }
+
+        function validarInformacion() {
+    // Obtener los valores de los campos
+    var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
+    var licencia = document.getElementById('txt_licencia').value;
+    var placaRemolque = document.getElementById('txt_placaremolque').value;
+    var placaCamion = document.getElementById('txt_placamion').value;
+    var tarjeta = document.getElementById('txt_tarjeta').value;
+
+    // Expresiones regulares para verificar el formato de las placas
+    var regexRemolque = /^RE\d+$/; // La placa del remolque debe comenzar con "RE" seguido de números
+    var regexCamion = /^C\d+$/;    // La placa del camión debe comenzar con "C" seguido de números
+
+    // Validar formato de placas antes de continuar
+    if (!regexRemolque.test(placaRemolque)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Formato Incorrecto',
+            text: 'La placa del remolque debe comenzar con "RE" seguido de números.',
+            confirmButtonText: 'Aceptar'
+        });
+        document.getElementById('txt_placaremolque').classList.add('error-field');
+        return; // Detener la ejecución si el formato de la placa del remolque es incorrecto
+    }
+
+    if (!regexCamion.test(placaCamion)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Formato Incorrecto',
+            text: 'La placa del camión debe comenzar con "C" seguido de números.',
+            confirmButtonText: 'Aceptar'
+        });
+        document.getElementById('txt_placamion').classList.add('error-field');
+        return; // Detener la ejecución si el formato de la placa del camión es incorrecto
+    }
+
+    // Verificar si el campo tarjeta está vacío
+    if (!tarjeta) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campo tarjeta vacío',
+            text: 'Por favor, ingrese el número de tarjeta.',
+            confirmButtonText: 'Aceptar'
+        });
+        document.getElementById('txt_tarjeta').classList.add('error-field');
+        return; // Detener la ejecución si el campo tarjeta está vacío
+    }
+
+    // Llamar al servidor para validar los datos
+    $.ajax({
+        type: "POST",
+        url: "Autorizacion_Camiones.aspx/ValidarDatos",
+        data: JSON.stringify({
+            codigoGeneracion: codigoGeneracion,
+            licencia: licencia,
+            placaRemolque: placaRemolque,
+            placaCamion: placaCamion
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            var resultado = response.d;
+
+            if (resultado.error) {
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Campo tarjeta vacío',
-                    text: 'Por favor, ingrese el número de tarjeta.',
+                    icon: 'error',
+                    title: 'Errores encontrados',
+                    text: 'Por favor revise los campos resaltados.',
                     confirmButtonText: 'Aceptar'
                 });
-                return; // Detener la ejecución si el campo tarjeta está vacío
-            }
-            
-            $.ajax({
-                type: "POST",
-                url: "Autorizacion_Camiones.aspx/ValidarDatos",
-                data: JSON.stringify({ codigoGeneracion: codigoGeneracion, licencia: licencia, placaRemolque: placaRemolque, placaCamion: placaCamion }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) 
-                {
-                    var resultado = response.d; 
-                    if (resultado.includes("Validación exitosa")) 
-                    {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Validación exitosa',
-                            text: resultado,
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            // Llamar a la función changeStatus después de la validación exitosa
-                            asignartarjeta(codigoGeneracion, tarjeta);
-                        });
-                    } 
-                    else 
-                    {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error en la validación',
-                            text: resultado,
-                            confirmButtonText: 'Aceptar'
-                        });
+
+                // Limpiar los errores previos
+                resetErrorFields();
+
+                // Marcar los campos con errores
+                resultado.camposConError.forEach(function (campo) {
+                    switch (campo) {
+                        case "licencia":
+                            document.getElementById('txt_licencia').classList.add('error-field');
+                            break;
+                        case "placaRemolque":
+                            document.getElementById('txt_placaremolque').classList.add('error-field');
+                            break;
+                        case "placaCamion":
+                            document.getElementById('txt_placamion').classList.add('error-field');
+                            break;
+                        case "codigoGeneracion":
+                            document.getElementById('codigoGeneracionInput').classList.add('error-field');
+                            break;
                     }
-                },
-                error: function (error) 
-                {
-                    console.error("Error en la solicitud: ", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ocurrió un error al validar los datos.',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Validación exitosa',
+                    text: resultado.mensaje,
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Llamar a la función asignar tarjeta después de la validación exitosa
+                    asignartarjeta(codigoGeneracion, tarjeta);
+                });
+            }
+        },
+        error: function (error) {
+            console.error("Error en la solicitud:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al validar los datos.',
+                confirmButtonText: 'Aceptar'
             });
         }
+    });
+}
+
+// Función para limpiar los campos de entrada
+function resetErrorFields() {
+    var campos = [
+        'txt_licencia',
+        'txt_placaremolque',
+        'txt_placamion',
+        'codigoGeneracionInput',
+        'txt_tarjeta'
+    ];
+    campos.forEach(function (campo) {
+        var elemento = document.getElementById(campo);
+        elemento.classList.remove('error-field');
+        elemento.value = ''; // Limpiar el campo
+    });
+}
+
+// Limpiar los datos cuando se cierre la modal
+$('#myModal').on('hidden.bs.modal', function () {
+    resetErrorFields(); // Limpiar los campos
+});
 
         // Funcion para asignar la tarjeta en NAV
         function asignartarjeta(codigoGeneracion, tarjeta) 
@@ -888,6 +1038,94 @@
                 }
             });
         }
+
+        document.getElementById('btnReportar').addEventListener('click', function() 
+        {
+            // Obtener el valor de codigoGeneracion desde el input
+            var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
+
+            // Asignar el valor al campo oculto en la modal
+            document.getElementById('codigoGeneracionModal').value = codigoGeneracion;
+
+            // Ocultar la modal anterior y mostrar la nueva
+            $('#rutaModal').modal('hide');
+            $('#modalReportar').modal('show');
+
+            // Confirmar en consola
+            console.log("Código de generación asignado a la modal:", codigoGeneracion);
+        });
+
+
+        // Al hacer clic en el botón "Cerrar" de modalReportar, cerramos modalReportar y mostramos rutaModal
+        document.getElementById('btnCerrarModalReportar').addEventListener('click', function() 
+        {
+            // Cerrar modalReportar
+            $('#modalReportar').modal('hide');
+
+            // Abrir rutaModal
+            $('#rutaModal').modal('show');
+        });
+
+        function guardarComentario() 
+        {
+            // Obtener los valores necesarios
+            var comentario = document.getElementById('comentario').value.trim();
+            var codigoGeneracion = document.getElementById('codigoGeneracionModal').value;
+
+            // Validar si el comentario está vacío
+            if (!comentario) 
+            {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Comentario vacío',
+                    text: 'Por favor, ingrese un comentario antes de guardar.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return; // Detener la ejecución
+            }
+
+            // Mostrar en consola para confirmar
+            console.log("Comentario:", comentario);
+            console.log("Código de generación:", codigoGeneracion);
+
+            // Realizar la solicitud AJAX
+            $.ajax({
+                type: "POST",
+                url: "Autorizacion_Camiones.aspx/GuardarComentario",
+                data: JSON.stringify({ codigoGeneracion: codigoGeneracion, comentario: comentario }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) 
+                {
+                    // Analizar el JSON recibido
+                    var responseData = response.d; // Asegúrate de adaptar según la estructura de tu backend
+                    //console.log("Respuesta del servidor:", responseData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'El comentario fue procesado correctamente.',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => 
+                    {
+                        $('#modalReportar').modal('hide'); // Ocultar la modal
+                        location.reload();
+                    });
+                    
+                },
+                error: function(error) 
+                {
+                    console.error("Error en la solicitud:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al guardar el comentario.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+                
+            });
+        }
+
     </script>
 
 </body>
