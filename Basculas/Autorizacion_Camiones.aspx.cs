@@ -200,15 +200,15 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                     // Comparar los valores obtenidos con los ingresados
                     if (data.driver.license != licencia)
                     {
-                        errores.Add("Licencia");
+                        errores.Add("licencia");
                     }
                     if (data.vehicle.trailerPlate != placaRemolque)
                     {
-                        errores.Add("Placa Remolque");
+                        errores.Add("placaRemolque");
                     }
                     if (data.vehicle.plate != placaCamion)
                     {
-                        errores.Add("Placa Camion");
+                        errores.Add("placaCamion");
                     }
                 }
                 catch (WebException webEx)

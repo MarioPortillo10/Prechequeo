@@ -178,12 +178,16 @@
             margin: 0.5rem; /* Espaciado entre tarjetas */
         }
 
-        /* Estilo para los campos con error */
-        .error-field 
+        /* Aplica borde rojo y fondo suave para campos con la clase 'error-field' */
+        input.form-control.error-field,
+        textarea.form-control.error-field,
+        select.form-control.error-field 
         {
-            border: 2px solid red !important; /* Borde rojo de 2px */
-            background-color: #ffdddd; /* Fondo ligeramente rojo para resaltar el error */
+            border: 2px solid red !important; /* Asegúrate de que se aplique incluso si hay otras reglas */
+            background-color: #f8d7da !important; /* Fondo suave para resaltar el error */
         }
+
+
     </style>
 
 </head>
@@ -687,7 +691,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="rutaModalLabel">Validación de Información</h5>
+                        <h5 class="modal-title" id="modalTitulo"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -699,7 +703,7 @@
                                 <label for="recipient-name" class="col-form-label">Licencia:</label>
                                 <input type="text" class="form-control" id="txt_licencia" />
                             </div>
-                           <div class="form-group">
+                            <div class="form-group">
                                 <label for="message-text" class="col-form-label">Placa Remolque:</label>
                                 <input type="text" class="form-control" id="txt_placaremolque" oninput="validarPlacaRemolque()" />
                                 <small class="form-text text-muted" id="placaRemolqueHint">Debe comenzar con "RE" seguido de números, sin espacios.</small>
@@ -776,14 +780,20 @@
 
      <script>
         $(document).ready(function () 
-            {
-                $('#rutaModal').on('show.bs.modal', function (event) {
-                    var button = $(event.relatedTarget); // Botón que abrió el modal
-                    var codigoGeneracion = button.data('codigo-generacion'); // Extraer la información del atributo data-codigo-generacion
-                    var modal = $(this);
-                    modal.find('#codigoGeneracionInput').val(codigoGeneracion); // Mostrar el código de generación en el input
-                });
+        {
+            $('#rutaModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botón que abrió el modal
+                var codigoGeneracion = button.data('codigo-generacion'); // Extraer la información del atributo data-codigo-generacion
+                var modal = $(this);
+                
+                // Mostrar el código de generación en el input
+                modal.find('#codigoGeneracionInput').val(codigoGeneracion);
+                
+                // Mostrar el código de generación en el título de la modal
+                modal.find('.modal-title').text('Validación de Información de ' + codigoGeneracion);
             });
+        });
+
 
         function filterCards() 
         {
@@ -850,51 +860,50 @@
         function validarInformacion() {
     // Obtener los valores de los campos
     var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
-    var licencia = document.getElementById('txt_licencia').value;
-    var placaRemolque = document.getElementById('txt_placaremolque').value;
-    var placaCamion = document.getElementById('txt_placamion').value;
-    var tarjeta = document.getElementById('txt_tarjeta').value;
+    var licencia         = document.getElementById('txt_licencia').value.trim();
+    var placaRemolque    = document.getElementById('txt_placaremolque').value.trim();
+    var placaCamion      = document.getElementById('txt_placamion').value.trim();
+    var tarjeta = document.getElementById('txt_tarjeta').value.trim();
 
     // Expresiones regulares para verificar el formato de las placas
     var regexRemolque = /^RE\d+$/; // La placa del remolque debe comenzar con "RE" seguido de números
     var regexCamion = /^C\d+$/;    // La placa del camión debe comenzar con "C" seguido de números
 
-    // Validar formato de placas antes de continuar
-    if (!regexRemolque.test(placaRemolque)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Formato Incorrecto',
-            text: 'La placa del remolque debe comenzar con "RE" seguido de números.',
-            confirmButtonText: 'Aceptar'
-        });
+    // Limpiar previamente cualquier clase de error
+    resetErrorFields([]);
+
+    // Validación de los campos vacíos
+    if (!licencia) {
+        document.getElementById('txt_licencia').classList.add('error-field');
+    }
+    if (!placaRemolque) {
         document.getElementById('txt_placaremolque').classList.add('error-field');
-        return; // Detener la ejecución si el formato de la placa del remolque es incorrecto
+    } else if (!regexRemolque.test(placaRemolque)) {
+        // Validar el formato de la placa del remolque
+        document.getElementById('txt_placaremolque').classList.add('error-field');
+    }
+    if (!placaCamion) {
+        document.getElementById('txt_placamion').classList.add('error-field');
+    } else if (!regexCamion.test(placaCamion)) {
+        // Validar el formato de la placa del camión
+        document.getElementById('txt_placamion').classList.add('error-field');
+    }
+    if (!tarjeta) {
+        document.getElementById('txt_tarjeta').classList.add('error-field');
     }
 
-    if (!regexCamion.test(placaCamion)) {
+    // Si hay algún campo con error, mostramos el mensaje y detenemos la ejecución
+    if (document.querySelectorAll('.error-field').length > 0) {
         Swal.fire({
             icon: 'error',
-            title: 'Formato Incorrecto',
-            text: 'La placa del camión debe comenzar con "C" seguido de números.',
+            title: 'Campos con error',
+            text: 'Por favor, complete todos los campos correctamente.',
             confirmButtonText: 'Aceptar'
         });
-        document.getElementById('txt_placamion').classList.add('error-field');
-        return; // Detener la ejecución si el formato de la placa del camión es incorrecto
+        return; // Detener la ejecución si algún campo tiene error
     }
 
-    // Verificar si el campo tarjeta está vacío
-    if (!tarjeta) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Campo tarjeta vacío',
-            text: 'Por favor, ingrese el número de tarjeta.',
-            confirmButtonText: 'Aceptar'
-        });
-        document.getElementById('txt_tarjeta').classList.add('error-field');
-        return; // Detener la ejecución si el campo tarjeta está vacío
-    }
-
-    // Llamar al servidor para validar los datos
+    // Si los campos pasan las validaciones, llamamos al servidor para validar los datos
     $.ajax({
         type: "POST",
         url: "Autorizacion_Camiones.aspx/ValidarDatos",
@@ -917,8 +926,8 @@
                     confirmButtonText: 'Aceptar'
                 });
 
-                // Limpiar los errores previos
-                resetErrorFields();
+                // Limpiar el marcado de error en los campos anteriores
+                resetErrorFields(resultado.camposConError);
 
                 // Marcar los campos con errores
                 resultado.camposConError.forEach(function (campo) {
@@ -932,8 +941,8 @@
                         case "placaCamion":
                             document.getElementById('txt_placamion').classList.add('error-field');
                             break;
-                        case "codigoGeneracion":
-                            document.getElementById('codigoGeneracionInput').classList.add('error-field');
+                        case "tarjeta":
+                            document.getElementById('txt_tarjeta').classList.add('error-field');
                             break;
                     }
                 });
@@ -942,10 +951,14 @@
                     icon: 'success',
                     title: 'Validación exitosa',
                     text: resultado.mensaje,
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Aceptar',
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        // Llamar a la función asignar tarjeta después de la validación exitosa
+                        return asignartarjeta(codigoGeneracion, tarjeta);
+                    }
                 }).then(() => {
-                    // Llamar a la función asignar tarjeta después de la validación exitosa
-                    asignartarjeta(codigoGeneracion, tarjeta);
+                    console.log("Tarjeta asignada correctamente.");
                 });
             }
         },
@@ -961,25 +974,27 @@
     });
 }
 
-// Función para limpiar los campos de entrada
-function resetErrorFields() {
+// Función para limpiar el marcado de error en los campos
+function resetErrorFields(camposConError) {
     var campos = [
         'txt_licencia',
         'txt_placaremolque',
         'txt_placamion',
-        'codigoGeneracionInput',
         'txt_tarjeta'
     ];
+
     campos.forEach(function (campo) {
         var elemento = document.getElementById(campo);
-        elemento.classList.remove('error-field');
-        elemento.value = ''; // Limpiar el campo
+        if (elemento && !camposConError.includes(campo)) {
+            // Si el campo no está en la lista de campos con error, quitamos la clase 'error-field'
+            elemento.classList.remove('error-field');
+        }
     });
 }
 
 // Limpiar los datos cuando se cierre la modal
 $('#myModal').on('hidden.bs.modal', function () {
-    resetErrorFields(); // Limpiar los campos
+    resetErrorFields([]); // Limpiar los campos
 });
 
         // Funcion para asignar la tarjeta en NAV
@@ -1121,11 +1136,9 @@ $('#myModal').on('hidden.bs.modal', function () {
                         text: 'Ocurrió un error al guardar el comentario.',
                         confirmButtonText: 'Aceptar'
                     });
-                }
-                
+                }   
             });
         }
-
     </script>
 
 </body>
