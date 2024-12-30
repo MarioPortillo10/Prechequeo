@@ -1,534 +1,646 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Basculas_Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Lista_Negra.aspx.cs" Inherits="Basculas_Lista_Negra" %>
 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Lista Negra</title>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorizacion de Ingreso</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.6/dist/jquery.fancybox.min.css" />
+    <!-- Tipo de letra -->
+    <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
 
-    <script src="../src/js/jquery-3.4.1.min.js"> </script>
-    <%--    <script src="../src/js/spotlight.min.js"></script>--%>
-    <script src="../src/js/spotlight.bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <style>
+    /* Establece la fuente del cuerpo de la página */
+    body 
+    {
+      font-family: 'Roboto', sans-serif; /* Usa la fuente Roboto, con sans-serif como alternativa */
+    }
 
-    <script>
-        var rotation = 0;
+    /* Estilo para botones naranjas */
+    .button-orange 
+    {
+      background-color: #f97316; /* Color de fondo naranja */
+    }
 
-        jQuery.fn.rotate = function (degrees) 
-        {
-            $(this).css({
-                '-webkit-transform': 'rotate(' + degrees + 'deg)',
-                '-moz-transform': 'rotate(' + degrees + 'deg)',
-                '-ms-transform': 'rotate(' + degrees + 'deg)',
-                'transform': 'rotate(' + degrees + 'deg)'
-            });
-        };
+    .button-orange:hover 
+    {
+      background-color: #ea580c; /* Color de fondo más oscuro al pasar el mouse */
+    }
 
-        $('#spotlight').click(function () 
-        {
-            alert("Demo Rotation");
-            //rotation += 45;
-            //$('.rotate').rotate(rotation);
-        });
+    /* Estilo para una línea vertical Plano*/
+    .vertical-line 
+    {
+      border-left: 4px solid #2b6cb0; /* Línea vertical anaranjada de 4px */
+      height: 100%; /* Altura completa del contenedor */
+    }
 
-        function openModal(cod_actividad, ntarjeta, cod_preTrans) 
-        {
-            //alert(codigo);
-            // jQuery.noConflict();
-            //$('#actividadModal').modal('show');
-            //var slt = document.getElementById('ddlActividadEdt'); txt_codigoPreTransaccion
-            document.getElementById("ddlActividadEdt").selectedIndex = cod_actividad;
-            document.getElementById("txt_tarjetaEdit").value = ntarjeta;
-            document.getElementById("txt_codigoPreTransaccion").value = cod_preTrans;
-        }
+    /* Estilo para una línea vertical Volteo*/
+    .vertical-line 
+    {
+      border-left: 4px solid #f97316; /* Línea vertical anaranjada de 4px */
+      height: 100%; /* Altura completa del contenedor */
+    }
 
-        //Confirma si el cliente quiere eliminar el item.  getConfirmationDetele
-        function getConfirmation() 
-        {
-            var retVal = confirm("¿Desea autorizar este ingreso?");
-            if (retVal == true) 
-            {
-                //alert("User wants to continue!");
-                return true;
-            } 
-            else 
-            {
-                //alert("User does not want to continue!");
-                return false;
-            }
-        }
+    /* Estilo para una línea en el banner */
+    .banner-line 
+    {
+      border-bottom: 6px solid #f97316; /* Línea horizontal en el banner de 6px */
+    }
 
-        function getConfirmationDetele() 
-        {
-            //Swal.fire({
-            //    title: '¿Estás seguro?',
-            //    text: "¡Este cambio no podrá ser revertido!",
-            //    icon: 'warning',
-            //    showCancelButton: true,
-            //    confirmButtonColor: '#3085d6',
-            //    cancelButtonColor: '#d33',
-            //    confirmButtonText: 'Sí, bórralo!'
-            //}).then((result) => {
-            //    if (result.value) {
-            //        Swal.fire(
-            //            'Eliminado!',
-            //            'El registro ha sido eliminado.',
-            //            'success'
-            //        )
-            //    }
-            //})
+    /* Estilo para un banner personalizado */
+    .custom-banner 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      align-items: center; /* Alinea los elementos al centro verticalmente */
+      background-color: #f97316; /* Color de fondo naranja */
+      padding: 0.25rem 1rem; /* Espaciado interno reducido: 0.25rem arriba y abajo, 1rem a los lados */
+      color: white; /* Color del texto blanco */
+      margin-top: 105px;
+      width: 45%;
+      border-radius: 5px;
+    }
 
-            var retVal = confirm("¿Desea Actualizar este registro?\n Este cambio no podra ser revertido");
-            if (retVal == true) 
-            {
-                //alert("User wants to continue!");
-                return true;
-            } 
-            else 
-            {
-                //alert("User does not want to continue!");
-                return false;
-            }
-        }
+    /* Estilo para el título dentro del banner */
+    .custom-banner h1 
+    {
+      color: white; /* Color del texto blanco */
+      font-size: 1.5rem; /* Tamaño de fuente reducido a 1.5rem */
+      font-weight: bold; /* Texto en negrita */
+      margin: 0; /* Elimina el margen por defecto */
+      font-family: 'Gilroy-Bold', sans-serif;
+    }
 
-        //Confirma si el cliente quiere eliminar el item.  getConfirmationDetele
-        function getConfirmation_update() 
-        {
-            var retVal = confirm("¿Desea actualizar este registro?");
-            if (retVal == true) 
-            {
-                //alert("User wants to continue!");
-                return true;
-            } 
-            else 
-            {
-                //alert("User does not want to continue!");
-                return false;
-            }
-        }
-    </script>
+    /* Estilo para tarjetas */
+    .card 
+    {
+      border-radius: 10px; /* Bordes redondeados de 10px */
+      overflow: hidden; /* Oculta el contenido que se desborda */
+    }
 
+    /* Estilo para la cabecera de la tarjeta */
+    .card-header 
+    {
+      background-color: #2b6cb0; /* Color de fondo azul */
+      color: white; /* Color del texto blanco */
+      padding: 10px; /* Espaciado interno de 10px */
+    }
 
-    <style>
-        .Content12 
-        {
-            -webkit-border-radius: 10px 10px 10px 10px;
-            border-radius: 10px 10px 10px 10px;
-            background: #fff;
-            /*padding: 30px;*/
-            width: 100%;
-            /*max-width: 450px;*/
-            position: relative;
-            /*padding: 0px;*/
-            -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
-            box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
-            /*text-align: center;*/
-        }
-    </style>
+    .header 
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 50px;
+        background-color: #fff;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 100; /* Para asegurar que esté en la parte superior de otros elementos */
+        font-family: 'Gilroy-Light', sans-serif;
+    }
+
+    .logo img 
+    {
+        max-height: 35px;
+    }
+
+    .login-button 
+    {
+        border: 2px solid #FF5C00;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #FF5C00;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+         font-family: 'Gilroy-Bold', sans-serif;
+    }
+
+    .login-button i 
+    {
+        margin-right: 8px;
+    }
+
+    .login-button:hover 
+    {
+        background-color: #FF5C00;
+        color: white;
+    }
+
+    /* Contenedor para el temporizador */
+    .timer-container 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
+    }
+
+    /* Estilo para la información del temporizador */
+    .timer-info 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      align-items: center; /* Alinea los elementos al centro verticalmente */
+      gap: 20px; /* Espacio de 20px entre los elementos */
+    }
+
+    /* Estilo para cada div dentro de la información del temporizador */
+    .timer-info div 
+    {
+      background-color: white; /* Color de fondo blanco */
+      width: 80px; /* Ancho de 80px */
+      height: 80px; /* Altura de 80px */
+      border-radius: 50%; /* Bordes redondeados para hacer un círculo */
+    }
+
+    /* Estilo para el contenedor de botones */
+    .buttons 
+    {
+      display: flex; /* Usa flexbox para el diseño */
+      gap: 10px; /* Espacio de 10px entre los botones */
+    }
+
+    .card1 
+    {
+        width: 175px; /* Ancho fijo */
+        height: 75px; /* Alto fijo */
+        background-color: #d1d5db; /* Color de fondo */
+        padding: 1rem;
+        text-align: center;
+        border-radius: 0.5rem; /* Bordes redondeados */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0.5rem; /* Espaciado entre tarjetas */
+    }
+
+    /* Estilo para los campos con error */
+    .error-field 
+    {
+        border: 2px solid red !important; /* Borde rojo de 2px */
+        background-color: #ffdddd; /* Fondo ligeramente rojo para resaltar el error */
+    }
+</style>
+
 </head>
 <body>
-    <form id="form1" runat="server">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">ALMAPAC</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+ <form id="form1" runat="server">
+    <asp:SqlDataSource ID="sql_rutas_actividades" runat="server" ConnectionString="<%$ ConnectionStrings:ConnProduccion %>"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="sql_rutas_actividadesDetalles" runat="server" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>"
+        InsertCommand="INSERT INTO [dbo].[LEVERANS_Plantilla_Rutas]([FK_Acceso],[Fk_Actividad],[Estado],[Correlativo])VALUES(@FK_Acceso,@FK_Actividad,1,@Correlativo)"
+        DeleteCommand="DELETE FROM [dbo].[LEVERANS_Plantilla_Rutas] WHERE [PK_Ruta]=@PK_Rutas"
+        UpdateCommand="UPDATE [dbo].[LEVERANS_Plantilla_Rutas] SET [Correlativo] = @Correlativo,[FK_Acceso]=@FK_Acceso,[Estado] = @Estado  WHERE [PK_Ruta]=@PK_Rutas">
+
+        <InsertParameters>
+            <asp:Parameter Name="FK_Acceso" Type="Int32" />
+            <asp:Parameter Name="FK_Actividad" Type="Int32" />
+            <asp:Parameter Name="Correlativo" Type="Int32" />
+        </InsertParameters>
+
+        <DeleteParameters>
+            <asp:Parameter Name="PK_Rutas" Type="Int32" />
+        </DeleteParameters>
+
+        <UpdateParameters>
+            <asp:Parameter Name="PK_Rutas" Type="Int32" />
+            <asp:Parameter Name="FK_Acceso" Type="Int32" />
+            <asp:Parameter Name="Correlativo" Type="Int32" />
+            <asp:Parameter Name="Estado" Type="Boolean" />
+        </UpdateParameters>
+    </asp:SqlDataSource>
+
+    <!-- Header -->
+    <header class="header bg-gradient-to-r from-white to-gray-200 py-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/almapac.png?raw=true" alt="Almapac Logo" class="h-12">
+            </div>
+
+            <!-- Navbar Toggler for Mobile View -->
+            <button id="menu-toggle" class="md:hidden text-gray-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link bg-primary text-white" href="Default.aspx"><span id="nft_1" class="badge badge-danger" style="position: absolute; top: -5px; left: 12px;"></span><i class="far fa-file-alt"></i>&nbsp;Pre-Transacciones</a>
-                    </li>
+            <!-- Navbar Links -->
+            <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
+                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
+                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
+                </a>
 
-                    <li class="nav-item">
-                        <%--<a class="nav-link disabled" href="Rutas_Transacciones.aspx">Rutas Transacciones</a>--%>
-                        <a class="nav-link" href="Rutas_Transacciones.aspx"><i class="fas fa-road"></i>&nbsp;Rutas Transacciones</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="Rutas_Actividades.aspx"><i class="fas fa-road"></i>&nbsp;Rutas Actividades</a>
-                    </li>
-
-                    <li class="nav-item active" style="position: relative">
-                        <a class="nav-link" href="Lista_Negra.aspx"><i class="fas fa-list-alt"></i>&nbsp;Lista Negra Motorista</a>
-                    </li>
-
-                <li class="nav-item">
-                        <a class="nav-link" href="Prechequeo.aspx"><i class="fas fa-qrcode"></i>&nbsp;Prechequeo</a>
-                    </li>
-                </ul>
-
-                <div class="my-2 my-lg-0">
-                    <asp:LinkButton ID="lnk_perfil" OnClick="lnk_perfil_Click" CssClass="btn btn-outline-success my-2 my-sm-0" runat="server"> Perfil</asp:LinkButton>
-                    <asp:LinkButton ID="lnk_salir"  OnClick="LinkSalir1_Click" CssClass="btn btn-outline-info my-2 my-sm-0" runat="server"><i class="fas fa-power-off">&nbsp Salir </i>&nbsp<i class="far fa-user"></i></asp:LinkButton>
+                <div class="relative group hover:bg-gray-100 p-2 rounded">
+                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
+                        <span>Rutas</span>
+                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
+                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
+                        </div>
+                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-road mr-2"></i>Rutas Actividades
+                        </div>
+                    </div>
                 </div>
+
+                <div class="relative group hover:bg-gray-100 p-2 rounded">
+                    <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
+                        <span>Monitoreo</span>
+                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Autorizacion_Camiones.aspx" style="text-decoration: none;">
+                                <i class="fa fa-truck mr-2"></i>Chequeo de Informacion
+                            </a>
+                        </div>
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Autorizacion_ingreso.aspx" style="text-decoration: none;">
+                                <i class="fas fa-unlock mr-2"></i>Autorización Ingreso
+                            </a>
+                        </div>
+                        <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
+                            <a href="Autorizacion_Porton4.aspx" style="text-decoration: none;">
+                                <i class="fas fa-check-square mr-2"></i>Autorización Portón 4
+                            </a>
+                        </div>
+
+                        <div class="block px-4 py-2 bg-primary text-white rounded hover:bg-opacity-80">
+                            <a href="Lista_Negra.aspx" style="text-decoration: none;">
+                                <i class="fas fa-list-alt mr-2"></i>Lista Negra Motorista
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-600 flex items-center" style="text-decoration: none;">
+                    <i class="fas fa-clock mr-2"></i>Recepción Azúcar
+                </a>
+            </nav>
+
+            <!-- Logout Button -->
+            <a href="login.aspx" class="login-button" style="text-decoration:none">
+                <i class="fas fa-user"></i> Cerrar Sesión
+            </a>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden px-4 py-2 space-y-2 bg-gray-100">
+                <a href="Default.aspx" class="block text-gray-700 hover:text-orange-600">Pre-Transacciones</a>
+                <div class="block text-gray-700">Rutas Transacciones</div>
+                <div class="block text-gray-700">Rutas Actividades</div>
+                <div class="block text-gray-700 bg-primary text-white">Chequeo de Información</div>
+                <a href="Autorizacion_ingreso.aspx" class="block text-gray-700 hover:text-orange-600">Autorización Ingreso</a>
+                <a href="Autorizacion_Porton4.aspx" class="block text-gray-700 hover:text-orange-600">Autorización Portón 4</a>
+                <a href="Lista_Negra.aspx" class="block text-gray-700 hover:text-orange-600">Lista Negra Motorista</a>
+                <a href="Tiempos_Azucar.aspx" class="block text-gray-700 hover:text-orange-600">Recepción Azúcar</a>
+                <a href="login.aspx" class="block text-gray-700 hover:text-orange-600">Cerrar Sesión</a>
             </div>
-        </nav>
+        </div>
+    </header>
 
-        <div class="container-fluid" id="conten">
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sql_estados" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>" runat="server" SelectCommand="SELECT * FROM [LEVERANS_PreTransaccionesEstados] ORDER BY Pk_PreTransEstados ASC"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="Sql_basculas" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>" runat="server" SelectCommand="SELECT * FROM [LEVERANS_Basculas] where N_Bascula <= 6 ORDER BY [N_Bascula] ASC"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sql_actividades" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>" runat="server" SelectCommand="SELECT PkActividad,Descripcion  FROM [dbo].[LEVERANS_Actividades] ORDER BY PkActividad"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sql_documetos" runat="server" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sql_usuarios" SelectCommand="SELECT PK_Usuario,Usuario FROM [dbo].[LEVERANS_UsuariosBascula]" runat="server" ConnectionString="<%$ ConnectionStrings:ConnStr_LEVERANS_prod %>"></asp:SqlDataSource>
+ 
+    <!-- Banner -->
+    <section class="custom-banner text-center">
+        <h1>Lista Negra</h1>
+    </section>
 
-            <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-                <ContentTemplate>
-                    <div class="row ml-4">
-                        <h3>Prechequeo  </h3>
-                        <p class="h3 ml-3" id="demo"></p>
-                       <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"> Crear</button>
+    <div class="d-flex justify-content-start" style="margin-top: -35px;">
+        <button type="button" class="btn" data-toggle="modal" data-target="#myModal" 
+            style="margin-left: 75%; background-color: #003366; border-color: #1D3557; color: white; 
+                border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px 20px; 
+                font-size: 1rem; transition: all 0.3s ease-in-out;">
+            <i class="fas fa-plus"></i> <strong> Nuevo Registro </strong> 
+        </button>
+    </div>
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="myModal" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Modal Header</h4>
-                                    </div>
 
-                                    <div class="modal-body">
-                                        <p>Some text in the modal.</p>
-                                    </div>
-                                    
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Main Content -->
+    <main class="container mx-auto py-8">
+        <div class="row ml-3" style="border: solid 0px;">
+            <div class="col mt-2 mb-2">
+                <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Busca aqui la transaccion..." class="form-control mb-3" style="border-radius: 15px; background-color: #f8f9f9; border: 1px solid #000000;">
+            </div>
+        </div>
 
-                    <div class="row ml-3 sticky-top" style="border: solid 0px;">
-                        <div class="col-9 mt-2 mb-2">
-                            <div class="input-group mb-3" style="border: solid 0px;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text secondary"># de Licencia</span>
-                                </div>
-
-                                <asp:TextBox ID="txtTransaccion" autocomplete="off" CssClass="form-control" runat="server"></asp:TextBox>
-                                <asp:DropDownList ID="ddl_Estado" CssClass="form-control" runat="server" DataSourceID="sql_estados" DataValueField="Pk_PreTransEstados" DataTextField="Descripcion" AppendDataBoundItems="true" Visible="false">
-                                    <asp:ListItem Value="0">Todos</asp:ListItem>
-                                </asp:DropDownList>
-
-                                <asp:DropDownList ID="ddl_Actividades2" CssClass="form-control" DataSourceID="sql_actividades" DataTextField="Descripcion" DataValueField="PkActividad" runat="server" AppendDataBoundItems="true" Visible="false">
-                                    <asp:ListItem Value="0">Seleccione una Actividad</asp:ListItem>
-                                </asp:DropDownList>
-
-                                <asp:DropDownList ID="ddl_basculas" CssClass="form-control" runat="server" DataSourceID="Sql_basculas" DataValueField="N_Bascula" DataTextField="Descripcion" AppendDataBoundItems="true" Visible="false">
-                                    <asp:ListItem Value="0">Selecciones Báscula</asp:ListItem>
-                                </asp:DropDownList>
-
-                                <div class="input-group-append">
-                                    <asp:LinkButton ID="lnkBuscar" CssClass="btn btn-primary" OnClick="lnkBuscar_Click" OnClientClick="return ShowCurrentTime()" runat="server">
-                                        <i class="fas fa-search"></i> Buscar
-                                    </asp:LinkButton>
-                                    
-                                    <asp:LinkButton ID="LnkRefresh" Visible="false" CssClass="btn btn-secondary" runat="server">
-                                        <i class="fas fa-sync"></i>
-                                    </asp:LinkButton>
-                                    
-                                    <asp:LinkButton ID="Lnk_newTransaccon" Visible="false" CssClass="btn btn-success" runat="server" data-toggle="modal" data-target="#nuevaPretransaccionModal">
-                                        <i class="fas fa-file-alt"> Nueva</i>
-                                    </asp:LinkButton>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <script type="text/javascript">
-                        $(document).on("click", '.ocultar', function () 
-                        {
-                            console.log("world");
-                            $(this).hide();
-                        });
-                    </script>
-
-                    <div class="row" style="border: solid 0px">
-                        <asp:ListView ID="ListView1" runat="server" DataSourceID="SqlDataSource1" OnPagePropertiesChanging="lvwPrincipal_PagePropertiesChanging" OnItemDataBound="ListView1_ItemDataBound">
-                            <ItemTemplate>
-                                <div class="col-lg-4 col-md-6 col-sm-12 " style="border: solid 0px">
-                                    <div class="mb-4 Content12" style="border: solid 0px">
-                                        <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("PK_PreTransaccion") %>'></asp:Label>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="row ml-3 mt-3">
-                                                    <asp:Repeater ID="rpt_galeria" runat="server">
-                                                        <ItemTemplate>
-                                                            <div class="col-6" style="border: solid 0px">
-                                                                <asp:HyperLink ID="HyperLink5" CssClass="spotlight" data-title='<%# "codTransaccion :" +DataBinder.Eval(Container.DataItem,"codTransaccion")%>' NavigateUrl='<%# "http://sv-svr-almapp02:2050/" + DataBinder.Eval(Container.DataItem,"Documento")%>' runat="server">
-                                                                    <asp:Image class="img-fluid rounded mt-4 mb-3 mb-md-0" Width="100%" ID="Image1" runat="server" ImageUrl='<%# "http://sv-svr-almapp02:2050/" + DataBinder.Eval(Container.DataItem,"Documento_thumbnail")%>' />
-                                                                </asp:HyperLink>
-                                                                <asp:LinkButton ID="lnk_rotar" OnClick="lnk_rotar_Click" CommandArgument='<%# Eval("Documento")+ ";" + Eval("Documento_thumbnail")%>' runat="server"><i class="fas fa-sync-alt"></i></asp:LinkButton>
-                                                            </div>
-                                                        </ItemTemplate>
-                                                    </asp:Repeater>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-8">
-                                                <br/>
-                                                <h5>
-                                                    <asp:Label ID="lbl_cod_estado" Visible="false" runat="server" Text='<%# Eval("cod_estado") %>'></asp:Label>
-                                                    <asp:Label ID="lblAlerta" runat="server" ForeColor='<%# System.Drawing.ColorTranslator.FromHtml(Eval("Color").ToString()) %>' CssClass="alerta"><i class="fa fa-circle"></i></asp:Label>&nbsp;<asp:Label ID="Label1" ForeColor="Blue" CssClass="h5" runat="server" Text='<%# Eval("estado") %>'></asp:Label></h5>
-                                                <h5>Código:
-                                                    <asp:Label ID="lblCodigo" runat="server" Text='<%# Eval("PK_PreTransaccion") %>'></asp:Label>
-                                                </h5>
-
-                                                <h5>Transacción:                                                
-                                                    <asp:Label ID="lblNombre" CssClass="h5" runat="server" Text='<%# Eval("codTransaccion") %>'></asp:Label>
-                                                </h5>
-    
-                                                <h5>Tarjeta:
-                                                    <asp:Label ID="lblTarjeta" runat="server" Text='<%# Eval("ntarjeta") %>'></asp:Label>
-                                                </h5>
-    
-                                                <h5>Placa:
-                                                    <asp:Label ID="lblPlaca" runat="server" Text='<%# Eval("placa") %>'></asp:Label>
-                                                </h5>
-    
-                                                <h5>Actividad:
-                                                    <asp:Label ID="lblActividad" CssClass="h6" runat="server" Text='<%# Eval("desc_actividad") %>'></asp:Label>
-                                                </h5>
-    
-                                                <p class="h5">N° Báscula:
-                                                    <asp:Label ID="Label2" runat="server" Text='<%# Eval("nbascula") %>'></asp:Label>
-                                                </p>
-    
-                                                <p class="h5">Fecha Creación:
-                                                    <asp:Label ID="lblFecha" runat="server" Text='<%# Eval("FechaHora") %>'></asp:Label>
-                                                </p>
-    
-                                                <p class="h5">Fecha Autorizado:
-                                                    <asp:Label ID="lblFechaAutorizado" runat="server" Text='<%# Eval("fechaautorizado") %>' ></asp:Label>
-                                                </p>
-                                                <br />
-
-                                                <asp:LinkButton ID="lnk_autorizar" CssClass="btn btn-danger mb-3" OnClientClick="return getConfirmation();" OnClick="lnk_autorizar_Click" CommandArgument='<%# Eval("PK_PreTransaccion")+ ";" + Eval("codTransaccion")%>' runat="server"> <i class="fas fa-clipboard-check"></i>&nbsp;Autorizar</asp:LinkButton>
-                                                <asp:LinkButton ID="lnk_autorizar2" CssClass="btn btn-warning mb-3" OnClientClick="return getConfirmation();" OnClick="lnk_autorizar2_Click" CommandArgument='<%# Eval("PK_PreTransaccion")+ ";" + Eval("codTransaccion")%>' runat="server"> <i class="fas fa-clipboard-check"></i>&nbsp;Autorizar 2</asp:LinkButton>
-                                                <asp:LinkButton ID="lnk_crearTransaccion" Visible="false" OnClick="lnk_crearTransaccion_Click" CommandArgument='<%# Eval("PK_PreTransaccion")%>' runat="server" CssClass="btn ocultar btn-primary mb-3">Crear</asp:LinkButton>
-                                                <asp:LinkButton ID="lnk_delete" Visible="false" runat="server" CssClass="btn btn-danger mb-3" OnClientClick="return getConfirmationDetele();" OnClick="lnk_delete_Click" CommandArgument='<%# Eval("PK_PreTransaccion")%>'><i class="fas fa-trash-alt"></i>&nbsp;Finalizar</asp:LinkButton>
-                                                <asp:LinkButton ID="lnk_update_pret" Visible="false" runat="server" CssClass="btn btn-info mb-3" OnClientClick="return getConfirmation_update();" OnClick="lnk_update_pret_Click" CommandArgument='<%# Eval("PK_PreTransaccion")%>' ><i class="fas fa-angle-double-right"></i>&nbsp;Omitir</asp:LinkButton>
-       
-                                                <button type="button" class="btn btn-primary mb-3" id="btn_edi" name="btn_edit" runat="server" visible="false" onclick='<%# "openModal(" +Eval("cod_actividad")+","+Eval("ntarjeta")+","+Eval("PK_PreTransaccion") + " );" %>' data-toggle="modal" data-target="#modal_editActividad"><i class="fas fa-road"></i>Editar2</button>
-                                            </div>
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
+            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
+                <div class="row g-4">
+                    <asp:Repeater ID="rptRutas" runat="server">
+                        <ItemTemplate>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 400px;">
+                                    <div class="card-img-top" style="height: 200px; overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                        <asp:Image ID="imgShipment" runat="server"
+                                            ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                        ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                        : null %>'
+                                            CssClass="img-fluid"
+                                            style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
+                                                    ? "width: 100%; height: 100%; object-fit: cover;" 
+                                                    : "display: none;" %>' />
+                                        <div style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
+                                                        ? "display: none;" 
+                                                        : "width: 100%; height: 100%; border: 2px dashed #ddd; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #888;" %>'>
+                                            Sin imagen
                                         </div>
                                     </div>
+                                
+                                    <div class="card-body p-4">
+                                        <!-- Información de la tarjeta con texto más pequeño -->
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Nombre:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblNombre" runat="server"
+                                                Text='<%# Eval("driver.name") != null ? HttpUtility.HtmlEncode(Eval("driver.name").ToString()) : "Sin datos" %>' />
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-id-card text-primary"></i> <strong>DUI:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                            
+                                        </p>
+
+                                        <!-- Línea divisoria con grosor y color especificados -->
+                                        <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-credit-card text-primary"></i> <strong>Licencia:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblLicencia" runat="server"
+                                                Text='<%# Eval("driver.license") != null ? HttpUtility.HtmlEncode(Eval("driver.license").ToString()) : "Sin datos" %>' />
+                                        </p>
+                                            
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Empresa de Transporte:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exclamation-circle text-primary"></i> <strong>Tipo de Incidente:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-ban text-primary"></i> <strong>Tipo de Castigo:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-comment text-primary"></i> <strong>Comentario:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblComentario" runat="server"
+                                                Text='<%# Eval("observation") != null ? HttpUtility.HtmlEncode(Eval("observation").ToString()) : "Sin datos" %>' />
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Tiempo de Sancion:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                            <asp:Label ID="lblTiempoSan" runat="server"
+                                                Text='<%# Eval("banDurationDays") != null ? HttpUtility.HtmlEncode(Eval("banDurationDays").ToString() + " Días") : "Sin datos" %>' />
+                                        </p>
+
+                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-check text-primary"></i> <strong>Fin de Sancion:</strong></p>
+                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        </p>
+                                            
+                                    </div>
                                 </div>
-                            </ItemTemplate>
-                        </asp:ListView>
-                    </div>
-
-                    <div class="row" style="border: solid 0px; position: fixed; bottom: 0; left: 0; right: 0;">
-                        <div class="col-lg-12 h3" style="text-align: center">
-                            <asp:DataPager runat="server" ID="dtpPrincipal" PagedControlID="ListView1" PageSize="12">
-                                <Fields>
-                                    <asp:NextPreviousPagerField ShowFirstPageButton="True" ShowNextPageButton="false" ShowPreviousPageButton="true" NextPageText="&lt;i class='fas fa-angle-right'&gt;&lt;/i&gt;" PreviousPageText="&lt;i class='fas fa-angle-left'&gt;&lt;/i&gt;" FirstPageText="&lt;i class='fas fa-angle-double-left'&gt;&lt;/i&gt;" LastPageText="&lt;i class='fas fa-angle-double-right'&gt;&lt;/i&gt;" />
-                                    <asp:NumericPagerField />
-                                    <asp:NextPreviousPagerField ShowLastPageButton="True" ShowNextPageButton="true" ShowPreviousPageButton="false" FirstPageText="&lt;i class='fas fa-angle-double-left'&gt;&lt;/i&gt;" LastPageText="&lt;i class='fas fa-angle-double-right'&gt;&lt;/i&gt;" NextPageText="&lt;i class='fas fa-angle-right'&gt;&lt;/i&gt;" PreviousPageText="&lt;i class='fas fa-angle-left'&gt;&lt;/i&gt;" />
-                                </Fields>
-                            </asp:DataPager>
-                        </div>
-                    </div>
-                </ContentTemplate>
-            </asp:UpdatePanel>
-
-            <!-- Modal para crear una nueva Pretransaccion -->
-            <div class="modal fade" id="nuevaPretransaccionModal" tabindex="-1" role="dialog" aria-labelledby="nuevaPretransaccionTitle" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="nuevaPretransaccionLongTitle">Create</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group col-12">
-                                <asp:TextBox ID="txtTarjeta" CssClass="form-control" TextMode="Number" placeholder="N° Tarjeta" runat="server"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="req_txtTarjeta" runat="server" ControlToValidate="txtTarjeta" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="save" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
                             </div>
-
-                            <div class="form-group col-12">
-                                <asp:DropDownList ID="ddl_actividades" CssClass="form-control" DataSourceID="sql_actividades" DataTextField="Descripcion" DataValueField="PkActividad" runat="server" AppendDataBoundItems="true">
-                                    <asp:ListItem Value="0"> seleccione una actividad</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="reqddl_actividades" runat="server" ControlToValidate="ddl_actividades" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="save" InitialValue="0"><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <asp:LinkButton ID="btn_save" runat="server" OnClick="btn_save_Click" CausesValidation="True" CssClass="btn btn-primary" ValidationGroup="save"><i class="fa fa-floppy-o"></i> Crear </asp:LinkButton>
-                        </div>
-                    </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
             </div>
+        </section> 
+    </main>
 
-            <!-- Modal -->
-            <div class="modal fade" id="modal_editActividad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal Edit</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+    <!-- Footer -->
+    <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
+            style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
+        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+    </footer>
+       
+        <!-- Modal RESTABLECER CONTRASEÑA -->
+        <div class="modal fade" id="editPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class=" modal-title" id="editPass2">Cambiar contraseña</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group col-12">
+                            <asp:TextBox ID="txtUsuario" Enabled="false" Text="Usuario1" CssClass="form-control" runat="server"></asp:TextBox>
                         </div>
-                        <div class="modal-body">
 
-                            <div class="form-group col-12">
-
-                                <input type="text" id="txt_codigoPreTransaccion" style="display: none" runat="server" />
-                                <label for="exampleInputEmail1">N° Tarjeta</label>
-                                <asp:TextBox ID="txt_tarjetaEdit" CssClass="form-control" TextMode="Number" placeholder="N° Tarjeta" runat="server" autocomplete="off"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txt_tarjetaEdit" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="edit2" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
-                            </div>
-
-
-                            <div class="form-group col-12">
-                                <label for="exampleInputEmail1">Actividad</label>
-                                <asp:DropDownList ID="ddlActividadEdt" CssClass="form-control" DataSourceID="sql_actividades" DataTextField="Descripcion" DataValueField="PkActividad" runat="server" AppendDataBoundItems="true">
-                                    <asp:ListItem Value="0"> seleccione una actividad</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="ddlActividadEdt" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="edit2" InitialValue="0"><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <asp:LinkButton ID="lnk_editPreTransaccion" OnClick="lnk_editPreTransaccion_Click" runat="server" CausesValidation="True" CssClass="btn btn-primary" ValidationGroup="edit2"><i class="fa fa-floppy-o"></i> Guardar </asp:LinkButton>
+                        <div class="form-group col-12">
+                            <asp:TextBox ID="txtPass" TextMode="Password" CssClass="form-control" placeholder="Contraseña" runat="server"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="ReqtxtPass" runat="server" ControlToValidate="txtPass" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="reset" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
                         </div>
                     </div>
+                    
                 </div>
             </div>
+        </div>
 
-
-            <!-- Modal RESTABLECER CONTRASEÑA -->
-            <div class="modal fade" id="editPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editPass2">Cambiar contraseña</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group col-12">
-                                <asp:TextBox ID="txtUsuario" Enabled="false" Text="Usuario1" CssClass="form-control" runat="server"></asp:TextBox>
-                            </div>
-
-                            <div class="form-group col-12">
-                                <asp:TextBox ID="txtPass" TextMode="Password" CssClass="form-control" placeholder="Contraseña" runat="server"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="ReqtxtPass" runat="server" ControlToValidate="txtPass" CssClass="reqGeneral" ErrorMessage="*" Display="Dynamic" ValidationGroup="reset" InitialValue=""><i class="fa fa-times-circle" aria-hidden="true"></i></asp:RequiredFieldValidator>
-                            </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">Registrar Motorista</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Licencia:</label>
+                            <input type="text" class="form-control" id="txt_licencia" />
                         </div>
                         
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <asp:LinkButton ID="lnk_restablecer" runat="server" OnClick="lnk_restablecer_Click" CausesValidation="True" CssClass="btn btn-primary" ValidationGroup="reset"><i class="fa fa-floppy-o"></i> Guardar </asp:LinkButton>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Tiempo:</label>
+                            <input type="number" class="form-control" id="txt_tiempo"/>
+                        </div> 
+
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Observación:</label>
+                            <textarea type="text" class="form-control" id="txt_observacion"></textarea>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="addBlacklist();">Guardar</button>
                     </div>
                 </div>
             </div>
-
-
-
-
-
         </div>
     </form>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form>
-            <div class="form-group">
-                <label for="recipient-name" class="col-form-label">Recipient:</label>
-                <input type="text" class="form-control" id="recipient-name">
-            </div>
-            <div class="form-group">
-                <label for="message-text" class="col-form-label">Message:</label>
-                <textarea class="form-control" id="message-text"></textarea>
-            </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Send message</button>
-        </div>
-        </div>
-    </div>
-    </div>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="../scripts/jquery.blockUI.js"></script>
-    <script type="text/javascript">
-        $('#exampleModal').on('show.bs.modal', function (event) 
-        {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var recipient = button.data('whatever') // Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var modal = $(this)
-            modal.find('.modal-title').text('New message to ' + recipient)
-            modal.find('.modal-body input').val(recipient)
-        })
-       
-        $(function () 
-        {
-            BlockUI("conten");
-            $.blockUI.defaults.css = {};
-        });
-        
-        function BlockUI(elementID) 
-        {
-            var prm = Sys.WebForms.PageRequestManager.getInstance();
-            prm.add_beginRequest(function () 
-            {
-                $("#" + elementID).block({
-                    message: '<div align = "center">' + '<img src="../images/009.gif"/></div>',
-                    css: {},
-                    overlayCSS: { backgroundColor: '#F8F9F9', opacity: 0.8, border: '0px solid #63B2EB' }
-                });
-            });
-            prm.add_endRequest(function () 
-            {
-                $("#" + elementID).unblock();
-            });
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lightgallery.js/master/dist/js/lightgallery.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-autoplay.js/master/dist/lg-autoplay.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
+    <!-- SweetAlert2 (latest version) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="../src/js/spotlight.bundle.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <!-- JavaScript for Mobile Menu Toggle -->
     <script>
-        lightGallery(document.getElementById('lightgallery'));
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
     </script>
+
+    <script>
+        function filterCards() 
+        {
+            // Obtén el valor del input de búsqueda
+            var input = document.getElementById("searchInput").value.toLowerCase();
+
+            // Selecciona todas las tarjetas dentro de los repetidores
+            var cards = document.querySelectorAll(".card");
+
+            // Recorre todas las tarjetas y muestra u oculta según el filtro
+            cards.forEach(function(card) 
+            {
+                // Combina el texto de los elementos de la tarjeta en una sola cadena y lo compara con el input
+                var cardText = card.innerText.toLowerCase();
+                if (cardText.includes(input)) 
+                {
+                    card.style.display = "block"; // Muestra la tarjeta
+                } 
+                else 
+                {
+                    card.style.display = "none"; // Oculta la tarjeta
+                }
+            });
+        }
+
+        function addBlacklist() {
+    // Obtener los valores de los campos
+    var licencia = document.getElementById('txt_licencia').value;
+    var tiempo = document.getElementById('txt_tiempo').value;
+    var observacion = document.getElementById('txt_observacion').value;
+
+    // Verificar si el campo licencia está vacío
+    if (!licencia) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campo licencia vacío',
+            text: 'Por favor, ingrese el número de licencia.',
+            confirmButtonText: 'Aceptar'
+        });
+        return; // Detener la ejecución si el campo licencia está vacío
+    }
+
+    // Verificar si el campo tiempo está vacío
+    if (!tiempo) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campo tiempo vacío',
+            text: 'Por favor, ingrese el número de días.',
+            confirmButtonText: 'Aceptar'
+        });
+        return; // Detener la ejecución si el campo tiempo está vacío
+    }
+
+    // Verificar si el campo observación está vacío
+    if (!observacion) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Comentario vacío',
+            text: 'Por favor, ingrese un comentario antes de guardar.',
+            confirmButtonText: 'Aceptar'
+        });
+        return; // Detener la ejecución
+    }
+
+    // Llamar al servidor para validar los datos
+    $.ajax({
+        type: "POST",
+        url: "Lista_Negra.aspx/addBlacklist",
+        data: JSON.stringify({
+            licencia: licencia,
+            tiempo: tiempo,
+            observacion: observacion
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            console.log("Respuesta del servidor:", response); // Mostrar toda la respuesta
+            var resultado = response.d; // Respuesta del servidor
+
+            // Verificar el tipo de alerta y mostrar la alerta correspondiente
+            if (resultado.alertType === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: resultado.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            } else if (resultado.alertType === "error") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: resultado.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            } else if (resultado.alertType === "warning") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: resultado.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        },
+        error: function (error) {
+            console.error("Error en la solicitud:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al validar los datos. Detalles: ' + (error.responseJSON ? error.responseJSON.message : error.statusText),
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
+
+        // Función para limpiar los campos de entrada
+        function resetErrorFields() {
+            var campos = [
+                'txt_licencia',
+                'txt_tiempo',
+                'txt_observacion'
+            ];
+            campos.forEach(function (campo) {
+                var elemento = document.getElementById(campo);
+                elemento.classList.remove('error-field');
+                elemento.value = ''; // Limpiar el campo
+            });
+        }
+
+        // Limpiar los datos cuando se cierre la modal
+        $('#myModal').on('hidden.bs.modal', function () {
+            resetErrorFields(); // Limpiar los campos
+        });
+
+
+
+    </script>
+
 </body>
 </html>

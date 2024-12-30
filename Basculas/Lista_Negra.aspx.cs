@@ -1,411 +1,310 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.Script.Services;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Newtonsoft.Json;
+using System.IO;        
+using System;
+using System.Net;
+using System.Web.Services;
+using System.Text;
+using System.Diagnostics;
 
 
-public partial class Basculas_Default : System.Web.UI.Page
+public partial class Basculas_Lista_Negra : System.Web.UI.Page
 {
-    bascula ob_bascula = new bascula();
-    login obj_login = new login();
-    PreTransacciones obj_preTra = new PreTransacciones();
-    bitacora obj_bitacora = new bitacora();
-    string cod_rol = "";
-
-
     protected void Page_Load(object sender, EventArgs e)
     {
-        cod_rol = Request.Cookies["cod_rol"].Value;
-
-
-        if (IsPostBack)
+        if (!IsPostBack)
         {
-            //BindListView(1);
-            DataBind();
-            
-            valida_rol();
+            // URL que deseas hacer el fetch
+            string url = "https://apiclientes.almapac.com:9010/api/blacklist";
 
+            // Token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            // Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            using (WebClient client = new WebClient())
+            {
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
+                try
+                {
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url);
+
+                    // Deserializar la respuesta JSON
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Vincular los datos filtrados al control Repeater
+                    rptRutas.DataSource = data;
+                    rptRutas.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    // Log detallado del error
+                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                    this.LogEvent("Mensaje de excepción: " + ex.Message);
+                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+                }
+            }
         }
- 
     }
 
-    protected void lnkBuscar_Click(object sender, EventArgs e)
+    [WebMethod]
+public static string addBlacklist(string licencia, string tiempo, string observacion)
+{
+    string url = "https://apiclientes.almapac.com:9010/api/blacklist";
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+    string responseContent = string.Empty;
+
+    try
+    {   
+        // Configurar protocolo TLS
+        System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+        // (Opcional) Ignorar validación del certificado
+        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+        using (var client = new WebClient())
+        {
+            client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+            var requestBody = new { license = licencia, observation = observacion, timeInDays = tiempo };
+            var json = JsonConvert.SerializeObject(requestBody);
+
+            // Log de la solicitud
+            LogEventS(new { Message = "Enviando solicitud al servidor", URL = url, RequestBody = requestBody });
+
+            responseContent = client.UploadString(url, "POST", json);
+
+            // Log de la respuesta
+            LogEventS(new { Message = "Respuesta recibida del servidor", ResponseContent = responseContent });
+
+            // Si la respuesta es exitosa, devolver éxito
+            return JsonConvert.SerializeObject(new
+            {
+                alertType = "success", // Tipo de alerta
+                message = "El motorista fue registrado correctamente.", // Mensaje a mostrar
+                serverResponse = responseContent
+            });
+        }
+    }
+    catch (WebException webEx)
     {
+        string serverResponse = "";
 
-        DataBind();
+        if (webEx.Response != null)
+        {
+            using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+            {
+                serverResponse = reader.ReadToEnd();
+            }
+        }
+
+        // Verificar si los datos están vacíos o si ocurrió un error
+        if (string.IsNullOrEmpty(serverResponse))
+        {
+            // Inyectar el script SweetAlert al frontend
+            ScriptManager.RegisterStartupScript(HttpContext.Current.Handler as Page, 
+                typeof(Page), 
+                "notFoundAlert", 
+                "Swal.fire('Error', 'La transacción no se encontró en la API.', 'error').then(() => { location.reload(); });", 
+                true);
+        }
+
+        // Log del error
+        LogEventS(new { Message = "WebException capturada", WebExceptionMessage = webEx.Message, ServerResponse = serverResponse });
+
+        return JsonConvert.SerializeObject(new
+        {
+            alertType = "error", // Tipo de alerta en caso de error
+            message = "Error en la solicitud: " + webEx.Message, // Mensaje de error
+            serverResponse = serverResponse
+        });
     }
+    catch (Exception ex)
+    {
+        // Log de excepción general
+        LogEventS(new { Message = "Excepción general capturada", ExceptionMessage = ex.Message, StackTrace = ex.StackTrace });
 
-    /// <summary>
-    /// obtenien todas las pre transacciones
-    /// </summary>
+        // Inyectar el script SweetAlert al frontend
+        ScriptManager.RegisterStartupScript(HttpContext.Current.Handler as Page, 
+            typeof(Page), 
+            "unexpectedErrorAlert", 
+            "Swal.fire('Error inesperado', 'Ocurrió un error inesperado.', 'error');", 
+            true);
+
+        return JsonConvert.SerializeObject(new
+        {
+            alertType = "error", // Tipo de alerta en caso de excepción general
+            message = "Error inesperado: " + ex.Message // Mensaje de error
+        });
+    }
+}
+
+
 
     private void DataBind()
     {
-        string query = "SELECT top 100 * FROM vw_Leverans_PreTransacciones";
-        string where = "";
-        string order = " ORDER BY PK_PreTransaccion DESC";
+        sql_rutas_actividades.SelectCommand = "SELECT * FROM [dbo].[ALMAPAC$Work Type]";
+        sql_rutas_actividades.DataBind();
+    }
 
-        if (!string.IsNullOrEmpty(txtTransaccion.Text))
+    public void LogEvent(object message)
+    {
+        string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
         {
-            if (where.Length > 0)
-                where += " AND codTransaccion=" + txtTransaccion.Text + "or PK_PreTransaccion="+ txtTransaccion.Text + "or ntarjeta=" + txtTransaccion.Text;
-            else
-                where += " WHERE codTransaccion=" + txtTransaccion.Text + "or PK_PreTransaccion=" + txtTransaccion.Text + "or ntarjeta=" + txtTransaccion.Text;
+            Directory.CreateDirectory(logDirectory);
         }
 
-        //Concatena el estado.
-        if (ddl_Estado.SelectedIndex > 0)
-            if (where.Length > 0)
-                where += " AND (cod_estado=" + ddl_Estado.SelectedValue + ")";
-            else
-                where += " WHERE (cod_estado=" + ddl_Estado.SelectedValue + ")";
-
-        //Concatena el estado.
-        if (ddl_Estado.SelectedIndex == 0)
-            if (where.Length > 0)
-                where += " AND (cod_estado <> 5)";
-            else
-                where += " WHERE (cod_estado <> 5)";
-
-
-        //Concatena la actividad. 
-        if (ddl_Actividades2.SelectedIndex > 0)
-            if (where.Length > 0)
-                where += " AND (PkActividad=" + ddl_Actividades2.SelectedValue + ")";
-            else
-                where += " WHERE (PkActividad=" + ddl_Actividades2.SelectedValue + ")";
-
-
-        //Concatena la bascula. 
-        if (ddl_basculas.SelectedIndex > 0)
-            if (where.Length > 0)
-                where += " AND (nbascula=" + ddl_basculas.SelectedValue + ")";
-            else
-                where += " WHERE (nbascula=" + ddl_basculas.SelectedValue + ")";
-
-        SqlDataSource1.SelectCommand = query + where + order;
-        ListView1.DataBind();
-    }
-
-
-
-
-
-   
-
-
-
-    protected void lvwPrincipal_PagePropertiesChanging(object sender, PagePropertiesChangingEventArgs e)
-    {
-
-        dtpPrincipal.SetPageProperties(e.StartRowIndex, e.MaximumRows, false);
-        DataBind();
-    }
-
-    /// <summary>
-    /// Metodo para cerrar la session
-    /// </summary>
-
-    protected void LinkSalir1_Click(object sender, EventArgs e)
-    {
-        FormsAuthentication.SignOut();
-        FormsAuthentication.RedirectToLoginPage();
-    }
-
-
-
-    /// <summary>
-    /// Autoriza el ingreso del vehiculo
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    protected void lnk_autorizar_Click(object sender, EventArgs e)
-    {
-
-
-        LinkButton lnk_autorizar2_Click = (LinkButton)sender;
-
-        string[] arg = new string[2];
-        arg = lnk_autorizar2_Click.CommandArgument.ToString().Split(';');
-
-
-        //codigo
-        int cod_pretransaccion = Convert.ToInt32(arg[0]);
-        //codTransaccion
-        int id = Convert.ToInt32(arg[1]);
-        //usuario
-        string username = Request.Cookies["username"].Value;
-
-        //Autoriza ingreso de vehiculo
-        ob_bascula.Autorizar_ingreso(cod_pretransaccion, id, username);
-
-
-        DataBind();
-    }
-
-
-
-    /// <summary>
-    /// Autoriza el pesaje
-    /// </summary>
-    protected void lnk_autorizar2_Click(object sender, EventArgs e)
-    {
-
-        //recuperamos parametro
-        LinkButton lnk_autorizar2_Click = (LinkButton)sender;
-        string[] arg = new string[2];
-        arg = lnk_autorizar2_Click.CommandArgument.ToString().Split(';');
-
-
- 
-        int cod_pretransaccion = Convert.ToInt32(arg[0]);
-        int id = Convert.ToInt32(arg[1]);
-        string username = Request.Cookies["username"].Value;
-
-        //Autoriza pesaje
-        ob_bascula.Autorizar(cod_pretransaccion, id, username);
-
-
-        DataBind();
-
-    }
-
-
-
-
-    /// <summary>
-    /// Metodo para ocultar botones dependiento del estado y rol
-    /// </summary>
-    protected void ListView1_ItemDataBound(object sender, ListViewItemEventArgs e)
-    {
-        if (e.Item.ItemType == ListViewItemType.DataItem)
+        // Convertir el mensaje a string
+        string logMessage;
+        try
         {
-            LinkButton lnk_autorizar = e.Item.FindControl("lnk_autorizar") as LinkButton;
-            LinkButton lnk_autorizar2 = e.Item.FindControl("lnk_autorizar2") as LinkButton;
-            LinkButton lnk_crearTransaccion = e.Item.FindControl("lnk_crearTransaccion") as LinkButton;
-            LinkButton lnk_update_pret = e.Item.FindControl("lnk_update_pret") as LinkButton;
-            LinkButton lnk_delete = e.Item.FindControl("lnk_delete") as LinkButton;
-
-            HtmlButton btn_edi = (HtmlButton)e.Item.FindControl("btn_edi");
-
-            Label lbl_cod_estado = e.Item.FindControl("lbl_cod_estado") as Label;
-            Label lblNombre = e.Item.FindControl("lblNombre") as Label;
-
-            
-            Label lblCodT = e.Item.FindControl("lblCodT") as Label;
-            int x = 0;
-
-            Repeater rpt_galeria = e.Item.FindControl("rpt_galeria") as Repeater;
-
-
-            string username = Request.Cookies["username"].Value;
-
-
-            string cod_trans = lblNombre.Text;
-
-            //pendiente de Autorizar Ingreso
-            if (lbl_cod_estado.Text == "1")
-            {
-
-
-
-
-                //si ya se creo la transaccion habilitamos estas opciones
-                if (cod_trans != "" )
-                {
-                    lnk_autorizar.Visible = true;
-                    lnk_autorizar2.Visible = false;
-                   
-
-                }
-                else
-                {
-                    lnk_crearTransaccion.Visible = true;
-                    lnk_autorizar2.Visible = false;
-                    lnk_autorizar.Visible = false;
-                    btn_edi.Visible = true;
-                }
-
-                //lnk_autorizar2.Visible = false;
-            }
-
-            //ingreso Autorizado
-           else if (lbl_cod_estado.Text == "2")
-            {
-                lnk_autorizar.Visible = false;
-                lnk_autorizar2.Visible = true;
-                lnk_update_pret.Visible = true;
-            }
-
-
-            //pendiente Autorizar Pesaje
-           else if (lbl_cod_estado.Text == "3")
-            {
-                lnk_autorizar.Visible = false;
-                lnk_autorizar2.Visible = true;
-            }
-            //en proceso
-            else if (lbl_cod_estado.Text == "4")
-            {
-                lnk_autorizar.Visible = false;
-                lnk_autorizar2.Visible = false;
-            }
-
-            //finalizado
-            else
-            {
-                lnk_autorizar.Visible = false;
-                lnk_autorizar2.Visible = false;
-            }
-
-
-            if (lblCodT.Text != "")
-            {
-                x = Convert.ToInt32(lblCodT.Text);
-            }
-
-
-
-
-            //activamos las acciones para el superAdmin
-            if (cod_rol.Equals("1"))
-            {
-                btn_edi.Visible = true;
-                lnk_delete.Visible = true;
-            }
-
-
-            //activamos las acciones para el superAdmin
-            if (cod_rol.Equals("2"))
-            {
-                btn_edi.Visible = true;
-                lnk_delete.Visible = true;
-            }
-			
-			            //activamos las acciones para el superAdmin a pesadores
-            if (cod_rol.Equals("3"))
-            {
-     
-                lnk_delete.Visible = true;
-            }
-
-    
-            //activamos las acciones para el supervisor
-
-
-            //Admin   btn_edi.Visible = true;
-
-
-
-
-            sql_documetos.SelectCommand = "SELECT * FROM [dbo].[vw_LEVERANS_Transdocumentos] where [PK_PreTransaccion] = " + x;
-
-            sql_documetos.DataBind();
-
-            rpt_galeria.DataSource = sql_documetos;
-
-            rpt_galeria.DataBind();
-
-
-
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
         }
 
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
+
+    // Método para escribir en el Visor de eventos
+public static void LogEventS(object message)
+{
+    try
+    {
+        // Convertir la ruta relativa a absoluta
+        string logFilePath = HttpContext.Current.Server.MapPath("~/Logs/MyAppLog.txt");
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
+    catch (Exception ex)
+    {
+        // Manejar errores al escribir el log
+        // Considera usar un método de respaldo como Event Viewer
+        Console.WriteLine("Error al escribir el log: " + ex.Message);
+    }
+}
+
+
+    public class Post
+    {
+        public int id { get; set; }
+        public string observation { get; set; }
+        public string severityLevel { get; set; }
+        public DateTime createdAt { get; set; }
+        public string banDurationDays { get; set; }
+        public string shipmentAttachments { get; set; }
+        public Driver driver { get; set; }
+    }
+
+    public class Driver
+    {
+        public int id { get; set; }
+        public string license { get; set; }
+        public string name { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+    }
+
+    protected void lnk_VerRuta_Click(object sender, EventArgs e)
+    {
+
+        this.LogEvent("HOLA TEST");
+
+        LinkButton lnk_VerRuta = (LinkButton)sender;
+        GridViewRow row = (GridViewRow)lnk_VerRuta.NamingContainer;
+        GridView gvw = (GridView)row.NamingContainer;
+      
+        //Hace el Binding.
+        DataBindRutasDetalles();
+
+        //Muestra el modal una vez hecho click en la fila.
+        ScriptManager.RegisterStartupScript(Page, Page.GetType(), "modal-convertir", "$('#modal-detalle').modal();", true);
     }
 
 
+    private void DataBindRutasDetalles()
+    {
+        //Delcara las variables.
+        // string strWhere = " WHERE Fk_Actividad =" + hfCodigo.Value;
+        string strSQL = "SELECT * FROM vw_LEVERANS_PLANTILLA_RUTAS";
+        string strOrder = "";
 
-    /// <summary>
-    /// Método para notificar al usuario las PreTransaciones q esperan autorizacion
-    /// </summary>
-    /// <returns></returns>
+        ////Ejecuta la consulta.
+        //sql_rutas_actividadesDetalles.SelectCommand = strSQL + strWhere + strOrder;
+        sql_rutas_actividadesDetalles.Select(new DataSourceSelectArguments());
+
+        //Relaciona el recordset con el GridView
+        sql_rutas_actividadesDetalles.DataBind();
+        //gvw_rutasDetalles.DataBind();
+    }
+
+    protected void btn_agregar_Click(object sender, EventArgs e)
+    {
+        LinkButton btnAgregar = (LinkButton)sender;
+        GridViewRow gvw_row = (GridViewRow)btnAgregar.NamingContainer;
+
+        //asignamos los valores a los parametros
+        sql_rutas_actividadesDetalles.InsertParameters["Correlativo"].DefaultValue = (gvw_row.FindControl("txt_correlativo") as TextBox).Text;
+        sql_rutas_actividadesDetalles.InsertParameters["FK_Acceso"].DefaultValue = "1";
+        //sql_rutas_actividadesDetalles.InsertParameters["FK_Actividad"].DefaultValue = hfCodigo.Value;
+        //Ejecutamos el query
+
+        sql_rutas_actividadesDetalles.Insert();
+        DataBindRutasDetalles();
+        Response.Redirect(Request.RawUrl, false);
+    }
+
     [System.Web.Services.WebMethod]
-    public static int GetCount()
-    {
-        int x = 0;
-        string ConnectionString = ConfigurationManager.AppSettings["ConnStr_LEVERANS_prod"];
 
-
-
-        using (SqlConnection con = new SqlConnection(ConnectionString))
-        {
-            using (SqlCommand cmd = new SqlCommand("SELECT count (*) FROM [LEVERANS_PreTransacciones] where [FK_PreTransaccion_Estado]=1", con))
-            {
-                con.Open();
-                var get_x = cmd.ExecuteScalar();
-
-                if (get_x != null)
-                {
-                    x = Convert.ToInt32(get_x);
-                }
-
-
-            }
-
-        }
-
-        return x;
-    }
-
-
-
-
-    /// <summary>
-    /// Método para refrescar la pagina cuando un registro cambia de estado
-    /// </summary>
-    /// <returns></returns>
-    [System.Web.Services.WebMethod]
-    public static int pendientes_autorizacion2()
-    {
-        int y = 0;
-        string ConnectionString = ConfigurationManager.AppSettings["ConnStr_LEVERANS_prod"];
-
-
-        //Obtiene todos los usuarios con el tipo de Rol: 6.
-        using (SqlConnection con = new SqlConnection(ConnectionString))
-        {
-            using (SqlCommand cmd = new SqlCommand("SELECT count (*) FROM [LEVERANS_PreTransacciones] where [FK_PreTransaccion_Estado]=3", con))
-            {
-                con.Open();
-                var get_x = cmd.ExecuteScalar();
-
-                if (get_x != null)
-                {
-                    y = Convert.ToInt32(get_x);
-                }
-
-
-            }
-
-        }
-        return y;
-    }
-
-
-
-
-    protected void LinkButton3_Click(object sender, EventArgs e)
-    {
-
-    }
-
-
-
-    /// <summary>
-    /// Método de prueba
-    /// </summary>
-    /// <returns></returns>
-    [System.Web.Services.WebMethod]
-    public static string ddl_get_actividades()
+    public static object getactividades(string codigo)
     {
         List<actividades> salida = new List<actividades>();
 
@@ -423,232 +322,47 @@ public partial class Basculas_Default : System.Web.UI.Page
                     actividades datos = new actividades();
                     datos.codigo = int.Parse(reader["Code"].ToString());
                     datos.descripcion = reader["Description"].ToString();
-
                     salida.Add(datos);
                 }
             }
             con.Close();
         }
-        return JsonConvert.SerializeObject(salida);
+        object json = new { data = salida };
+        return json;
     }
 
-
-
-    /// <summary>
-    /// Crea una nueva PreTransacción y la convierte en una Transacción 
-    /// </summary>
-    protected void btn_save_Click(object sender, EventArgs e)
+    protected void gvw_rutasDetalles_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
+        GridView gvw_rutasDetalles = (GridView)sender;
+        sql_rutas_actividadesDetalles.DeleteParameters["PK_Rutas"].DefaultValue = gvw_rutasDetalles.DataKeys[e.RowIndex].Value.ToString();
+        sql_rutas_actividadesDetalles.Delete();
 
-        //capturamos los parametros del modal #nuevaPretransaccionModal
-        string value = ddl_actividades.SelectedValue;
-        string  Item= ddl_actividades.SelectedItem.Text;
-        int cod_pretransaccion = 0;
-        int cod_bascula = Convert.ToInt32(Request.Cookies["cod_bascula"].Value);
-        string username = Request.Cookies["username"].Value;
-
-        
-        ws_basculas wb = new ws_basculas();
- 
-        //creamos la pretransaccion
-        cod_pretransaccion = wb.Save_Pretransaccion(txtTarjeta.Text, ddl_actividades.SelectedValue, Item, "", "", "", "", "", "", true);
-     
-        //creamos transaccion en NAV y autorizamos ingreso.
-        ob_bascula.AUTORIZA_INGRESO_EN_ACCESO(cod_pretransaccion, username, cod_bascula, 2);
-
-        DataBind();
-        txtTarjeta.Text = "";
-        ddl_actividades.SelectedValue = "0";
+        gvw_rutasDetalles.EditIndex = -1;
+        Response.Redirect(Request.RawUrl, false);
     }
 
-
-    //protected void LinkButton2_Click(object sender, EventArgs e)
-    //{
-    //    ScriptManager.RegisterStartupScript(Page, Page.GetType(), "modal-convertir", "$('#exampleModal').modal();", true);
-    //}
-
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-
-    protected void lnk_crearTransaccion_Click(object sender, EventArgs e)
+    protected void gvw_rutasDetalles_RowUpdating(object sender, GridViewUpdateEventArgs e)
     {
+        GridView gvw_rutasDetalles = (GridView)sender;
+        GridViewRow row = gvw_rutasDetalles.Rows[e.RowIndex];
 
-        LinkButton lnk_crearTransaccion_Click = (LinkButton)sender;
-
-        //capturamos datos requeridos para autorizar
-        int cod_pretransaccion = Convert.ToInt32(lnk_crearTransaccion_Click.CommandArgument);
-        int cod_bascula = Convert.ToInt32(Request.Cookies["cod_bascula"].Value);
-        string username = Request.Cookies["username"].Value;
-
-
-        //Autoriza transaccion en NAV sin Acceso de ingreso.
-        ob_bascula.AUTORIZA_INGRESO_EN_ACCESO(cod_pretransaccion, username, cod_bascula, 1);
-
-        DataBind();
-    }
-
-    protected void LinkButton1_Click1(object sender, EventArgs e)
-    {
-        
-    }
-
-    protected void LinkButton2_Click1(object sender, EventArgs e)
-    {
+        sql_rutas_actividadesDetalles.UpdateParameters["PK_Rutas"].DefaultValue = gvw_rutasDetalles.DataKeys[e.RowIndex].Value.ToString();
+        sql_rutas_actividadesDetalles.UpdateParameters["Correlativo"].DefaultValue = (row.FindControl("txt_correlativo") as TextBox).Text;
+        sql_rutas_actividadesDetalles.UpdateParameters["FK_Acceso"].DefaultValue = (row.FindControl("ddlAccesos") as DropDownList).SelectedValue;
+        sql_rutas_actividadesDetalles.UpdateParameters["Estado"].DefaultValue = ((row.FindControl("CheckBox1") as CheckBox).Checked).ToString();
+        sql_rutas_actividadesDetalles.Update();
         Response.Redirect(Request.RawUrl, false);
     }
 
     protected void lnk_perfil_Click(object sender, EventArgs e)
     {
-
-        txtUsuario.Text= Request.Cookies["username"].Value;
-
+        txtUsuario.Text = Request.Cookies["username"].Value;
         ScriptManager.RegisterStartupScript(Page, Page.GetType(), "modal-convertir", "$('#editPass').modal();", true);
     }
 
-
-
-    protected void lnk_restablecer_Click(object sender, EventArgs e)
+    protected void LinkSalir1_Click(object sender, EventArgs e)
     {
-
-        int cod_usuario = Convert.ToInt32(Request.Cookies["cod_usuario"].Value);
-
-        obj_login.ActualizarContraseña(cod_usuario,txtPass.Text);
-        txtPass.Text = "";
-
-        FormsAuthentication.SignOut();
-        FormsAuthentication.RedirectToLoginPage();
+        // FormsAuthentication.SignOut();
+        // FormsAuthentication.RedirectToLoginPage();
     }
-
-    protected void lnk_editPreTransaccion_Click(object sender, EventArgs e)
-    {
-
-
-        int pk =  Convert.ToInt32(txt_codigoPreTransaccion.Value);
-
-        string ntarjeta = txt_tarjetaEdit.Text;
-
-        string cod_actividad = ddlActividadEdt.SelectedValue;
-
-        string actividad = ddlActividadEdt.SelectedItem.Text;
-
-        obj_preTra.UpdatePreTransacciones(pk,ntarjeta,cod_actividad,actividad);
-        //Response.Redirect(Request.RawUrl, false);
-        // int cod = 0;
-    }
-
-    protected void lnk_delete_Click(object sender, EventArgs e)
-    {
-
-        LinkButton lnk_delete_Click = (LinkButton)sender;
-
-        //capturamos datos requeridos para autorizar
-        int cod_pretransaccion = Convert.ToInt32(lnk_delete_Click.CommandArgument);
-        int cod_usuario = Convert.ToInt32(Request.Cookies["cod_usuario"].Value);
-        string username = Request.Cookies["username"].Value;
-
-        obj_preTra.DeletePreTransaccion(cod_pretransaccion);
-        String bitacora = String.Format("El usuario {0} elimino la Pretransacción # {1}",username, cod_pretransaccion);
-        obj_bitacora.AgregaBitacora(bitacora,cod_usuario);
-
-        //Response.Redirect(Request.RawUrl, false);
-
-        DataBind();
-    }
-
-    protected void lnk_rotar_Click(object sender, EventArgs e)
-    {
-        LinkButton lnk_rotar_Click = (LinkButton)sender;
-
-        string[] arg = new string[2];
-        arg = lnk_rotar_Click.CommandArgument.ToString().Split(';');
-
-
-        //Documentos
-        string Documento = arg[0];
-        string Documentothumbnail = arg[1];
-
-
-        string Documento_sinFormato = Documento.Substring(0, Documento.Length-4);
-
-        //rota 90° el primer Documento
-        rotarImagen(Documento_sinFormato);
-        //Documento_thumbnail
-     
-        string Documentothumbnail_sinFormato = Documentothumbnail.Substring(0,Documentothumbnail.Length-4);
-        //rota 90° el segundo Documento
-        rotarImagen(Documentothumbnail_sinFormato);
-
-        //int codi = 4;
-
-        
-
-
-    }
-
-    public void rotarImagen(string filename)
-    {
-
-      //  string filePath = Server.MapPath("~/Upload/" + filename+".jpg");
-
-	//string filePath = @"E:\Scanner-img\" + filename+ ".jpg";
-
-        string path = @"E:\Scanner-img\" + filename+ ".jpg";
-
-        string nuevo_nombre = Guid.NewGuid().ToString() + ".jpg";
-
-        string newpath = Server.MapPath(filename + ".01.jpg");
-
-        System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-        img.Save(newpath);
-
-        img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-        img.Save(path);
-        img.Dispose();
-
-    }
-
-    protected void lnk_update_pret_Click(object sender, EventArgs e)
-    {
-        LinkButton lnk_update_pret_Click = (LinkButton)sender;
-        //capturamos datos requeridos para autorizar
-        int cod_pretransaccion = Convert.ToInt32(lnk_update_pret_Click.CommandArgument);
-        int cod_usuario = Convert.ToInt32(Request.Cookies["cod_usuario"].Value);
-        string username = Request.Cookies["username"].Value;
-
-        ob_bascula.UpdateEstadoPreTransaccion(cod_pretransaccion, 3);
-
-        String bitacora = String.Format("El usuario {0} simulo ingreso para la Pretransacción # {1}", username, cod_pretransaccion);
-        obj_bitacora.AgregaBitacora(bitacora, cod_usuario);
-
-        //Response.Redirect(Request.RawUrl, false);
-
-        DataBind();
-    }
-
-    /// <summary>
-    /// Metodo para dar privilegios a usuarios dependiendo de el rol q este tiene asignado
-    /// </summary>
-    public void valida_rol() {
-
-        //Declaramos los controles a los q les aplicaremos los cambios 
-
-
-        //accion dependiendo del tipo de rol del usuario
-        switch (cod_rol)
-        {
-            case "1":
-            case "2":
-                Lnk_newTransaccon.Visible = true;
-                break;
-            default:
-                break;
-        }
-
-    }
-
-
-  
 }
