@@ -534,7 +534,7 @@
     <main class="main">
         <!-- Truck Image -->
         <div class="truck-image-container">
-            <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Imagenes/imagen%20camionero.png" alt="Truck Image" class="truck-image">
+            <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/refs/heads/main/imagen-camionero-_1_.webp" alt="Truck Image" class="truck-image">
         </div>
 
         <!-- Text Section -->
@@ -814,6 +814,17 @@
 <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
 
 <script>
+    $(document).ready(function () {
+        // Detectar cuando se cambia el valor del input
+        $('#<%= txtTransaccion.ClientID %>').on('input', function () {
+            var valor = $(this).val();
+            // Reemplazar ' por -
+            valor = valor.replace(/'/g, '-');
+            // Establecer el nuevo valor en el input
+            $(this).val(valor);
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () 
     {
         var carouselElement = document.getElementById('carouselForms');
