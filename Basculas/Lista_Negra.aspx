@@ -333,87 +333,81 @@
             </div>
         </div>
 
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
-            <div class="w-11/12 mx-auto bg-white" style="max-width: 900px; margin: 0 auto;">
-                <div class="row g-4">
-                    <asp:Repeater ID="rptRutas" runat="server">
-                        <ItemTemplate>
-                            <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-                                <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 400px;">
-                                    <div class="card-img-top" style="height: 200px; overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
-                                        <asp:Image ID="imgShipment" runat="server"
-                                            ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
-                                                        ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
-                                                        : null %>'
-                                            CssClass="img-fluid"
-                                            style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
-                                                    ? "width: 100%; height: 100%; object-fit: cover;" 
-                                                    : "display: none;" %>' />
-                                        <div style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
-                                                        ? "display: none;" 
-                                                        : "width: 100%; height: 100%; border: 2px dashed #ddd; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #888;" %>'>
-                                            Sin imagen
-                                        </div>
-                                    </div>
-                                
-                                    <div class="card-body p-4">
-                                        <!-- Información de la tarjeta con texto más pequeño -->
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Nombre:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblNombre" runat="server"
-                                                Text='<%# Eval("driver.name") != null ? HttpUtility.HtmlEncode(Eval("driver.name").ToString()) : "Sin datos" %>' />
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-id-card text-primary"></i> <strong>DUI:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            
-                                        </p>
-
-                                        <!-- Línea divisoria con grosor y color especificados -->
-                                        <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-credit-card text-primary"></i> <strong>Licencia:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblLicencia" runat="server"
-                                                Text='<%# Eval("driver.license") != null ? HttpUtility.HtmlEncode(Eval("driver.license").ToString()) : "Sin datos" %>' />
-                                        </p>
-                                            
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Empresa de Transporte:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exclamation-circle text-primary"></i> <strong>Tipo de Incidente:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-ban text-primary"></i> <strong>Tipo de Castigo:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-comment text-primary"></i> <strong>Comentario:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblComentario" runat="server"
-                                                Text='<%# Eval("observation") != null ? HttpUtility.HtmlEncode(Eval("observation").ToString()) : "Sin datos" %>' />
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Tiempo de Sancion:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                            <asp:Label ID="lblTiempoSan" runat="server"
-                                                Text='<%# Eval("banDurationDays") != null ? HttpUtility.HtmlEncode(Eval("banDurationDays").ToString() + " Días") : "Sin datos" %>' />
-                                        </p>
-
-                                        <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-check text-primary"></i> <strong>Fin de Sancion:</strong></p>
-                                        <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
-                                        </p>
-                                            
-                                    </div>
+        <!-- Main Content -->
+    <div class="container">
+        <div class="row mt-3"> <!-- Agregado mt-3 para un margen superior -->
+            <asp:Repeater ID="rptRutas" runat="server">
+                <ItemTemplate>
+                    <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                        <div class="card border rounded-4" style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px; height: 400px;">
+                            <div class="card-img-top" style="height: 200px; overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                <asp:Image ID="imgShipment" runat="server"
+                                    ImageUrl='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0)
+                                                ? ((dynamic)Eval("shipmentAttachments"))[0].fileUrl
+                                                : null %>'
+                                    CssClass="img-fluid"
+                                    style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
+                                            ? "width: 100%; height: 100%; object-fit: cover;" 
+                                            : "display: none;" %>' />
+                                <div style='<%# (Eval("shipmentAttachments") != null && ((IEnumerable<object>)Eval("shipmentAttachments")).Count() > 0) 
+                                                ? "display: none;" 
+                                                : "width: 100%; height: 100%; border: 2px dashed #ddd; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #888;" %>'>
+                                    Sin imagen
                                 </div>
                             </div>
-                        </ItemTemplate>
-                    </asp:Repeater>
-                </div>
-            </div>
-        </section> 
+                                
+                            <div class="card-body p-4">
+                                <!-- Información de la tarjeta con texto más pequeño -->
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-user text-primary"></i> <strong>Nombre:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                    <asp:Label ID="lblNombre" runat="server"
+                                        Text='<%# Eval("driver.name") != null ? HttpUtility.HtmlEncode(Eval("driver.name").ToString()) : "Sin datos" %>' />
+                                </p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-id-card text-primary"></i> <strong>DUI:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;"></p>
+                                    
+                                <!-- Línea divisoria con grosor y color especificados -->
+                                <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-credit-card text-primary"></i> <strong>Licencia:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                    <asp:Label ID="lblLicencia" runat="server"
+                                        Text='<%# Eval("driver.license") != null ? HttpUtility.HtmlEncode(Eval("driver.license").ToString()) : "Sin datos" %>' />
+                                </p>
+                                            
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-truck text-primary"></i> <strong>Empresa de Transporte:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;"></p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-exclamation-circle text-primary"></i> <strong>Tipo de Incidente:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;"></p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-ban text-primary"></i> <strong>Tipo de Castigo:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;"></p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-comment text-primary"></i> <strong>Comentario:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                    <asp:Label ID="lblComentario" runat="server"
+                                        Text='<%# Eval("observation") != null ? HttpUtility.HtmlEncode(Eval("observation").ToString()) : "Sin datos" %>' />
+                                </p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-clock text-primary"></i> <strong>Tiempo de Sancion:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                    <asp:Label ID="lblTiempoSan" runat="server"
+                                        Text='<%# Eval("banDurationDays") != null ? HttpUtility.HtmlEncode(Eval("banDurationDays").ToString() + " Días") : "Sin datos" %>' />
+                                </p>
+
+                                <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-calendar-check text-primary"></i> <strong>Fin de Sancion:</strong></p>
+                                <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;"></p>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+        </div>
+    </div>
+
     </main>
 
     <!-- Footer -->
