@@ -20,55 +20,48 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-         // Verificamos si las cookies están presentes
         if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
         {
-            // Obtener los valores de las cookies
             string username = Request.Cookies["username"].Value;
             string cod_bascula = Request.Cookies["cod_bascula"].Value;
             string cod_usuario = Request.Cookies["cod_usuario"].Value;
             string cod_turno = Request.Cookies["cod_turno"].Value;
 
-            // Aquí puedes usar estos valores como necesites
-            // Por ejemplo, mostrar el nombre de usuario en una etiqueta (si lo necesitas)
-            //lblUsername.Text = username;
-
-            this.LogEvent("Inicio de la carga de la página.");
             if (!IsPostBack)
             {
                 string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
                 string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-                
-                // Forzar el uso de TLS 1.2
+
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 using (WebClient client = new WebClient())
                 {
-                    // Añadir el token al encabezado de autorización
                     client.Headers.Add("Authorization", "Bearer " + token);
                     client.Encoding = Encoding.UTF8;
+
                     try
                     {
-                        // Realizar la solicitud GET y leer la respuesta
                         string responseBody = client.DownloadString(url);
 
-                        // Deserializar la respuesta JSON
+                        // Deserialización de datos
                         var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                        // Filtrar por tipos de camiones
+                        // Ordenar por dateTimePrecheckeo
+                        data = data
+                               .Where(item => item.dateTimePrecheckeo != DateTime.MinValue) // Validar que tenga un valor válido
+                               .OrderBy(item => item.dateTimePrecheckeo) // Ordenar por la propiedad
+                               .ToList();
+
+                        // Filtrado y conteo
                         var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
                         var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
 
-                        // Contar registros por tipo
                         lblCountP.Text = truckTypeP.Count.ToString();
                         lblCountV.Text = truckTypeV.Count.ToString();
 
-                        // Crear una lista de códigos de ingenio válidos
+                        // Actualización de ingenioCounts
                         var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
-
-                        // Inicializar los conteos de ingenios
                         var ingenioCounts = new Dictionary<string, int>();
 
-                        // Contar ingenios en todos los registros filtrados
                         foreach (var item in data)
                         {
                             var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
@@ -85,21 +78,19 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                             }
                         }
 
-                        // Procesar e insertar los conteos en las etiquetas correspondientes
-                        int i = 1;
-                        foreach (var ingenio in validIngenios)
+                        // Asignar valores a los TextBox correspondientes
+                        for (int i = 1; i <= validIngenios.Length; i++)
                         {
-                            // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
-                            var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i.ToString())) as TextBox;
+                            var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + i.ToString()) as TextBox;
                             if (txtIngenioQuantity != null)
                             {
-                                // Mostrar el conteo de ingenios o 0 si no existe
-                                txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                                txtIngenioQuantity.Text = ingenioCounts.ContainsKey(validIngenios[i - 1]) 
+                                    ? ingenioCounts[validIngenios[i - 1]].ToString() 
+                                    : "0";
                             }
-                            i++;
                         }
 
-                        // Vincular los datos filtrados a los Repeaters correspondientes
+                        // Vincular datos ordenados a los Repeaters
                         rptRutas1.DataSource = truckTypeP;
                         rptRutas1.DataBind();
 
@@ -108,20 +99,20 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                     }
                     catch (Exception ex)
                     {
-                        // Manejar errores de solicitud o deserialización
-                        // lblIngenioCounts.Text = "Error al cargar los datos: " + ex.Message;
                         lblCountP.Text = "0";
                         lblCountV.Text = "0";
+                        // Registrar el error en un archivo de log o consola
+                        Console.WriteLine("Error: " + ex.Message);
                     }
-                }    
+                }
             }
         }
         else
         {
-            // Si las cookies no están presentes, redirigir al login
             Response.Redirect("login.aspx");
         }
     }
+
 
     public void LogEvent(object message)
     {

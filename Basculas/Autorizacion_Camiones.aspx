@@ -686,52 +686,48 @@
             </div>
         </div>
 
-        <!-- Modal de Validación -->
         <div class="modal fade" id="rutaModal" tabindex="-1" role="dialog" aria-labelledby="rutaModalLabel" aria-hidden="true" data-backdrop="static">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitulo"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitulo"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
+                <!-- Agregamos un id al formulario -->
+                <form id="formRutaModal">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Licencia:</label>
+                        <input type="text" class="form-control" id="txt_licencia" />
                     </div>
-                    <div class="modal-body">
-                        <input type="hidden" class="form-control" id="codigoGeneracionInput" readonly />
-                        <form>
-                            <div class="form-group">
-                                <label for="recipient-name" class="col-form-label">Licencia:</label>
-                                <input type="text" class="form-control" id="txt_licencia" />
-                            </div>
-                            <div class="form-group">
-                                <label for="message-text" class="col-form-label">Placa Remolque:</label>
-                                <input type="text" class="form-control" id="txt_placaremolque" oninput="validarPlacaRemolque()" />
-                                <small class="form-text text-muted" id="placaRemolqueHint">Debe comenzar con "RE" seguido de números, sin espacios.</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="message-text" class="col-form-label">Placa Camión:</label>
-                                <input type="text" class="form-control" id="txt_placamion" oninput="validarPlacaCamion()" />
-                                <small class="form-text text-muted" id="placaCamionHint">Debe comenzar con "C" seguido de números, sin espacios.</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
-                                <input type="number" class="form-control" id="txt_tarjeta"  oninput="this.value = this.value.slice(0, 4)" />
-                            </div>
-                        </form>
-                        <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Placa Remolque:</label>
+                        <input type="text" class="form-control" id="txt_placaremolque" oninput="validarPlacaRemolque()" />
+                        <small class="form-text text-muted" id="placaRemolqueHint">Debe comenzar con "RE" seguido de números, sin espacios.</small>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="btnReportar">Reportar</button>
-                        <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Placa Camión:</label>
+                        <input type="text" class="form-control" id="txt_placamion" oninput="validarPlacaCamion()" />
+                        <small class="form-text text-muted" id="placaCamionHint">Debe comenzar con "C" seguido de números, sin espacios.</small>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">No. Tarjeta:</label>
+                        <input type="number" class="form-control" id="txt_tarjeta" oninput="this.value = this.value.slice(0, 4)" />
+                    </div>
+                </form>
+                <asp:Label ID="lblRuta" runat="server" Text=""></asp:Label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnReportar">Reportar</button>
+                <button type="button" class="btn btn-primary" onclick="validarInformacion()">Confirmar</button>
             </div>
         </div>
+    </div>
+</div>
 
-        </div>
-        </div>
-       </div>
 
 
         <div class="modal fade" tabindex="-1" role="dialog" id="modalReportar" aria-labelledby="modalReportarLabel" aria-hidden="true" data-backdrop="static">
@@ -992,10 +988,37 @@ function resetErrorFields(camposConError) {
     });
 }
 
-// Limpiar los datos cuando se cierre la modal
-$('#myModal').on('hidden.bs.modal', function () {
-    resetErrorFields([]); // Limpiar los campos
+// Función para limpiar campos específicos de la modal
+function limpiarCamposModal() {
+    const campos = [
+        'txt_licencia',
+        'txt_placaremolque',
+        'txt_placamion',
+        'txt_tarjeta'
+    ];
+
+    // Limpiar valores de los campos
+    campos.forEach(campoId => {
+        const campo = document.getElementById(campoId);
+        if (campo) {
+            campo.value = ''; // Limpia el valor del campo
+            campo.classList.remove('error-field'); // Limpia las clases de error si existen
+        }
+    });
+
+    // Si el formulario tiene campos adicionales que limpiar
+    const hiddenField = document.getElementById('codigoGeneracionInput');
+    if (hiddenField) {
+        hiddenField.value = '';
+    }
+}
+
+// Evento de cierre de la modal
+$('#rutaModal').on('hidden.bs.modal', function () {
+    limpiarCamposModal(); // Llama a la función para limpiar los campos
 });
+    
+
 
         // Funcion para asignar la tarjeta en NAV
         function asignartarjeta(codigoGeneracion, tarjeta) 
