@@ -425,7 +425,7 @@
                         <!-- Info 1 -->
                         <div class="bg-white p-2 rounded-md  text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
                             <p>
-                                <strong>Transaccion:</strong>
+                                <strong>Transacción:</strong>
                                 <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
                             </p>
                             
@@ -473,7 +473,7 @@
                                 <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
                                 <ul class="space-y text-sm" style="color: white; text-align: left;">
                                     <li>
-                                        <strong>Transaccion:</strong>
+                                        <strong>Transacción:</strong>
                                         <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
                                     </li>
                                     <li>
@@ -538,7 +538,7 @@
                         <!-- Info 1 -->
                         <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
                             <p>
-                                <strong>Transaccion:</strong>
+                                <strong>Transacción:</strong>
                                 <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
                             </p>
                                 
@@ -585,7 +585,7 @@
 
                                     <ul class="space-y text-sm" style="color: white; text-align: left;">
                                         <li>
-                                            <strong>Transaccion:</strong>
+                                            <strong>Transacción:</strong>
                                             <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
                                         </li>
                                         <li>
@@ -922,7 +922,9 @@
                                 background: '#d4edda',
                                 confirmButtonColor: '#28a745',
                             });
-                        } else {
+                        } 
+                        else 
+                        {
                             console.log("La respuesta de la API no tiene el formato esperado");
                             Swal.fire({
                                 icon: 'error',
@@ -933,7 +935,9 @@
                                 confirmButtonColor: '#721c24',
                             });
                         }
-                    } else {
+                    } 
+                    else 
+                    {
                         console.log("Respuesta vacía o no válida de la API");
                         Swal.fire({
                             icon: 'error',
@@ -945,11 +949,13 @@
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, status, error) 
+                {
                     var errorMessage = xhr.responseText || error;
 
                     // Verificar si el error corresponde a la condición específica
-                    if (errorMessage.includes("(400) Solicitud incorrecta")) {
+                    if (errorMessage.includes("(400) Solicitud incorrecta")) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'No se pueden solicitar unidades',
@@ -958,7 +964,9 @@
                             background: '#f8d7da',
                             confirmButtonColor: '#721c24',
                         });
-                    } else {
+                    } 
+                    else 
+                    {
                         console.log("Error en la solicitud AJAX: ", status, error);
                         Swal.fire({
                             icon: 'error',
@@ -972,15 +980,33 @@
                 }
             });
         }
-
-
-
     </script>
 
     <script>
         let intervals = { timer1: null, timer2: null }; // Objeto para almacenar los intervalos de cada cronómetro
         let isRunning = { timer1: false, timer2: false }; // Estado de ejecución de cada cronómetro
         let lastTimestamps = { timer1: null, timer2: null }; // Tiempos de inicio de cada cronómetro
+
+        window.onload = function () 
+        {
+            for (const key in intervals) 
+            {
+                const isRunningStored = localStorage.getItem(`${key}_isRunning`) === 'true';
+                const storedMilliseconds = parseInt(localStorage.getItem(`${key}_milliseconds`)) || 0;
+
+                if (isRunningStored) 
+                {
+                    console.log(`Restaurando ${key}, tiempo acumulado: ${storedMilliseconds}ms`);
+                    lastTimestamps[key] = performance.now();
+                    restoreTimer(key, storedMilliseconds);
+                } 
+                else 
+                {
+                    console.log(`${key} no estaba en ejecución.`);
+                    updateTimerDisplay(key === 'timer1' ? 'timerText1' : 'timerText2', storedMilliseconds);
+                }
+            }
+        };
 
         // Función para manejar la modal y la lógica de barrido
         function mostrarModal(event, button) 
@@ -1088,64 +1114,76 @@
 
         function startTimer(storageKey) 
         {
-            if (!storageKey) 
-            {
-                console.error("storageKey no está definido.");
-                return; // Salir si storageKey no está definido
-            }
+            if (!storageKey || isRunning[storageKey]) return;
 
-            let milliseconds = 0;
-            // Duración dinámica dependiendo del reloj
-            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 minutos o 10 minutos en milisegundos
+            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000;
             const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
             const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
 
-            if (isRunning[storageKey]) {
-                console.log(`${storageKey} ya está en ejecución.`);
-                return; // No iniciar si ya está en ejecución
+            let milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
+            const wasRunning = localStorage.getItem(`${storageKey}_isRunning`) === 'true';
+
+            if (wasRunning) 
+            {
+                const lastSavedTimestamp = parseInt(localStorage.getItem(`${storageKey}_lastTimestamp`)) || 0;
+                if (lastSavedTimestamp) 
+                {
+                    const now = performance.now();
+                    milliseconds += now - lastSavedTimestamp;
+                }
             }
 
             isRunning[storageKey] = true;
-            localStorage.setItem(`${storageKey}_isRunning`, 'true');
             lastTimestamps[storageKey] = performance.now();
+            localStorage.setItem(`${storageKey}_isRunning`, 'true');
 
-            intervals[storageKey] = setInterval(() => {
+            intervals[storageKey] = setInterval(() => 
+            {
                 const currentTimestamp = performance.now();
                 const elapsed = currentTimestamp - lastTimestamps[storageKey];
                 lastTimestamps[storageKey] = currentTimestamp;
 
                 milliseconds += elapsed;
                 localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
+                localStorage.setItem(`${storageKey}_lastTimestamp`, performance.now());
 
                 const angle = (milliseconds / duration) * 360;
                 const progressCircleElement = document.getElementById(progressCircleId);
-                if (progressCircleElement) {
+                if (progressCircleElement) 
+                {
                     progressCircleElement.style.background = `conic-gradient(${getColor(milliseconds, duration, storageKey)} ${angle}deg, #f0f0f0 ${angle}deg)`;
-                } else {
-                    console.error(`Elemento con ID "${progressCircleId}" no encontrado.`);
                 }
 
                 updateTimerDisplay(timerTextId, milliseconds);
-            }, 50);
 
+                if (milliseconds >= duration) 
+                {
+                    clearInterval(intervals[storageKey]);
+                    isRunning[storageKey] = false;
+                    localStorage.setItem(`${storageKey}_isRunning`, 'false');
+                }
+            }, 50);
         }
+
 
         function stopTimer(stopButtonId) 
         {
             const codigoGeneracion = document.getElementById(stopButtonId).getAttribute('data-codigo-generacion');
-            console.log("Código de generación:", codigoGeneracion); // Verifica que el valor se obtenga correctamente
-
             const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : 'timer2';
             const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
             const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
             const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 min para stopButton1 y 10 min para stopButton2
             const milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
-            console.log(`Cronómetro detenido. Tiempo transcurrido: ${formatTime(milliseconds)}`);
+            const tiempoTranscurrido = formatTime(milliseconds); // Formatear el tiempo transcurrido
+
+            console.log(`Código de generación: ${codigoGeneracion}`);
+            console.log(`Cronómetro detenido. Tiempo transcurrido: ${tiempoTranscurrido}`);
 
             if (!isRunning[storageKey]) 
             {
                 console.log("El cronómetro ya está detenido.");
                 return; // No hacer nada si el cronómetro ya está detenido
+                
             }
 
             // Si el tiempo transcurrido es mayor que el umbral, mostramos la modal para seleccionar motivo
@@ -1154,11 +1192,14 @@
                 const confirmationModal = document.getElementById("confirmationModal");
                 confirmationModal.style.display = "block"; // Muestra la modal
 
-                document.getElementById("confirmStopButton").onclick = function() {
-                    // Obtener el valor seleccionado en el select de la modal
-                    const motivoDetencion = document.getElementById("motivoDetencion").value;
+                document.getElementById("confirmStopButton").onclick = function() 
+                {
+                    // Obtener el valor del comentario seleccionado en el input de la modal
+                    const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Enviar vacío si no hay comentario
+                    console.log('Motivo seleccionado:', motivoDetencion);
 
-                    console.log('Motivo seleccionado:', motivoDetencion); // Verifica que el valor se obtiene correctamente
+                    // Llamar a la función TiempoAzucar con los parámetros
+                    TiempoAzucar(codigoGeneracion, tiempoTranscurrido, motivoDetencion);
 
                     // Detener el cronómetro y actualizar la UI
                     clearInterval(intervals[storageKey]);
@@ -1168,17 +1209,12 @@
                     document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
                     updateTimerDisplay(timerTextId, 0);
                     confirmationModal.style.display = "none"; // Ocultar modal
-
-                    console.log(`Cronómetro detenido. Tiempo transcurrido: ${formatTime(milliseconds)}`);
-                    console.log(`Motivo de detención: ${motivoDetencion}`);
                 };
 
-
-                // Cancelar detener cronómetro
-                document.getElementById("cancelStopButton").onclick = function() {
+                document.getElementById("cancelStopButton").onclick = function() 
+                {
                     confirmationModal.style.display = "none"; // Cerrar modal sin detener el cronómetro
                 };
-
             } 
             else 
             {
@@ -1189,7 +1225,43 @@
                 localStorage.setItem(`${storageKey}_milliseconds`, 0);
                 document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
                 updateTimerDisplay(timerTextId, 0);
+
+                // Llamar a la función TiempoAzucar con un comentario vacío
+                TiempoAzucar(codigoGeneracion, tiempoTranscurrido, '');
             }
+        }
+
+        function restoreTimer(storageKey, initialMilliseconds) 
+        {
+            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000;
+            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
+            const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
+
+            let milliseconds = initialMilliseconds;
+
+            isRunning[storageKey] = true;
+
+            intervals[storageKey] = setInterval(() => 
+            {
+                const currentTimestamp = performance.now();
+                const elapsed = currentTimestamp - lastTimestamps[storageKey];
+                lastTimestamps[storageKey] = currentTimestamp;
+                milliseconds += elapsed;
+                localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
+
+                const angle = (milliseconds / duration) * 360;
+                const progressCircleElement = document.getElementById(progressCircleId);
+
+                if (progressCircleElement) 
+                {
+                    progressCircleElement.style.background = `conic-gradient(${getColor(milliseconds, duration, storageKey)} ${angle}deg, #f0f0f0 ${angle}deg)`;
+                }
+
+                updateTimerDisplay(timerTextId, milliseconds);
+
+                // Eliminar la condición de detención del cronómetro
+                // Ya no hay necesidad de detener el cronómetro si ha alcanzado el tiempo máximo
+            }, 50);
         }
 
         function updateTimerDisplay(timerTextId, milliseconds) 
@@ -1249,6 +1321,75 @@
                 // Tiempo excedido o alcanzado
                 return "#ff0000"; // Rojo
             }
+        }
+
+        // Función para cambiar el estatus después de la validación exitosa
+        function changeStatusAzucar(codigoGeneracion) 
+        {
+            var predefinedStatusId = 9; // Cambia esto al ID de estado que deseas
+            if (!codigoGeneracion || codigoGeneracion.trim() === '') 
+            {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor, ingrese un Código de Generación',
+                    icon: 'error',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
+                data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) 
+                {
+                    console.log("Respuesta de la API: ", response.d);     
+                    // Recargar la página cuando el usuario presione "Aceptar"
+                    location.reload();
+                },
+                error: function(xhr, status, error) 
+                {
+                    console.error("Error cambiando el estado: ", error);
+                }
+            });
+        }
+
+        function TiempoAzucar(codigoGeneracion, tiempo, comentario)
+        {  
+            if (!codigoGeneracion || codigoGeneracion.trim() === '') 
+            {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor, ingrese un Código de Generación',
+                    icon: 'error',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "Tiempos_Azucar.aspx/TiempoAzucar",
+                data: JSON.stringify({ codigoGeneracion: codigoGeneracion, tiempo: tiempo, comentario: comentario}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) 
+                {
+                    console.log("Respuesta de la API: ", response.d);     
+
+                    // Funcion para cambiar estatus de la Transacción
+                    changeStatusAzucar(codigoGeneracion);
+                },
+                error: function(xhr, status, error) 
+                {
+                    console.error("Error cambiando el estado: ", error);
+                }
+            });
         }
     </script>
 

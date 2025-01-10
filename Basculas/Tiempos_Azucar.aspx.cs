@@ -209,97 +209,135 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         }
     }
     
-
-
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
-{
-    // Código para solicitar una unidad
-    string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/call-multiple/";
-    string url = baseUrl + Tipo_Unidad + "/" + currentValue;
-
-    // Token de autenticación
-    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-    try
     {
-        using (WebClient client = new WebClient())
+        // Código para solicitar una unidad
+        string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/call-multiple/";
+        string url = baseUrl + Tipo_Unidad + "/" + currentValue;
+
+        // Token de autenticación
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+        try
         {
-            try
+            using (WebClient client = new WebClient())
             {
-                // Configurar los encabezados
+                try
+                {
+                    // Configurar los encabezados
+                    client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    // Log de la URL de la solicitud
+                    LogEventS("URL de solicitud: " + url);
+
+                    // Enviar la solicitud POST sin cuerpo
+                    string response = client.UploadString(url, "POST", "");
+
+                    // Log de la respuesta
+                    LogEventS("Respuesta de la API: " + response);
+
+                    // Verificar si la respuesta está vacía
+                    if (string.IsNullOrEmpty(response))
+                    {
+                        LogEventS("El servidor no devolvió respuesta.");
+                        return "El servidor no devolvió respuesta.";
+                    }
+
+                    // Intentar parsear la respuesta como JSON
+                    try
+                    {
+                        // Deserializar la respuesta como un arreglo JSON (JArray)
+                        var responseArray = JsonConvert.DeserializeObject(response) as Newtonsoft.Json.Linq.JArray;
+
+                        // Verificar si el arreglo contiene elementos
+                        if (responseArray != null && responseArray.Count > 0)
+                        {
+                            // Extraer información del primer objeto del arreglo
+                            var firstItem = responseArray[0];
+                            string status = firstItem["status"] != null ? firstItem["status"].ToString() : "No status";
+                            string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "No entryTime";
+
+                            // Crear un mensaje de respuesta
+                            string serverResponse = "Status: " + status + ", EntryTime: " + entryTime;
+
+                            // Log del mensaje de respuesta
+                            LogEventS("Respuesta exitosa: " + serverResponse);
+                            return serverResponse;
+                        }
+                        else
+                        {
+                            LogEventS("La respuesta de la API está vacía.");
+                            return "La respuesta de la API está vacía.";
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        // Si la respuesta no es un JSON válido
+                        LogEventS("Error al procesar la respuesta JSON: " + ex.Message);
+                        return "Error al procesar la respuesta JSON: " + ex.Message;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Captura cualquier error dentro del bloque 'using'
+                    LogEventS("Error al realizar la solicitud: " + ex.Message);
+                    return "Error al realizar la solicitud: " + ex.Message;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Captura cualquier error inesperado fuera del 'using'
+            LogEventS("Error inesperado: " + ex.Message);
+            return "Error inesperado: " + ex.Message;
+        }
+    }
+
+    [WebMethod]
+    public static string TiempoAzucar(string codigoGeneracion, string tiempo, string comentario)
+    {
+        // Log de los parámetros recibidos
+        LogEventS(new { Message = "Parámetros recibidos", codigoGeneracion, tiempo, comentario });
+
+        string baseUrl = "https://apiclientes.almapac.com:9010/api/shipping/sugartime/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+
+        string responseContent = string.Empty;
+
+        try
+        {
+            using (var client = new WebClient())
+            {
                 client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-                // Log de la URL de la solicitud
-                LogEventS("URL de solicitud: " + url);
+                var requestBody = new { codeGen = codigoGeneracion, time = tiempo, observation = comentario };
+                var json = JsonConvert.SerializeObject(requestBody);
 
-                // Enviar la solicitud POST sin cuerpo
-                string response = client.UploadString(url, "POST", "");
+                // Log del JSON generado para la solicitud
+                LogEventS(new { Message = "JSON generado para la solicitud", json });
+
+                responseContent = client.UploadString(baseUrl, "POST", json);
 
                 // Log de la respuesta
-                LogEventS("Respuesta de la API: " + response);
-
-                // Verificar si la respuesta está vacía
-                if (string.IsNullOrEmpty(response))
-                {
-                    LogEventS("El servidor no devolvió respuesta.");
-                    return "El servidor no devolvió respuesta.";
-                }
-
-                // Intentar parsear la respuesta como JSON
-                try
-                {
-                    // Deserializar la respuesta como un arreglo JSON (JArray)
-                    var responseArray = JsonConvert.DeserializeObject(response) as Newtonsoft.Json.Linq.JArray;
-
-                    // Verificar si el arreglo contiene elementos
-                    if (responseArray != null && responseArray.Count > 0)
-                    {
-                        // Extraer información del primer objeto del arreglo
-                        var firstItem = responseArray[0];
-                        string status = firstItem["status"] != null ? firstItem["status"].ToString() : "No status";
-                        string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "No entryTime";
-
-                        // Crear un mensaje de respuesta
-                        string serverResponse = "Status: " + status + ", EntryTime: " + entryTime;
-
-                        // Log del mensaje de respuesta
-                        LogEventS("Respuesta exitosa: " + serverResponse);
-                        return serverResponse;
-                    }
-                    else
-                    {
-                        LogEventS("La respuesta de la API está vacía.");
-                        return "La respuesta de la API está vacía.";
-                    }
-                }
-                catch (JsonException ex)
-                {
-                    // Si la respuesta no es un JSON válido
-                    LogEventS("Error al procesar la respuesta JSON: " + ex.Message);
-                    return "Error al procesar la respuesta JSON: " + ex.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                // Captura cualquier error dentro del bloque 'using'
-                LogEventS("Error al realizar la solicitud: " + ex.Message);
-                return "Error al realizar la solicitud: " + ex.Message;
+                LogEventS(new { Message = "Respuesta recibida del servidor", ResponseContent = responseContent });
             }
         }
+        catch (Exception ex)
+        {
+            // Log del error
+            LogEventS(new { Message = "Error inesperado", Exception = ex.Message });
+            return "Error inesperado: " + ex.Message;
+        }
+
+        // Log del éxito
+        LogEventS(new { Message = "Solicitud completada exitosamente", ResponseContent = responseContent });
+
+        return responseContent;
     }
-    catch (Exception ex)
-    {
-        // Captura cualquier error inesperado fuera del 'using'
-        LogEventS("Error inesperado: " + ex.Message);
-        return "Error inesperado: " + ex.Message;
-    }
-}
-
-
-
 
     private void DataBind()
     {
@@ -337,7 +375,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         File.AppendAllText(logFilePath, formattedLog);
     }
 
-    // Método para escribir en el Visor de eventos
+    // Método para escribir en el Visor de eventos o archivo de logs
     public static void LogEventS(object message)
     {
         try
@@ -356,28 +394,24 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             string logMessage;
             try
             {
-                // Intentar serializar el mensaje en formato JSON
                 logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
             }
-            catch (Exception ex)
+            catch
             {
-                // Si la serialización falla, usa el método ToString() o "null" si es nulo
+                // Si la serialización falla, usar el método ToString() o "null" si es nulo
                 logMessage = (message != null) ? message.ToString() : "null";
-
-                // Log de error en caso de fallo en la serialización
-                logMessage = string.Format("[Error al serializar mensaje]: {0} - {1}", ex.Message, logMessage);
             }
 
-            // Formatear el mensaje de log con la fecha y hora
-            string formattedLog = string.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+            // Formatear el mensaje de log
+            string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
 
-            // Escribir el log en el archivo, asegurándose de que no se sobrescriba el archivo existente
+            // Escribir el log en el archivo
             File.AppendAllText(logFilePath, formattedLog);
         }
         catch (Exception ex)
         {
-            // Manejar cualquier error al escribir el log
-            // En este caso, se escribe un mensaje en la consola (esto puede cambiarse por otro método de logging)
+            // Manejar errores al escribir el log
+            // Considera usar un método de respaldo como Event Viewer
             Console.WriteLine("Error al escribir el log: " + ex.Message);
         }
     }
@@ -583,7 +617,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public string marchamo3 { get; set; }
         public string marchamo4 { get; set; }
     }
-
 
     protected void lnk_VerRuta_Click(object sender, EventArgs e)
     {
