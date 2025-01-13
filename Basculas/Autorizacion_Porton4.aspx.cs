@@ -41,7 +41,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                     this.LogEvent("Realizando solicitud GET a la URL: " + url);
                     this.LogEvent("Método de solicitud: GET");
                     this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
-                    
+
                     // Realizar la solicitud GET y leer la respuesta
                     string responseBody = client.DownloadString(url);
 
@@ -53,9 +53,11 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
                     // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 4
-                    var filteredData = data.Where(p => p.currentStatus == 4).ToList();
+                    var filteredData = data.Where(p => p.currentStatus == 4 && p.dateTimePrecheckeo != null)
+                                        .OrderBy(p => p.dateTimePrecheckeo) // Ordenar por dateTimePrecheckeo
+                                        .ToList();
 
-                    // Vincular los datos filtrados al control Repeater
+                    // Vincular los datos filtrados y ordenados al control Repeater
                     rptRutas.DataSource = filteredData;
                     rptRutas.DataBind();
                 }
@@ -71,6 +73,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
             }
         }
     }
+
 
     [WebMethod]
     public static string ValidarDatos(string codigoGeneracion, string marchamo1, string marchamo2, string marchamo3, string marchamo4)

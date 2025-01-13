@@ -528,6 +528,91 @@
             });
         }
 
+        // Evento para cuando se abre la modal
+        $('#rutaModal').on('shown.bs.modal', function () 
+        {
+            // Establece el autofocus en el primer input
+            $('#txt_marchamo1').focus();
+        });
+
+        // Función para manejar el autofocus entre los campos
+function configurarAutofocus() {
+    const campos = [
+        'txt_marchamo1',
+        'txt_marchamo2',
+        'txt_marchamo3',
+        'txt_marchamo4'
+    ];
+
+    // Variable para detectar si la modal está abierta o cerrada
+    let modalAbierta = false;
+
+    // Referencia a la modal
+    const modal = document.getElementById('rutaModal'); // Ajusta el id de tu modal
+
+    // Usar el evento hidden.bs.modal de Bootstrap para detectar el cierre de la modal
+    $(modal).on('hidden.bs.modal', function () {
+        modalAbierta = false; // Marcar que la modal se ha cerrado
+        limpiarCampos(); // Limpiar los campos cuando se cierre la modal
+    });
+
+    // Limpiar todos los campos de la modal
+    function limpiarCampos() {
+        campos.forEach(campoId => {
+            const campo = document.getElementById(campoId);
+            if (campo) {
+                campo.value = ''; // Limpiar el valor del campo
+            }
+        });
+    }
+
+    // Cuando se abre la modal, marcarla como abierta
+    const botonAbrirModal = document.getElementById('abrirRutaModal'); // Ajusta este id al de tu botón de apertura
+    if (botonAbrirModal) {
+        botonAbrirModal.addEventListener('click', () => {
+            modalAbierta = true; // Marcar que la modal está abierta
+        });
+    }
+
+    // Si el usuario hace blur (sale de un campo), manejamos el foco y validación
+    campos.forEach((campo, index) => {
+        const elemento = document.getElementById(campo);
+
+        if (elemento) {
+            elemento.addEventListener('blur', function () {
+                // Usamos un timeout para que el foco actual se actualice correctamente
+                setTimeout(() => {
+                    const elementoActivo = document.activeElement;
+                    const esOtroCampo = campos.includes(elementoActivo.id);
+
+                    // Si el usuario no se movió manualmente a otro campo
+                    if (!esOtroCampo) {
+                        // Buscar el primer campo vacío
+                        const campoVacio = campos.find(id => {
+                            const input = document.getElementById(id);
+                            return input && input.value.trim() === ''; // Campo vacío
+                        });
+
+                        if (campoVacio) {
+                            // Mover el foco al primer campo vacío
+                            document.getElementById(campoVacio).focus();
+                        } else if (index === campos.length - 1 && !modalAbierta) {
+                            // Si todos los campos están llenos, y la modal no está abierta, ejecutar validarInformacion
+                            validarInformacion();
+                        }
+                    }
+                }, 0);
+            });
+        }
+    });
+}
+
+// Configurar el autofocus al cargar la página
+document.addEventListener('DOMContentLoaded', configurarAutofocus);
+
+
+
+
         function validarInformacion() 
         {
             var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
@@ -627,7 +712,7 @@
                         confirmButtonText: "Aceptar"
                     }).then(() => {
                         // Recargar la página después de aceptar
-                        //location.reload();
+                        location.reload();
                     });
                 },
                 error: function(xhr, status, error) {
