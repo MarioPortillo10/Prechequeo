@@ -40,13 +40,11 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     string responseBody = client.DownloadString(url);
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && p.vehicle.truckType == "P"  || p.vehicle.truckType == "R")
-                    .Select(p =>
+                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
+                    .Select((p, index) =>
                     {
-                        // Formatear el campo dateTimePrecheckeo directamente
-                        string timeForPrecheck = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
-
-                        p.TimeForId2 = timeForPrecheck; // Asignar el valor al campo existente o equivalente
+                        p.IsFirst = (index == 0); // Nueva propiedad
+                        p.TimeForId2 = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
                         return p;
                     }).ToList();
 
@@ -136,19 +134,14 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 
                     // Filtrar para mostrar solo aquellos registros donde el currentStatus es 7
                     // y el tipo de camión es 'VOLTEO'
-                    var filteredData = data.Where(p => 
-                        p.currentStatus == 7 && // Filtrar por currentStatus
-                        p.vehicle != null && 
-                        p.vehicle.truckType == "V"
-                    )
-                    .Select(p =>
+                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
+                    .Select((p, index) =>
                     {
-                        // Asignar el tiempo directamente a TimeForId2
-                        p.TimeForId2 = "No disponible"; // Este es el valor por defecto
-                        // Retornar el objeto con los datos filtrados
+                        p.IsFirst = (index == 0); // Nueva propiedad
+                        p.TimeForId2 = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
                         return p;
-                    })
-                    .ToList();
+                    }).ToList();
+
 
                     // Asigna el conteo de los registros filtrados al Label
                     lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
@@ -208,6 +201,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             }
         }
     }
+
+
     
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
@@ -445,6 +440,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public NavRecord navRecord { get; set; }
         // Propiedades existentes...
         public string TimeForId2 { get; set; }  // Propiedad adicional para mostrar la hora
+        public bool IsFirst { get; set; }
+
     }
 
     public class Driver

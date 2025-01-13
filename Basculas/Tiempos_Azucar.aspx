@@ -458,52 +458,51 @@
                     </ItemTemplate>
                 </asp:Repeater>
 
-                <!-- Entry 2 -->    
+
                 <asp:Repeater ID="rptRutas" runat="server">
                     <ItemTemplate>
-                        <!-- Unidades Planas -->
-                        <h2 class="text-lg font-bold mb-4 text-center">UNIDAD PLANA EN COLA</h2>
-                        <div class="bg-blue-600 text-white p-2 rounded-lg mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
-                            <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
+                        <h2 id="titulo" class="text-lg font-bold mb-4 text-center" runat="server" Visible='<%# Eval("IsFirst") %>'>UNIDAD PLANA EN COLA</h2>
+                            <div class="bg-blue-600 text-white p-2 rounded-lg mb-2"  style="font-family: 'Gilroy-Light', sans-serif;">
+                                <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
                                             data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
                                             data-trailerplate='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>' 
                                             data-plate='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>' 
                                             data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>' OnClientClick="return confirmAuthorization(this);" CausesValidation="false">
                                         
-                                <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
-                                <ul class="space-y text-sm" style="color: white; text-align: left;">
-                                    <li>
-                                        <strong>Transacción:</strong>
-                                        <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
-                                    </li>
-                                    <li>
-                                        <strong>Ingenio:</strong> 
-                                        <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
-                                    </li>
-                                    <li>
-                                        <strong>Motorista:</strong> 
-                                        <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# Eval("driver.name") != null ? HttpUtility.HtmlEncode(Eval("driver.name").ToString()) : "Sin Datos" %>'></asp:Label>
-                                    </li>
-                                    <li>
-                                        <strong>Placa Remolque:</strong>
-                                        <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# Eval("vehicle.trailerPlate") != null ? HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) : "Sin Datos" %>'></asp:Label>
-                                    </li>
-                                    <li>
-                                        <strong>Placa Camión:</strong> 
-                                        <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# Eval("vehicle.plate") != null ? HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) : "Sin Datos" %>'></asp:Label>
-                                    </li>
-                                    <li>
-                                        <strong>Hora de Ingreso:</strong> 
-                                        <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo")  %>'></asp:Label>
-                                    </li>
+                                    <asp:Label ID="lblCodT" Visible="false" runat="server" Text='<%# Eval("id") %>'></asp:Label>
 
-                                </ul>
-                            </asp:LinkButton>
+                                    <ul class="space-y text-sm" style="color: white; text-align: left;">
+                                        <li>
+                                            <strong>Transacción:</strong>
+                                            <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
+                                        </li>
+                                        <li>
+                                            <strong>Ingenio:</strong> 
+                                            <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
+                                        </li>
+                                        <li>
+                                            <strong>Motorista:</strong> 
+                                            <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                                        </li>
+                                        
+                                        <li>
+                                            <strong>Placa Remolque:</strong>
+                                            <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                                        </li>
+                                        <li>
+                                            <strong>Placa Camión:</strong> 
+                                            <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                                        </li>
+                                        <li>
+                                            <strong>Hora de Ingreso:</strong> 
+                                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") %>'></asp:Label>
+                                        </li>
+                                    </ul>
+                                </asp:LinkButton>
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
             </div>
-              
             
             <!-- Unidades de Volteo -->
             <div class="w-3/4 mx-auto bg-white"> 
@@ -573,7 +572,7 @@
                 <!-- Entry 2 -->    
                 <asp:Repeater ID="rptRutas2" runat="server">
                     <ItemTemplate>
-                        <h2 class="text-lg font-bold mb-4 text-center">UNIDAD VOLTEO EN COLA</h2>
+                        <h2 id="titulo" class="text-lg font-bold mb-4 text-center" runat="server" Visible='<%# Eval("IsFirst") %>'>UNIDAD VOLTEO EN COLA</h2>
                             <div class="bg-gray-600 text-white p-2 rounded-lg mb-2"  style="font-family: 'Gilroy-Light', sans-serif;">
                                 <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" 
                                             data-transporter='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' 
@@ -893,6 +892,15 @@
 
         function SolicitarUnidad(Tipo_Unidad, currentValue) 
         {
+            if (Tipo_Unidad === "V") 
+            {
+                nuevaVariable = "Volteo";
+            } 
+            else if (Tipo_Unidad === "R") 
+            {
+                nuevaVariable = "Plana";
+            }
+
             $.ajax({
                 async: true,
                 type: "POST",
@@ -902,50 +910,28 @@
                 dataType: "json",
                 success: function(response) 
                 {
-                    if (response && Array.isArray(response) && response.length > 0) 
+                    // Verificar si la respuesta contiene un estado de error (por ejemplo, error 400)
+                    if (response && response.statusCode === 400) 
                     {
-                        // Procesar la respuesta como un arreglo JSON
-                        var shipment = response[0]; // Primer elemento del arreglo
-
-                        // Verificar que los campos esenciales estén presentes
-                        if (shipment.status && shipment.entryTime) {
-                            console.log("Respuesta de la API: ", shipment);
-
-                            // Condicional para mostrar el tipo de unidad solicitado
-                            var tipoUnidad = Tipo_Unidad === 'R' ? 'Plano' : 'Volteo';
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Solicitud Enviada!',
-                                text: `Has solicitado ${currentValue} camiones del tipo ${tipoUnidad}. Estado: ${shipment.status}, Hora de entrada: ${shipment.entryTime}`,
-                                confirmButtonText: 'Aceptar',
-                                background: '#d4edda',
-                                confirmButtonColor: '#28a745',
-                            });
-                        } 
-                        else 
-                        {
-                            console.log("La respuesta de la API no tiene el formato esperado");
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'La respuesta de la API no tiene el formato esperado.',
-                                confirmButtonText: 'Aceptar',
-                                background: '#f8d7da',
-                                confirmButtonColor: '#721c24',
-                            });
-                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No se pueden solicitar unidades',
+                            text: 'Aún hay unidades a la espera de ser despachadas. Por favor, intenta más tarde.',
+                            confirmButtonText: 'Aceptar',
+                            
+                            confirmButtonColor: '#721c24',
+                        });
                     } 
                     else 
                     {
-                        console.log("Respuesta vacía o no válida de la API");
+                        // Si no hay error en la respuesta
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'La respuesta de la API está vacía o no es válida.',
+                            icon: 'success',
+                            title: '¡Solicitud Enviada!',
+                            text: `Has solicitado ${currentValue} camiones del tipo ${nuevaVariable}.`,
                             confirmButtonText: 'Aceptar',
-                            background: '#f8d7da',
-                            confirmButtonColor: '#721c24',
+                            
+                            confirmButtonColor: '#28a745',
                         });
                     }
                 },
@@ -953,33 +939,35 @@
                 {
                     var errorMessage = xhr.responseText || error;
 
-                    // Verificar si el error corresponde a la condición específica
-                    if (errorMessage.includes("(400) Solicitud incorrecta")) 
+                    // Verificar si el error es un 400 (si la solicitud fue incorrecta)
+                    if (xhr.status === 400) 
                     {
                         Swal.fire({
                             icon: 'error',
                             title: 'No se pueden solicitar unidades',
                             text: 'Aún hay unidades a la espera de ser despachadas. Por favor, intenta más tarde.',
                             confirmButtonText: 'Aceptar',
-                            background: '#f8d7da',
+                            
                             confirmButtonColor: '#721c24',
                         });
                     } 
                     else 
                     {
+                        // Si el error no es 400, mostrar un mensaje más general
                         console.log("Error en la solicitud AJAX: ", status, error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error de Conexión',
-                            text: 'Hubo un problema al realizar la solicitud. Intenta nuevamente.',
+                            text: 'Hubo un problema al realizar la solicitud. Intenta nuevamente. Detalles del error: ' + errorMessage,
                             confirmButtonText: 'Aceptar',
-                            background: '#f8d7da',
+                            
                             confirmButtonColor: '#721c24',
                         });
                     }
                 }
             });
         }
+
     </script>
 
     <script>
@@ -1383,7 +1371,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
-                    changeStatusAzucar(codigoGeneracion);
+                    //changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
                 {
