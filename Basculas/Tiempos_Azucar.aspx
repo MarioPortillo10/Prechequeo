@@ -1144,15 +1144,15 @@
 
                 updateTimerDisplay(timerTextId, milliseconds);
 
-                if (milliseconds >= duration) 
-                {
-                    clearInterval(intervals[storageKey]);
-                    isRunning[storageKey] = false;
-                    localStorage.setItem(`${storageKey}_isRunning`, 'false');
-                }
+                // Eliminar o comentar este bloque para que el cronómetro no se detenga automáticamente
+                // if (milliseconds >= duration) 
+                // {
+                //     clearInterval(intervals[storageKey]);
+                //     isRunning[storageKey] = false;
+                //     localStorage.setItem(`${storageKey}_isRunning`, 'false');
+                // }
             }, 50);
         }
-
 
         function stopTimer(stopButtonId) 
         {
@@ -1160,63 +1160,58 @@
             const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : 'timer2';
             const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
             const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
-            const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 min para stopButton1 y 10 min para stopButton2
+            const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 min para timer1 y 10 min para timer2
             const milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
             const tiempoTranscurrido = formatTime(milliseconds); // Formatear el tiempo transcurrido
 
             console.log(`Código de generación: ${codigoGeneracion}`);
-            console.log(`Cronómetro detenido. Tiempo transcurrido: ${tiempoTranscurrido}`);
+            console.log(`Tiempo transcurrido: ${tiempoTranscurrido}`);
 
-            if (!isRunning[storageKey]) 
-            {
+            if (!isRunning[storageKey]) {
                 console.log("El cronómetro ya está detenido.");
                 return; // No hacer nada si el cronómetro ya está detenido
-                
             }
 
-            // Si el tiempo transcurrido es mayor que el umbral, mostramos la modal para seleccionar motivo
-            if (milliseconds > threshold) 
-            {
+            // Mostrar la modal si se supera el umbral de tiempo
+            if (milliseconds > threshold) {
                 const confirmationModal = document.getElementById("confirmationModal");
-                confirmationModal.style.display = "block"; // Muestra la modal
+                confirmationModal.style.display = "block"; // Mostrar modal
 
-                document.getElementById("confirmStopButton").onclick = function() 
-                {
-                    // Obtener el valor del comentario seleccionado en el input de la modal
-                    const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Enviar vacío si no hay comentario
+                document.getElementById("confirmStopButton").onclick = function () {
+                    const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Comentario opcional
                     console.log('Motivo seleccionado:', motivoDetencion);
 
-                    // Llamar a la función TiempoAzucar con los parámetros
-                    TiempoAzucar(codigoGeneracion, tiempoTranscurrido, motivoDetencion);
-
-                    // Detener el cronómetro y actualizar la UI
+                    // Detener el cronómetro y limpiar la UI
                     clearInterval(intervals[storageKey]);
                     isRunning[storageKey] = false;
                     localStorage.setItem(`${storageKey}_isRunning`, 'false');
                     localStorage.setItem(`${storageKey}_milliseconds`, 0);
                     document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
                     updateTimerDisplay(timerTextId, 0);
+
+                    // Llamar a la función TiempoAzucar
+                    TiempoAzucar(codigoGeneracion, tiempoTranscurrido, motivoDetencion);
+
                     confirmationModal.style.display = "none"; // Ocultar modal
                 };
 
-                document.getElementById("cancelStopButton").onclick = function() 
-                {
+                document.getElementById("cancelStopButton").onclick = function () {
                     confirmationModal.style.display = "none"; // Cerrar modal sin detener el cronómetro
                 };
-            } 
-            else 
-            {
-                // Si no se supera el umbral, detener normalmente sin mostrar la modal
-                clearInterval(intervals[storageKey]);
-                isRunning[storageKey] = false;
-                localStorage.setItem(`${storageKey}_isRunning`, 'false');
-                localStorage.setItem(`${storageKey}_milliseconds`, 0);
-                document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
-                updateTimerDisplay(timerTextId, 0);
 
-                // Llamar a la función TiempoAzucar con un comentario vacío
-                TiempoAzucar(codigoGeneracion, tiempoTranscurrido, '');
+                return; // Salir de la función para no detener automáticamente el cronómetro
             }
+
+            // Si no se supera el umbral, detener normalmente
+            clearInterval(intervals[storageKey]);
+            isRunning[storageKey] = false;
+            localStorage.setItem(`${storageKey}_isRunning`, 'false');
+            localStorage.setItem(`${storageKey}_milliseconds`, 0);
+            document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
+            updateTimerDisplay(timerTextId, 0);
+
+            // Llamar a la función TiempoAzucar con un comentario vacío
+            TiempoAzucar(codigoGeneracion, tiempoTranscurrido, '');
         }
 
         function restoreTimer(storageKey, initialMilliseconds) 
