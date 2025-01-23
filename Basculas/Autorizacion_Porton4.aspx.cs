@@ -23,7 +23,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
-            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4?includeAttachments=true";
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
 
             // Token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
@@ -37,17 +37,9 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                 client.Encoding = Encoding.UTF8;
                 try
                 {
-                    // Log de la solicitud
-                    this.LogEvent("Realizando solicitud GET a la URL: " + url);
-                    this.LogEvent("Método de solicitud: GET");
-                    this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
 
                     // Realizar la solicitud GET y leer la respuesta
                     string responseBody = client.DownloadString(url);
-
-                    // Log de la respuesta
-                    this.LogEvent("Respuesta recibida:");
-                    this.LogEvent(responseBody);
 
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
@@ -267,6 +259,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public int currentStatus { get; set; }
+        public int idNavRecord { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime dateTimePrecheckeo { get; set; }
         public bool mapping { get; set; }
@@ -276,7 +269,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public List<Status> statuses { get; set; }
         public List<ShipmentAttachment> shipmentAttachments { get; set; } // Agregado para los adjuntos
         public List<ShipmentSeal> shipmentSeals { get; set; }
-        public NavRecord navRecord { get; set; }
+        //public NavRecord navRecord { get; set; }
     }
 
     public class Driver
@@ -345,7 +338,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public string sealDescription { get; set; }
         public DateTime createdAt { get; set; }
     }
-
+/*
     public class NavRecord
     {
         public string timestamp { get; set; }
@@ -450,7 +443,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public string marchamo4 { get; set; }
     }
 
-   
+   */
 
  
 

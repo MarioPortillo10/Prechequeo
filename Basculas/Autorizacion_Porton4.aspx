@@ -335,9 +335,16 @@
                                         </i> <strong>Transacción:</strong></p>
                                     <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                         <asp:Label ID="lblTransaccion" runat="server"
-                                            Text='<%# Eval("navRecord.id") != null ? HttpUtility.HtmlEncode(Eval("navRecord.id").ToString()) : "Sin datos" %>' />
+                                            Text='<%# Eval("idNavRecord") != null ? HttpUtility.HtmlEncode(Eval("idNavRecord").ToString()) : "Sin datos" %>' />
                                     </p>
                                 
+                                    <p class="text-start" style="font-size: 0.9rem;">
+                                        <i class="fas fa-user text-primary"></i> <strong>Motorista:</strong>
+                                    </p>
+                                    <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                        <asp:Label ID="lblMotorista" runat="server" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>' />
+                                    </p>
+
                                     <p class="text-start" style="font-size: 0.9rem;">
                                         <i class="fas fa-id-card text-primary"></i> <strong>Licencia:</strong>
                                     </p>
