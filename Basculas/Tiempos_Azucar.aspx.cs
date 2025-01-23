@@ -15,6 +15,7 @@ using System.Web.Services;
 using System.Text;
 
 
+
 public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
@@ -42,11 +43,16 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 
                     var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
                     .Select((p, index) =>
-                    {
-                        p.IsFirst = (index == 0); // Nueva propiedad
-                        p.TimeForId2 = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
-                        return p;
-                    }).ToList();
+{
+    p.IsFirst = (index == 0); // Nueva propiedad
+    // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+    p.TimeForId2 = p.dateTimePrecheckeo != null
+        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        : "No hay datos"; // Valor por defecto si es null
+    return p;
+}).ToList();
+
+
 
                     // Depuración: Verifica el conteo de registros
                     Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
@@ -96,17 +102,17 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
                     // y el tipo de camión es 'PLANA'
                     var filteredData = data.Where(p => p.currentStatus == 8 && p.vehicle != null && p.vehicle.truckType == "P" || p.vehicle.truckType == "R")
-                    .Select(p =>
-                    {
-                        // Formatear el campo dateTimePrecheckeo directamente
-                        string timeForPrecheck = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
+                    .Select((p, index) =>
+{
+    p.IsFirst = (index == 0); // Nueva propiedad
+    // Comprobar si dateTimePrecheckeo tiene valor y formatearlo
+    string timeForPrecheck = p.dateTimePrecheckeo.HasValue 
+        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        : "No hay datos"; // Valor predeterminado si es null
+    p.TimeForId2 = timeForPrecheck;
+    return p;
+}).ToList();
 
-                        // Asignar el valor del tiempo al campo TimeForId2
-                        p.TimeForId2 = timeForPrecheck;
-
-                        // Retornar el objeto con los datos filtrados
-                        return p;
-                    }).ToList();
 
                     // Vincular los datos filtrados al control Repeater
                     rptRutas1.DataSource = filteredData;
@@ -136,11 +142,17 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     // y el tipo de camión es 'VOLTEO'
                     var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
                     .Select((p, index) =>
-                    {
-                        p.IsFirst = (index == 0); // Nueva propiedad
-                        p.TimeForId2 = p.dateTimePrecheckeo.ToString("yyyy-MM-dd HH:mm:ss");
-                        return p;
-                    }).ToList();
+{
+    p.IsFirst = (index == 0); // Nueva propiedad
+    // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+    p.TimeForId2 = p.dateTimePrecheckeo != null
+        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+        : "No hay datos"; // Valor por defecto si es null
+    return p;
+}).ToList();
+
+
+
 
 
                     // Asigna el conteo de los registros filtrados al Label
@@ -428,8 +440,9 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public DateTime updatedAt { get; set; }
         public int currentStatus { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
-        public DateTime dateTimePrecheckeo { get; set; }
-        public int idNavRecord { get; set; }
+        public DateTime? dateTimePrecheckeo { get; set; }
+
+        public int? idNavRecord { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
@@ -560,7 +573,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public int salida { get; set; }
         public int codfactor { get; set; }
         public int factor1 { get; set; }
-        public int factor2 { get; set; }
+        public float factor2 { get; set; }
         public int factor3 { get; set; }
         public int pesocliente { get; set; }
         public int equivalencia { get; set; }

@@ -495,7 +495,7 @@
                                         </li>
                                         <li>
                                             <strong>Hora de Ingreso:</strong> 
-                                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") %>'></asp:Label>
+                                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
                                         </li>
                                     </ul>
                                 </asp:LinkButton>
@@ -563,7 +563,7 @@
 
                             <p>
                                 <strong>Hora de Ingreso:</strong> 
-                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") %>'></asp:Label>
+                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
                             </p>
                         </div>
                     </ItemTemplate>
@@ -606,7 +606,7 @@
                                         </li>
                                         <li>
                                             <strong>Hora de Ingreso:</strong> 
-                                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") %>'></asp:Label>
+                                            <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
                                         </li>
                                     </ul>
                                 </asp:LinkButton>
@@ -1354,7 +1354,7 @@
                 });
                 return;
             }
-
+    
             $.ajax({
                 type: "POST",
                 url: "Tiempos_Azucar.aspx/TiempoAzucar",
@@ -1366,7 +1366,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
-                    changeStatusAzucar(codigoGeneracion);
+                    //changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
                 {
