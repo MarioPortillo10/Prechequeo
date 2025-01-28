@@ -303,10 +303,10 @@
     </header>
 
  
-  <!-- Banner -->
-  <section class="custom-banner text-center">
-    <h1>Autorizacion de Ingreso</h1>
-  </section>
+    <!-- Banner -->
+    <section class="custom-banner text-center">
+        <h1>Autorizacion de Ingreso</h1>
+    </section>
 
     <!-- Main Content -->
     <main class="container mx-auto py-8">
@@ -350,7 +350,7 @@
             </div>
 
             <div class="bg-white">
-                <h2 class="text-lg font-bold mb-4 text-center">TOTAL UNIDADES</h2>
+                <h2 class="text-lg font-bold mb-4 text-center">TOTAL UNIDADES PENDIENTES</h2>
                 <div class="grid grid-cols-2 gap-4">
         
                     <!-- Tarjeta de "Solicitar Plano" con altura reducida -->
@@ -751,60 +751,65 @@
     }
 
     // Función para cambiar el estatus después de la validación exitosa
-    function changeStatus(codigoGeneracion) 
-    {
-        if (!codigoGeneracion || codigoGeneracion.trim() === '') 
-        {
-            Swal.fire({
-                title: 'Error',
-                text: 'Por favor, ingrese un Código de Generación',
-                icon: 'error',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
+function changeStatus(codigoGeneracion) {
+    // Validar si el código de generación está vacío
+    if (!codigoGeneracion || codigoGeneracion.trim() === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, ingrese un Código de Generación',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
 
-        $.ajax({
-            type: "POST",
-            url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
-            data: JSON.stringify({ codeGen: codigoGeneracion}),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(response) 
-            {
-                // Verificar la respuesta en la consola para depuración
-                console.log("Respuesta de la API:", response.d);  // Esto debería contener el mensaje que la API devuelve.
+    // Realizar la solicitud AJAX
+    $.ajax({
+        type: "POST",
+        url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
+        data: JSON.stringify({ codeGen: codigoGeneracion }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            var resultado = response.d;
 
-                // Mostrar una alerta de éxito usando SweetAlert
+            if (resultado.includes("Operación exitosa")) {
+                // Mostrar alerta de éxito con SweetAlert2
                 Swal.fire({
-                    title: '¡Operación exitosa!',
-                    text: "El Ingreso a sido autorizado", // Mostrar el mensaje de la API
                     icon: 'success',
+                    title: '¡Operación exitosa!',
+                    text: resultado, // Mensaje personalizado desde la API
                     confirmButtonText: 'Aceptar'
                 }).then((result) => {
-                    if (result.isConfirmed) 
-                    {
-                        // Recargar la página cuando el usuario presione "Aceptar"
+                    if (result.isConfirmed) {
+                        // Recargar la página tras confirmar la alerta
                         location.reload();
                     }
                 });
-            },
-            error: function(xhr, status, error) 
-            {
-                // Verificar el error en la consola para depuración
-                console.error("Error al cambiar el estado:", error);
-
-                // Mostrar una alerta de error usando SweetAlert
+            } else {
+                // Mostrar alerta de error con SweetAlert2
                 Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al cambiar el estado: ' + error,
                     icon: 'error',
+                    title: 'Error',
+                    text: resultado, // Mensaje personalizado desde la API
                     confirmButtonText: 'Aceptar'
                 });
             }
-        });
-    }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en la solicitud: ", error);
+
+            // Mostrar alerta de error con SweetAlert2
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un problema al cambiar el estado. Por favor, intenta nuevamente.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
 </script>
 
 </body>

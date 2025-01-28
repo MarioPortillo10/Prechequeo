@@ -17,201 +17,217 @@ using System.Text;
 
 public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 {
-// Clases para deserializar JSON de la segunda API
-public class QueueData
-{
-    public QueueDataInner data { get; set; }
-}
-
-public class QueueDataInner
-{
-    public int V { get; set; }
-    public int P { get; set; }
-    public int R { get; set; }
-}
-
-protected void Page_Load(object sender, EventArgs e)
-{
-    this.LogEvent("Inicio de la carga de la página AuI.");
-    if (!IsPostBack)
+    // Clases para deserializar JSON de la segunda API
+    public class QueueData
     {
-        // URL de la primera API
-        string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3";
-        // URL de la segunda API
-        string url2 = "https://apiclientes.almapac.com:9010/api/queue/count/";
+        public QueueDataInner data { get; set; }
+    }
 
-        // Token
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+    public class QueueDataInner
+    {
+        public int V { get; set; }
+        public int P { get; set; }
+        public int R { get; set; }
+    }
 
-        // Forzar el uso de TLS 1.2
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-        using (WebClient client = new WebClient())
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        this.LogEvent("Inicio de la carga de la página Autorizacion de Ingreso.");
+        if (!IsPostBack)
         {
-            // Añadir el token al encabezado de autorización
-            client.Headers.Add("Authorization", "Bearer " + token);
-            client.Encoding = Encoding.UTF8;
-            try
+            // URL de la primera API
+            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3";
+            // URL de la segunda API
+            string url2 = "https://apiclientes.almapac.com:9010/api/queue/count/";
+
+            // Token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+
+            // Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            using (WebClient client = new WebClient())
             {
-                // *** Primera API ***
-                string responseBody1 = client.DownloadString(url1);
-                var data1 = JsonConvert.DeserializeObject<List<Post>>(responseBody1);
-
-                // Filtrar y procesar datos de la primera API
-                // Filtrar por tipos de camiones
-                var truckTypeP = data1.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
-                var truckTypeV = data1.Where(item => item.vehicle.truckType == "V").ToList();
-
-                // Contar registros por tipo
-                lblCountP.Text = truckTypeP.Count.ToString();
-                lblCountV.Text = truckTypeV.Count.ToString();
-
-                // Crear una lista de códigos de ingenio válidos
-                var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
-
-                // Inicializar los conteos de ingenios
-                var ingenioCounts = new Dictionary<string, int>();
-
-                // Contar ingenios en todos los registros filtrados
-                foreach (var item in data1)
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
+                try
                 {
-                    var ingenioNavCode = (item.ingenio != null) ? item.ingenio.ingenioNavCode : null; // Verificar nulos explícitamente
-                    if (!string.IsNullOrEmpty(ingenioNavCode) && validIngenios.Contains(ingenioNavCode))
+                    // *** Primera API ***
+                    string responseBody1 = client.DownloadString(url1);
+                    var data1 = JsonConvert.DeserializeObject<List<Post>>(responseBody1);
+
+                    // Filtrar y procesar datos de la primera API
+                    // Filtrar por tipos de camiones
+                    var truckTypeP = data1.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                    var truckTypeV = data1.Where(item => item.vehicle.truckType == "V").ToList();
+
+                    // Contar registros por tipo
+                    lblCountP.Text = truckTypeP.Count.ToString();
+                    lblCountV.Text = truckTypeV.Count.ToString();
+
+                    // Crear una lista de códigos de ingenio válidos
+                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+
+                    // Inicializar los conteos de ingenios
+                    var ingenioCounts = new Dictionary<string, int>();
+
+                    // Contar ingenios en todos los registros filtrados
+                    foreach (var item in data1)
                     {
-                        if (ingenioCounts.ContainsKey(ingenioNavCode))
+                        var ingenioNavCode = (item.ingenio != null) ? item.ingenio.ingenioNavCode : null; // Verificar nulos explícitamente
+                        if (!string.IsNullOrEmpty(ingenioNavCode) && validIngenios.Contains(ingenioNavCode))
                         {
-                            ingenioCounts[ingenioNavCode]++;
+                            if (ingenioCounts.ContainsKey(ingenioNavCode))
+                            {
+                                ingenioCounts[ingenioNavCode]++;
+                            }
+                            else
+                            {
+                                ingenioCounts[ingenioNavCode] = 1;
+                            }
                         }
-                        else
+                    }
+
+                    // Procesar e insertar los conteos en las etiquetas correspondientes
+                    int i = 1;
+                    foreach (var ingenio in validIngenios)
+                    {
+                        // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
+                        var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i.ToString())) as TextBox;
+                        if (txtIngenioQuantity != null)
                         {
-                            ingenioCounts[ingenioNavCode] = 1;
+                            // Mostrar el conteo de ingenios o 0 si no existe
+                            txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                        }
+                        i++;
+                    }
+
+                    // Vincular los datos filtrados a los Repeaters correspondientes
+                    rptRutas1.DataSource = truckTypeP;
+                    rptRutas1.DataBind();
+
+                    rptRutas2.DataSource = truckTypeV;
+                    rptRutas2.DataBind();
+
+                    int countP = 0;
+                    int countV = 0;
+                            
+                    foreach (var item in data1)
+                    {
+                        if (item.vehicle.truckType == "P" || item.vehicle.truckType == "R")
+                        {
+                            countP++;
+                        }
+                        else if (item.vehicle.truckType == "V")
+                        {
+                            countV++;
                         }
                     }
-                }
 
-                // Procesar e insertar los conteos en las etiquetas correspondientes
-                int i = 1;
-                foreach (var ingenio in validIngenios)
-                {
-                    // Usamos string.Format para construir el nombre del control de forma compatible con .NET 4.6
-                    var txtIngenioQuantity = this.FindControl(string.Format("txtIngenioQuantity{0}", i.ToString())) as TextBox;
-                    if (txtIngenioQuantity != null)
+                    lblCountP.Text = countP.ToString();
+                    lblCountV.Text = countV.ToString();
+
+                    // *** Segunda API ***
+                    string responseBody2 = client.DownloadString(url2);
+
+                    // Deserializar respuesta de la segunda API
+                    var queueData = JsonConvert.DeserializeObject<QueueData>(responseBody2);
+
+                    if (queueData != null && queueData.data != null)
                     {
-                        // Mostrar el conteo de ingenios o 0 si no existe
-                        txtIngenioQuantity.Text = ingenioCounts.ContainsKey(ingenio) ? ingenioCounts[ingenio].ToString() : "0";
+                        // Asignar datos a etiquetas
+                        lblV.Text = "" + queueData.data.V.ToString();
+                        lblP.Text = "" + queueData.data.R.ToString();
                     }
-                    i++;
-                }
-
-                // Vincular los datos filtrados a los Repeaters correspondientes
-                rptRutas1.DataSource = truckTypeP;
-                rptRutas1.DataBind();
-
-                rptRutas2.DataSource = truckTypeV;
-                rptRutas2.DataBind();
-
-                int countP = 0;
-                int countV = 0;
-                        
-                foreach (var item in data1)
-                {
-                    if (item.vehicle.truckType == "P" || item.vehicle.truckType == "R")
+                    else
                     {
-                        countP++;
-                    }
-                    else if (item.vehicle.truckType == "V")
-                    {
-                        countV++;
+                        // Si no hay datos, mostrar 0
+                        lblV.Text = "0";
+                        lblP.Text = "0";
                     }
                 }
-
-                lblCountP.Text = countP.ToString();
-                lblCountV.Text = countV.ToString();
-
-                // *** Segunda API ***
-                string responseBody2 = client.DownloadString(url2);
-
-                // Deserializar respuesta de la segunda API
-                var queueData = JsonConvert.DeserializeObject<QueueData>(responseBody2);
-
-                if (queueData != null && queueData.data != null)
+                catch (Exception ex)
                 {
-                    // Asignar datos a etiquetas
-                    lblV.Text = "" + queueData.data.V.ToString();
-                    lblP.Text = "" + queueData.data.R.ToString();
-                }
-                else
-                {
-                    // Si no hay datos, mostrar 0
+                    // Manejo de errores
                     lblV.Text = "0";
                     lblP.Text = "0";
+                    lblCountP.Text = "0";
+                    lblCountV.Text = "0";
+
+
+                    // Puedes loguear o mostrar detalles del error para depuración.
+                    Console.WriteLine("Error: " + ex.Message);
+                    // Log detallado del error
+                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                    this.LogEvent("Mensaje de excepción: " + ex.Message);
+                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
                 }
-            }
-            catch (Exception ex)
-            {
-                // Manejo de errores
-                lblV.Text = "0";
-                lblP.Text = "0";
-                lblCountP.Text = "0";
-                lblCountV.Text = "0";
-
-
-                // Puedes loguear o mostrar detalles del error para depuración.
-                Console.WriteLine("Error: " + ex.Message);
-                // Log detallado del error
-                this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
-                this.LogEvent("Mensaje de excepción: " + ex.Message);
-                this.LogEvent("Pila de llamadas: " + ex.StackTrace);
             }
         }
     }
-}
 
     [WebMethod]
 public static string ChangeTransactionStatus(string codeGen)
 {
+    // Validar que codeGen no sea nulo o vacío
     if (string.IsNullOrEmpty(codeGen))
     {
-        return "Error: codeGen no puede ser nulo o vacío";
+        return "Error: El parámetro 'codeGen' no puede ser nulo o vacío.";
     }
 
     try
     {
-        // Simulación de la lógica para cambiar el estatus
-        string url = "https://apiclientes.almapac.com:9010/api/queue/send/" + codeGen;
+        // Configurar la URL y el token
+        string url = string.Format("https://apiclientes.almapac.com:9010/api/queue/send/{0}", codeGen);
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-        string responseContent;
+
+        // Configurar el protocolo de seguridad
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         using (var client = new WebClient())
         {
+            // Configurar encabezados de solicitud
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-            // Realizar la solicitud POST y recibir la respuesta
-            responseContent = client.UploadString(url, "POST", "");  // No se envía cuerpo en la solicitud
-
-            // Puedes hacer algo con la respuesta, por ejemplo, imprimirla
-            Console.WriteLine("Respuesta de la API: " + responseContent);
+            // Realizar la solicitud POST
+            string responseContent = client.UploadString(url, "POST", ""); // Sin cuerpo en la solicitud
+            return "Cambio de estatus exitoso: " + responseContent;
         }
-
-        return "Cambio de estatus exitoso: " + responseContent;
     }
     catch (WebException webEx)
     {
-        using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+        try
         {
-            string errorResponse = reader.ReadToEnd();
-            return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + errorResponse;
+            // Obtener respuesta del servidor en caso de error HTTP
+            using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+            {
+                string errorResponse = reader.ReadToEnd();
+                LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+                LogEventS("Mensaje de excepción: " + webEx.Message);
+                LogEventS("Pila de llamadas: " + webEx.StackTrace);
+                return string.Format("Error en la solicitud: {0}. Respuesta del servidor: {1}", webEx.Message, errorResponse);
+            }
+        }
+        catch
+        {
+            // Manejar casos donde no se pueda obtener la respuesta del servidor
+            LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+            LogEventS("Mensaje de excepción: " + webEx.Message);
+            LogEventS("Pila de llamadas: " + webEx.StackTrace);
+            return string.Format("Error en la solicitud: {0}. No se pudo leer la respuesta del servidor.", webEx.Message);
+            
         }
     }
     catch (Exception ex)
     {
-        return "Error inesperado: " + ex.Message;
+        // Manejar errores generales
+        LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+        LogEventS("Mensaje de excepción: " + ex.Message);
+        LogEventS("Pila de llamadas: " + ex.StackTrace);
+        return string.Format("Error inesperado: {0}", ex.Message);
     }
-
-    
 }
-
 
 
     private void DataBind()
@@ -253,7 +269,7 @@ public static string ChangeTransactionStatus(string codeGen)
     // Método para escribir en el Visor de eventos
     public static void LogEventS(object message)
     {
-        string logFilePath = "~/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logFilePath = "C:/trasacciones-almapac-main/Logs/MyAppLog.txt"; // Ruta absoluta
         string logDirectory = Path.GetDirectoryName(logFilePath);
 
         // Crear el directorio si no existe
