@@ -229,7 +229,6 @@ public static string ChangeTransactionStatus(string codeGen)
     }
 }
 
-
     private void DataBind()
     {
         sql_rutas_actividades.SelectCommand = "SELECT * FROM [dbo].[ALMAPAC$Work Type]";
@@ -299,7 +298,7 @@ public static string ChangeTransactionStatus(string codeGen)
 
 
 
-public class IngenioCount
+    public class IngenioCount
     {
         public string IngenioName { get; set; }
         public int Count { get; set; }
