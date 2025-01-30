@@ -19,50 +19,62 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        this.LogEvent("Inicio de la carga de la página P4.");
-        if (!IsPostBack)
+        this.LogEvent("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        this.LogEvent("Inicio de la carga de la página Chequeo de entrada.");
+        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
         {
-            // URL que deseas hacer el fetch
-            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
-
-            // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-            // Forzar el uso de TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            using (WebClient client = new WebClient())
+            string username     = Request.Cookies["username"].Value;
+            string cod_bascula  = Request.Cookies["cod_bascula"].Value;
+            string cod_usuario  = Request.Cookies["cod_usuario"].Value;
+            string cod_turno    = Request.Cookies["cod_turno"].Value;
+            if (!IsPostBack)
             {
-                // Añadir el token al encabezado de autorización
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
-                try
+                // URL que deseas hacer el fetch
+                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
+
+                // Token
+                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+                // Forzar el uso de TLS 1.2
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                using (WebClient client = new WebClient())
                 {
+                    // Añadir el token al encabezado de autorización
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
+                    try
+                    {
 
-                    // Realizar la solicitud GET y leer la respuesta
-                    string responseBody = client.DownloadString(url);
+                        // Realizar la solicitud GET y leer la respuesta
+                        string responseBody = client.DownloadString(url);
 
-                    // Deserializar la respuesta JSON
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+                        // Deserializar la respuesta JSON
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 4
-                    var filteredData = data.Where(p => p.currentStatus == 4 && p.dateTimePrecheckeo != null)
-                                        .OrderBy(p => p.dateTimePrecheckeo) // Ordenar por dateTimePrecheckeo
-                                        .ToList();
+                        // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 4
+                        var filteredData = data.Where(p => p.currentStatus == 4 && p.dateTimePrecheckeo != null)
+                                            .OrderBy(p => p.dateTimePrecheckeo) // Ordenar por dateTimePrecheckeo
+                                            .ToList();
 
-                    // Vincular los datos filtrados y ordenados al control Repeater
-                    rptRutas.DataSource = filteredData;
-                    rptRutas.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                    // Log detallado del error
-                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
-                    this.LogEvent("Mensaje de excepción: " + ex.Message);
-                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+                        // Vincular los datos filtrados y ordenados al control Repeater
+                        rptRutas.DataSource = filteredData;
+                        rptRutas.DataBind();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        // Log detallado del error
+                        this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                        this.LogEvent("Mensaje de excepción: " + ex.Message);
+                        this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+                    }
                 }
             }
+        }
+        else
+        {
+            Response.Redirect("login.aspx");
         }
     }
 
@@ -85,11 +97,6 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         {
             using (WebClient client = new WebClient())
             {
-                // Log de la solicitud
-                LogEventS("Realizando solicitud GET a la URL: " + url);
-                LogEventS("Método de solicitud: GET");
-                LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
-            
                 client.Headers.Add("Authorization", "Bearer " + token);
 
                 // Descarga los datos de la API
@@ -97,10 +104,6 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 
                 // Deserializa los datos en el objeto Post
                 var data = JsonConvert.DeserializeObject<Post>(responseBody);
-
-                // Log de la respuesta
-                LogEventS("Respuesta recibida:");
-                LogEventS(responseBody);
 
                 // Validar que haya información de sellos en la respuesta
                 if (data == null || data.shipmentSeals == null || !data.shipmentSeals.Any())

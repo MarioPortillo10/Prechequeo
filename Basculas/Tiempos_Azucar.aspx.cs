@@ -20,202 +20,210 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
         {
-            // URL que deseas hacer el fetch
-            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
-            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8?includeAttachments=true";
-
-            // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            using (WebClient client = new WebClient())
+            string username = Request.Cookies["username"].Value;
+            string cod_bascula = Request.Cookies["cod_bascula"].Value;
+            string cod_usuario = Request.Cookies["cod_usuario"].Value;
+            string cod_turno = Request.Cookies["cod_turno"].Value;
+            if (!IsPostBack)
             {
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
+                // URL que deseas hacer el fetch
+                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
+                string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8?includeAttachments=true";
 
-                try
+                // Token
+                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                using (WebClient client = new WebClient())
                 {
-                    //this.LogEvent("Estoy aqui");
-                    string responseBody = client.DownloadString(url);
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
 
-                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
-                    .Select((p, index) =>
-{
-    p.IsFirst = (index == 0); // Nueva propiedad
-    // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
-    p.TimeForId2 = p.dateTimePrecheckeo != null
-        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-        : "No hay datos"; // Valor por defecto si es null
-    return p;
-}).ToList();
-
-
-
-                    // Depuración: Verifica el conteo de registros
-                    Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
-
-                    if (filteredData.Count > 0)
+                    try
                     {
-                        lblTotalRegistros.Text = filteredData.Count.ToString();
+                        //this.LogEvent("Estoy aqui");
+                        string responseBody = client.DownloadString(url);
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                        var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
+                        .Select((p, index) =>
+                        {
+                            p.IsFirst = (index == 0); // Nueva propiedad
+                            // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                            p.TimeForId2 = p.dateTimePrecheckeo != null
+                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                : "No hay datos"; // Valor por defecto si es null
+                            return p;
+                        }).ToList();
+
+                        // Depuración: Verifica el conteo de registros
+                        Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
+
+                        if (filteredData.Count > 0)
+                        {
+                            lblTotalRegistros.Text = filteredData.Count.ToString();
+                        }
+                        else
+                        {
+                            lblTotalRegistros.Text = "0";
+                        }
+
+                        // Vincula los datos filtrados al Repeater
+                        rptRutas.DataSource = filteredData;
+                        rptRutas.DataBind();
+
+                        // Depuración: Imprime los datos en la consola
+                        foreach (var item in filteredData)
+                        {
+                            Console.WriteLine(String.Format("ID: {0}, TimeForPrecheck: {1}", item.id, item.TimeForId2));
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        this.LogEvent(ex.Message);
+                        this.LogEvent(ex.StackTrace);
                         lblTotalRegistros.Text = "0";
                     }
+                }
 
-                    // Vincula los datos filtrados al Repeater
-                    rptRutas.DataSource = filteredData;
-                    rptRutas.DataBind();
+                using (WebClient client = new WebClient())
+                {
+                    // Añadir el token al encabezado de autorización
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
 
-                    // Depuración: Imprime los datos en la consola
-                    foreach (var item in filteredData)
+                    try
                     {
-                        Console.WriteLine(String.Format("ID: {0}, TimeForPrecheck: {1}", item.id, item.TimeForId2));
+                        // Realizar la solicitud GET y leer la respuesta
+                        string responseBody = client.DownloadString(url1);
+
+                        // Deserializar la respuesta JSON
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
+                        // y el tipo de camión es 'PLANA'
+                        var filteredData = data.Where(p => p.currentStatus == 8 && p.vehicle != null && p.vehicle.truckType == "P" || p.vehicle.truckType == "R")
+                        .Select((p, index) =>
+                        {
+                            p.IsFirst = (index == 0); // Nueva propiedad
+                            // Comprobar si dateTimePrecheckeo tiene valor y formatearlo
+                            string timeForPrecheck = p.dateTimePrecheckeo.HasValue 
+                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                : "No hay datos"; // Valor predeterminado si es null
+                            p.TimeForId2 = timeForPrecheck;
+                            return p;
+                        }).ToList();
+
+                        // Vincular los datos filtrados al control Repeater
+                        rptRutas1.DataSource = filteredData;
+                        rptRutas1.DataBind();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                        this.LogEvent(ex.Message);
+                        this.LogEvent(ex.StackTrace);
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
                     }
                 }
-                catch (Exception ex)
+
+                using (WebClient client = new WebClient())
                 {
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                    this.LogEvent(ex.Message);
-                    this.LogEvent(ex.StackTrace);
-                    lblTotalRegistros.Text = "0";
-                }
-            }
-
-            using (WebClient client = new WebClient())
-            {
-                // Añadir el token al encabezado de autorización
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
-
-                try
-                {
-                    // Realizar la solicitud GET y leer la respuesta
-                    string responseBody = client.DownloadString(url1);
-
-                    // Deserializar la respuesta JSON
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
-                    // y el tipo de camión es 'PLANA'
-                    var filteredData = data.Where(p => p.currentStatus == 8 && p.vehicle != null && p.vehicle.truckType == "P" || p.vehicle.truckType == "R")
-                    .Select((p, index) =>
-{
-    p.IsFirst = (index == 0); // Nueva propiedad
-    // Comprobar si dateTimePrecheckeo tiene valor y formatearlo
-    string timeForPrecheck = p.dateTimePrecheckeo.HasValue 
-        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-        : "No hay datos"; // Valor predeterminado si es null
-    p.TimeForId2 = timeForPrecheck;
-    return p;
-}).ToList();
-
-
-                    // Vincular los datos filtrados al control Repeater
-                    rptRutas1.DataSource = filteredData;
-                    rptRutas1.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                }
-            }
-
-            using (WebClient client = new WebClient())
-            {
-                // Añadir el token al encabezado de autorización
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
-                try
-                {
-                    // Realizar la solicitud GET y leer la respuesta
-                    string responseBody = client.DownloadString(url);
-
-                    // Deserializar la respuesta JSON
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 7
-                    // y el tipo de camión es 'VOLTEO'
-                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
-                    .Select((p, index) =>
-{
-    p.IsFirst = (index == 0); // Nueva propiedad
-    // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
-    p.TimeForId2 = p.dateTimePrecheckeo != null
-        ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-        : "No hay datos"; // Valor por defecto si es null
-    return p;
-}).ToList();
-
-
-
-
-
-                    // Asigna el conteo de los registros filtrados al Label
-                    lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
-
-                    // Vincular los datos filtrados al control Repeater
-                    rptRutas2.DataSource = filteredData;
-                    rptRutas2.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                    lblTotalRegistrosV.Text = "0";
-                }
-            }
-
-            using (WebClient client = new WebClient())
-            {
-                // Añadir el token al encabezado de autorización
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
-                try
-                {
-                    // Realizar la solicitud GET y leer la respuesta
-                    string responseBody = client.DownloadString(url1);
-
-                    // Deserializar la respuesta JSON
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
-                    // y el tipo de camión es 'VOLTEO'
-                    var filteredData = data.Where(p => 
-                        p.currentStatus == 8 && // Filtrar por currentStatus
-                        p.vehicle != null && 
-                        p.vehicle.truckType == "V"
-                    )
-                    .Select(p =>
+                    // Añadir el token al encabezado de autorización
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
+                    try
                     {
-                        // Asignar el tiempo directamente a TimeForId2
-                        p.TimeForId2 = "No disponible"; // Este es el valor por defecto
+                        // Realizar la solicitud GET y leer la respuesta
+                        string responseBody = client.DownloadString(url);
 
-                         // Retornar el objeto con los datos filtrados
-                         return p;
-                    })
-                    .ToList();
+                        // Deserializar la respuesta JSON
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    // Vincular los datos filtrados al control Repeater
-                    rptRutas3.DataSource = filteredData;
-                    rptRutas3.DataBind();
+                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 7
+                        // y el tipo de camión es 'VOLTEO'
+                        var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
+                        .Select((p, index) =>
+                        {
+                            p.IsFirst = (index == 0); // Nueva propiedad
+                            // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                            p.TimeForId2 = p.dateTimePrecheckeo != null
+                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                : "No hay datos"; // Valor por defecto si es null
+                            return p;
+                        }).ToList();
+
+                        // Asigna el conteo de los registros filtrados al Label
+                        lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
+
+                        // Vincular los datos filtrados al control Repeater
+                        rptRutas2.DataSource = filteredData;
+                        rptRutas2.DataBind();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        this.LogEvent(ex.Message);
+                        this.LogEvent(ex.StackTrace);
+                        lblTotalRegistrosV.Text = "0";
+                    }
                 }
-                catch (Exception ex)
+
+                using (WebClient client = new WebClient())
                 {
-                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    // Añadir el token al encabezado de autorización
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
+                    try
+                    {
+                        // Realizar la solicitud GET y leer la respuesta
+                        string responseBody = client.DownloadString(url1);
+
+                        // Deserializar la respuesta JSON
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
+                        // y el tipo de camión es 'VOLTEO'
+                        var filteredData = data.Where(p => 
+                            p.currentStatus == 8 && // Filtrar por currentStatus
+                            p.vehicle != null && 
+                            p.vehicle.truckType == "V"
+                        )
+                        .Select(p =>
+                        {
+                            // Asignar el tiempo directamente a TimeForId2
+                            p.TimeForId2 = "No disponible"; // Este es el valor por defecto
+
+                            // Retornar el objeto con los datos filtrados
+                            return p;
+                        })
+                        .ToList();
+
+                        // Vincular los datos filtrados al control Repeater
+                        rptRutas3.DataSource = filteredData;
+                        rptRutas3.DataBind();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                        this.LogEvent(ex.Message);
+                        this.LogEvent(ex.StackTrace);
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    }
+                
                 }
-            
             }
+        }
+        else
+        {
+            Response.Redirect("login.aspx");
         }
     }
 
-
-    
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
     {
@@ -237,14 +245,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
                     client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-                    // Log de la URL de la solicitud
-                    LogEventS("URL de solicitud: " + url);
-
                     // Enviar la solicitud POST sin cuerpo
                     string response = client.UploadString(url, "POST", "");
-
-                    // Log de la respuesta
-                    LogEventS("Respuesta de la API: " + response);
 
                     // Verificar si la respuesta está vacía
                     if (string.IsNullOrEmpty(response))
@@ -271,7 +273,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                             string serverResponse = "Status: " + status + ", EntryTime: " + entryTime;
 
                             // Log del mensaje de respuesta
-                            LogEventS("Respuesta exitosa: " + serverResponse);
                             return serverResponse;
                         }
                         else
@@ -306,12 +307,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
     [WebMethod]
     public static string TiempoAzucar(string codigoGeneracion, string tiempo, string comentario)
     {
-        // Log de los parámetros recibidos
-        LogEventS(new { Message = "Parámetros recibidos", codigoGeneracion, tiempo, comentario });
-
         string baseUrl = "https://apiclientes.almapac.com:9010/api/shipping/sugartime/";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-
         string responseContent = string.Empty;
 
         try
@@ -324,13 +321,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                 var requestBody = new { codeGen = codigoGeneracion, time = tiempo, observation = comentario };
                 var json = JsonConvert.SerializeObject(requestBody);
 
-                // Log del JSON generado para la solicitud
-                LogEventS(new { Message = "JSON generado para la solicitud", json });
-
                 responseContent = client.UploadString(baseUrl, "POST", json);
-
-                // Log de la respuesta
-                LogEventS(new { Message = "Respuesta recibida del servidor", ResponseContent = responseContent });
             }
         }
         catch (Exception ex)
@@ -339,10 +330,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             LogEventS(new { Message = "Error inesperado", Exception = ex.Message });
             return "Error inesperado: " + ex.Message;
         }
-
-        // Log del éxito
-        LogEventS(new { Message = "Solicitud completada exitosamente", ResponseContent = responseContent });
-
         return responseContent;
     }
 
@@ -351,7 +338,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         sql_rutas_actividades.SelectCommand = "SELECT * FROM [dbo].[ALMAPAC$Work Type]";
         sql_rutas_actividades.DataBind();
     }
-
     public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
@@ -382,45 +368,35 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         File.AppendAllText(logFilePath, formattedLog);
     }
 
-    // Método para escribir en el Visor de eventos o archivo de logs
+    // Método para escribir en el Visor de eventos
     public static void LogEventS(object message)
     {
+        string logFilePath = "C:/trasacciones-almapac-main/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
         try
         {
-            // Convertir la ruta relativa a absoluta
-            string logFilePath = HttpContext.Current.Server.MapPath("~/Logs/MyAppLog.txt");
-            string logDirectory = Path.GetDirectoryName(logFilePath);
-
-            // Crear el directorio si no existe
-            if (!Directory.Exists(logDirectory))
-            {
-                Directory.CreateDirectory(logDirectory);
-            }
-
-            // Convertir el mensaje a string
-            string logMessage;
-            try
-            {
-                logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
-            }
-            catch
-            {
-                // Si la serialización falla, usar el método ToString() o "null" si es nulo
-                logMessage = (message != null) ? message.ToString() : "null";
-            }
-
-            // Formatear el mensaje de log
-            string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
-
-            // Escribir el log en el archivo
-            File.AppendAllText(logFilePath, formattedLog);
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
         }
-        catch (Exception ex)
+        catch
         {
-            // Manejar errores al escribir el log
-            // Considera usar un método de respaldo como Event Viewer
-            Console.WriteLine("Error al escribir el log: " + ex.Message);
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
         }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
     }
 
     public class Post
