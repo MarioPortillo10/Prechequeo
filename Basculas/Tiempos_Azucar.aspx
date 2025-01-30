@@ -1366,7 +1366,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
-                    //changeStatusAzucar(codigoGeneracion);
+                    changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
                 {
