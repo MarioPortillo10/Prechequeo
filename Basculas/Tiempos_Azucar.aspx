@@ -1048,7 +1048,7 @@
                             showCommentModal(codigoGeneracion, isSweepingRequired, (comentario) => 
                             {
                                 console.log('Iniciando cronómetro tras comentario...');
-                                //sweepinglog(codigoGeneracion, isSweepingRequired, comentario); // Registrar el barrido con el comentario
+                                sweepinglog(codigoGeneracion, isSweepingRequired, comentario); // Registrar el barrido con el comentario
                                 startTimer(storageKey); // Llamar al inicio del cronómetro
                             });
                         }
@@ -1060,7 +1060,7 @@
                     console.log(`Tipo de barrido seleccionado: ${tipoSeleccionado}`);
                     $('#barridoModal').modal('hide'); // Cerrar modal de barrido
                     console.log('Iniciando cronómetro directamente...');
-                    //sweepinglog(codigoGeneracion, isSweepingRequired, '');
+                    sweepinglog(codigoGeneracion, isSweepingRequired, '');
                     startTimer(storageKey); // Llamar al inicio del cronómetro
 
                 }
@@ -1373,7 +1373,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
-                    //changeStatusAzucar(codigoGeneracion);
+                    changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
                 {
