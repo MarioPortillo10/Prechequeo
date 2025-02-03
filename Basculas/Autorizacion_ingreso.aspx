@@ -676,6 +676,17 @@
     </script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Evitar recarga al hacer clic en botones del navbar
+            document.querySelectorAll("button").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Evita que el botón recargue la página
+                });
+            });
+        });
+    </script>
+
+    <script>
         function filterCards() 
         {
             // Obtén el valor del input de búsqueda
@@ -750,52 +761,102 @@
         return false; // Evita que el botón realice su acción predeterminada
     }
 
-    // Función para cambiar el estatus después de la validación exitosa
     function changeStatus(codigoGeneracion) 
+{
+    if (!codigoGeneracion || codigoGeneracion.trim() === '') 
     {
-        if (!codigoGeneracion || codigoGeneracion.trim() === '') 
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese un Código de Generación',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
+        data: JSON.stringify({ codeGen: codigoGeneracion}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(response) 
         {
-            Swal.fire({
-                title: 'Error',
-                text: 'Por favor, ingrese un Código de Generación',
-                icon: 'error',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
+        // Verificar la respuesta en la consola para depuración
+        console.log("Respuesta de la API:", response.d); // Mostrar el contenido de la respuesta
+
+        // Verificar si response.d es un objeto o una cadena
+        if (typeof response.d === "string") {
+            console.log("response.d es una cadena:", response.d); // Mostrar si es una cadena
+        } else {
+            console.log("response.d no es una cadena, es un objeto:", response.d); // Mostrar si es un objeto
         }
 
-        $.ajax({
-            type: "POST",
-            url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
-            data: JSON.stringify({ codeGen: codigoGeneracion}),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(response) 
-            {
-                // Verificar la respuesta en la consola para depuración
-                console.log("Respuesta de la API:", response.d);  // Esto debería contener el mensaje que la API devuelve.
+    // Si la respuesta contiene un mensaje de éxito, mostramos el modal de éxito
+    if (response.d.includes("exitoso")) {
+        Swal.fire({
+            title: '¡Operación exitosa!',
+            text: 'El Ingreso a sido autorizado', // Mostrar el mensaje de la API
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.reload();
+            }
+        });
+    } else {
+        // Mostrar los logs cuando haya un error
+        console.log("No contiene 'exitoso', mostrando error...");
+        
+        // Verificar si 'response.d' es un objeto y contiene el campo 'message'
+        let errorResponse = response.d;
+        console.log("errorResponse:", errorResponse); // Verifica la respuesta completa
 
-                // Mostrar una alerta de éxito usando SweetAlert
+        try {
+            // Si es un objeto, parseamos y verificamos el campo 'message'
+            let parsedError = JSON.parse(errorResponse);
+            console.log("parsedError:", parsedError); // Verifica la estructura de 'errorMessage'
+            console.log("message:", parsedError.message); // Verifica el valor de 'message'
+            
+            // Ahora mostramos el error con el mensaje específico
+            Swal.fire({
+                title: 'Error',
+                text: response.d, // Mostrar el mensaje de error específico
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        } catch (e) {
+            console.log("Error al parsear la respuesta:", e); // Si no se puede parsear, mostramos el error completo
+            Swal.fire({
+                title: 'Error',
+                text: errorResponse, // Mostrar la respuesta completa si no se puede parsear
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+},
+        error: function(xhr, status, error) 
+        {
+            // Verificar el error en la consola para depuración
+            console.error("Error al cambiar el estado:", error);
+
+            // Intentar extraer y mostrar el 'message' de la respuesta JSON si está disponible
+            try {
+                // Si la respuesta es un JSON, intentamos analizarla
+                let errorResponse = JSON.parse(xhr.responseText);
+                let errorMessage = errorResponse.message || 'Hubo un problema al cambiar el estado.';
+
+                // Mostrar el mensaje de error específico
                 Swal.fire({
-                    title: '¡Operación exitosa!',
-                    text: "El Ingreso a sido autorizado", // Mostrar el mensaje de la API
-                    icon: 'success',
+                    title: 'Error',
+                    text: errorMessage, // Mostrar solo el 'message'
+                    icon: 'error',
                     confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    if (result.isConfirmed) 
-                    {
-                        // Recargar la página cuando el usuario presione "Aceptar"
-                        location.reload();
-                    }
                 });
-            },
-            error: function(xhr, status, error) 
-            {
-                // Verificar el error en la consola para depuración
-                console.error("Error al cambiar el estado:", error);
-
-                // Mostrar una alerta de error usando SweetAlert
+            } catch (e) {
+                // Si no es un JSON válido, mostrar el error genérico
                 Swal.fire({
                     title: 'Error',
                     text: 'Hubo un problema al cambiar el estado: ' + error,
@@ -803,8 +864,10 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-        });
-    }
+        }
+    });
+}
+
 </script>
 
 </body>
