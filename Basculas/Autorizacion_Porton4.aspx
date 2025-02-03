@@ -394,8 +394,6 @@
         </div>
     </div>
 
-
-
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
@@ -478,7 +476,6 @@
 
     <!-- Custom Scripts -->
     <script src="../src/js/spotlight.bundle.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -512,6 +509,18 @@
     <script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
     <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Evitar recarga al hacer clic en botones del navbar
+            document.querySelectorAll("button").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Evita que el botón recargue la página
+                });
+            });
+        });
+    </script>
+
+    
     <script>
         $(document).ready(function () 
         {
