@@ -1000,8 +1000,10 @@
         function mostrarModal(event, button) 
         {
             const requiresSweeping = button.getAttribute('data-requires-sweeping'); // Obtener el valor de requiresSweeping desde el atributo de datos
-
+            const isSweepingRequired = requiresSweeping === 'S'; // evalúa si requiresSweeping es igual a "S", asignando true si lo es y false en caso contrario
+            const codigoGeneracion = button.getAttribute('data-codigo-generacion'); //Obtener el valor del codigo de generacion
             let storageKey;
+
             if (button.id === 'startButton1') 
             {
                 storageKey = 'timer1'; // Si el id es 'startButton1', asigna 'timer1'
@@ -1043,9 +1045,10 @@
                         {
                             // Mostrar modal de comentario y cerrar la modal de barrido
                             $('#barridoModal').modal('hide');
-                            showCommentModal(() => 
+                            showCommentModal(codigoGeneracion, isSweepingRequired, (comentario) => 
                             {
                                 console.log('Iniciando cronómetro tras comentario...');
+                                //sweepinglog(codigoGeneracion, isSweepingRequired, comentario); // Registrar el barrido con el comentario
                                 startTimer(storageKey); // Llamar al inicio del cronómetro
                             });
                         }
@@ -1057,13 +1060,15 @@
                     console.log(`Tipo de barrido seleccionado: ${tipoSeleccionado}`);
                     $('#barridoModal').modal('hide'); // Cerrar modal de barrido
                     console.log('Iniciando cronómetro directamente...');
+                    //sweepinglog(codigoGeneracion, isSweepingRequired, '');
                     startTimer(storageKey); // Llamar al inicio del cronómetro
+
                 }
             };
         }
 
         // Función para mostrar el modal de comentario
-        function showCommentModal(callback) 
+        function showCommentModal(codigoGeneracion, isSweepingRequired, callback) 
         {
             Swal.fire({
                 title: 'Ingrese su comentario',
@@ -1090,7 +1095,9 @@
                 if (result.isConfirmed) 
                 {
                     console.log('Comentario enviado:', result.value);
-                    if (callback) callback(); // Ejecutar el callback al confirmar
+                    console.log('Código Generación:', codigoGeneracion);
+                    console.log('Requiere Barrido:', isSweepingRequired);
+                    if (callback) callback(result.value); // Pasar el comentario al callback
                 } 
                 else 
                 {
@@ -1100,59 +1107,52 @@
             });
         }
 
-        function startTimer(storageKey) 
+
+        function sweepinglog(codeGen, requiresSweeping, observation)
         {
-            if (!storageKey || isRunning[storageKey]) return;
-
-            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000;
-            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
-            const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
-
-            let milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
-            const wasRunning = localStorage.getItem(`${storageKey}_isRunning`) === 'true';
-
-            if (wasRunning) 
-            {
-                const lastSavedTimestamp = parseInt(localStorage.getItem(`${storageKey}_lastTimestamp`)) || 0;
-                if (lastSavedTimestamp) 
+            //alert(codeGen + " - " + requiresSweeping + " - " + observation);
+            $.ajax({
+                type: "POST",
+                url: "Tiempos_Azucar.aspx/sweepinglog",
+                data: JSON.stringify({ codeGen: codeGen, requiresSweeping: requiresSweeping, observation: observation }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) 
                 {
-                    const now = performance.now();
-                    milliseconds += now - lastSavedTimestamp;
+                    console.log("Respuesta de la API: ", response.d);     
+                },
+                error: function(xhr, status, error) 
+                {
+                    console.error("Error cambiando el estado: ", error);
                 }
-            }
+            });
+        }
+
+        function startTimer(storageKey) {
+            if (isRunning[storageKey]) return; // Si el temporizador ya está corriendo, no hacer nada
 
             isRunning[storageKey] = true;
-            lastTimestamps[storageKey] = performance.now();
             localStorage.setItem(`${storageKey}_isRunning`, 'true');
 
-            intervals[storageKey] = setInterval(() => 
-            {
-                const currentTimestamp = performance.now();
-                const elapsed = currentTimestamp - lastTimestamps[storageKey];
-                lastTimestamps[storageKey] = currentTimestamp;
-
-                milliseconds += elapsed;
+            // Si no hay un valor de tiempo previo en el almacenamiento local, inicializamos en 0
+            let milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`) || '0');
+            const interval = setInterval(() => {
+                // Aumentar el tiempo en intervalos de 1000 ms (1 segundo)
+                milliseconds += 1000;
+                
+                // Guardar el tiempo en el almacenamiento local
                 localStorage.setItem(`${storageKey}_milliseconds`, milliseconds);
-                localStorage.setItem(`${storageKey}_lastTimestamp`, performance.now());
 
-                const angle = (milliseconds / duration) * 360;
-                const progressCircleElement = document.getElementById(progressCircleId);
-                if (progressCircleElement) 
-                {
-                    progressCircleElement.style.background = `conic-gradient(${getColor(milliseconds, duration, storageKey)} ${angle}deg, #f0f0f0 ${angle}deg)`;
-                }
+                // Mostrar el tiempo en la interfaz de usuario
+                updateTimerDisplay(storageKey, milliseconds);
 
-                updateTimerDisplay(timerTextId, milliseconds);
+            }, 1000); // El cronómetro se actualiza cada segundo (1000 ms)
 
-                // Eliminar o comentar este bloque para que el cronómetro no se detenga automáticamente
-                // if (milliseconds >= duration) 
-                // {
-                //     clearInterval(intervals[storageKey]);
-                //     isRunning[storageKey] = false;
-                //     localStorage.setItem(`${storageKey}_isRunning`, 'false');
-                // }
-            }, 50);
+            // Guardar el ID del intervalo para detenerlo más tarde si es necesario
+            intervals[storageKey] = interval;
         }
+
+
 
         function stopTimer(stopButtonId) 
         {
@@ -1160,58 +1160,65 @@
             const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : 'timer2';
             const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
             const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
-            const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 min para timer1 y 10 min para timer2
+            const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : 10 * 60 * 1000; // 15 min para stopButton1 y 10 min para stopButton2
             const milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
-            const tiempoTranscurrido = formatTime(milliseconds); // Formatear el tiempo transcurrido
+            const tiempoCompleto = formatTime(milliseconds); // Formatear el tiempo transcurrido
+            // Extraer minutos y segundos
+            const tiempoTranscurrido = tiempoCompleto.split(':').slice(0, 2).join(':'); // Mantener solo MM:SS
 
             console.log(`Código de generación: ${codigoGeneracion}`);
-            console.log(`Tiempo transcurrido: ${tiempoTranscurrido}`);
+            console.log(`Cronómetro detenido. Tiempo transcurrido: ${tiempoTranscurrido}`);
 
-            if (!isRunning[storageKey]) {
+            if (!isRunning[storageKey]) 
+            {
+                
                 console.log("El cronómetro ya está detenido.");
                 return; // No hacer nada si el cronómetro ya está detenido
             }
 
-            // Mostrar la modal si se supera el umbral de tiempo
-            if (milliseconds > threshold) {
+            // Si el tiempo transcurrido es mayor que el umbral, mostramos la modal para seleccionar motivo
+            if (milliseconds > threshold) 
+            {
                 const confirmationModal = document.getElementById("confirmationModal");
-                confirmationModal.style.display = "block"; // Mostrar modal
+                confirmationModal.style.display = "block"; // Muestra la modal
 
-                document.getElementById("confirmStopButton").onclick = function () {
-                    const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Comentario opcional
+                document.getElementById("confirmStopButton").onclick = function() 
+                {
+                    // Obtener el valor del comentario seleccionado en el input de la modal
+                    const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Enviar vacío si no hay comentario
                     console.log('Motivo seleccionado:', motivoDetencion);
 
-                    // Detener el cronómetro y limpiar la UI
+                    // Llamar a la función TiempoAzucar con los parámetros
+                    TiempoAzucar(codigoGeneracion, tiempoTranscurrido, motivoDetencion);
+
+                    // Detener el cronómetro y actualizar la UI
                     clearInterval(intervals[storageKey]);
                     isRunning[storageKey] = false;
                     localStorage.setItem(`${storageKey}_isRunning`, 'false');
                     localStorage.setItem(`${storageKey}_milliseconds`, 0);
                     document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
                     updateTimerDisplay(timerTextId, 0);
-
-                    // Llamar a la función TiempoAzucar
-                    TiempoAzucar(codigoGeneracion, tiempoTranscurrido, motivoDetencion);
-
                     confirmationModal.style.display = "none"; // Ocultar modal
                 };
 
-                document.getElementById("cancelStopButton").onclick = function () {
+                document.getElementById("cancelStopButton").onclick = function() 
+                {
                     confirmationModal.style.display = "none"; // Cerrar modal sin detener el cronómetro
                 };
+            } 
+            else 
+            {
+                // Si no se supera el umbral, detener normalmente sin mostrar la modal
+                clearInterval(intervals[storageKey]);
+                isRunning[storageKey] = false;
+                localStorage.setItem(`${storageKey}_isRunning`, 'false');
+                localStorage.setItem(`${storageKey}_milliseconds`, 0);
+                document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
+                updateTimerDisplay(timerTextId, 0);
 
-                return; // Salir de la función para no detener automáticamente el cronómetro
+                // Llamar a la función TiempoAzucar con un comentario vacío
+                TiempoAzucar(codigoGeneracion, tiempoTranscurrido, '');
             }
-
-            // Si no se supera el umbral, detener normalmente
-            clearInterval(intervals[storageKey]);
-            isRunning[storageKey] = false;
-            localStorage.setItem(`${storageKey}_isRunning`, 'false');
-            localStorage.setItem(`${storageKey}_milliseconds`, 0);
-            document.getElementById(progressCircleId).style.background = `conic-gradient(#f0f0f0 0deg, #f0f0f0 0deg)`;
-            updateTimerDisplay(timerTextId, 0);
-
-            // Llamar a la función TiempoAzucar con un comentario vacío
-            TiempoAzucar(codigoGeneracion, tiempoTranscurrido, '');
         }
 
         function restoreTimer(storageKey, initialMilliseconds) 
@@ -1354,7 +1361,7 @@
                 });
                 return;
             }
-    
+
             $.ajax({
                 type: "POST",
                 url: "Tiempos_Azucar.aspx/TiempoAzucar",
@@ -1366,7 +1373,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
-                    changeStatusAzucar(codigoGeneracion);
+                    //changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
                 {
