@@ -597,7 +597,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public string codbuque5 { get; set; }
         public int agentLogTruck { get; set; }
         public string lotNo { get; set; }
-        public int qtyRelasedAvailability { get; set; }
+        public double qtyRelasedAvailability { get; set; }
         public string marchamo1 { get; set; }
         public string marchamo2 { get; set; }
         public string marchamo3 { get; set; }
