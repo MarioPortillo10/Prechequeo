@@ -773,6 +773,16 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Evitar recarga al hacer clic en botones del navbar
+            document.querySelectorAll("button").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Evita que el botón recargue la página
+                });
+            });
+        });
+    </script>
 
      <script>
         $(document).ready(function () 
@@ -853,173 +863,172 @@
             }
         }
 
-        function validarInformacion() {
-    // Obtener los valores de los campos
-    var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
-    var licencia         = document.getElementById('txt_licencia').value.trim();
-    var placaRemolque    = document.getElementById('txt_placaremolque').value.trim();
-    var placaCamion      = document.getElementById('txt_placamion').value.trim();
-    var tarjeta = document.getElementById('txt_tarjeta').value.trim();
+        function validarInformacion() 
+        {
+            // Obtener los valores de los campos
+            var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
+            var licencia         = document.getElementById('txt_licencia').value.trim();
+            var placaRemolque    = document.getElementById('txt_placaremolque').value.trim();
+            var placaCamion      = document.getElementById('txt_placamion').value.trim();
+            var tarjeta = document.getElementById('txt_tarjeta').value.trim();
 
-    // Expresiones regulares para verificar el formato de las placas
-    var regexRemolque = /^RE\d+$/; // La placa del remolque debe comenzar con "RE" seguido de números
-    var regexCamion = /^C\d+$/;    // La placa del camión debe comenzar con "C" seguido de números
+            // Expresiones regulares para verificar el formato de las placas
+            var regexRemolque = /^RE\d+$/; // La placa del remolque debe comenzar con "RE" seguido de números
+            var regexCamion = /^C\d+$/;    // La placa del camión debe comenzar con "C" seguido de números
 
-    // Limpiar previamente cualquier clase de error
-    resetErrorFields([]);
+            // Limpiar previamente cualquier clase de error
+            resetErrorFields([]);
 
-    // Validación de los campos vacíos
-    if (!licencia) {
-        document.getElementById('txt_licencia').classList.add('error-field');
-    }
-    if (!placaRemolque) {
-        document.getElementById('txt_placaremolque').classList.add('error-field');
-    } else if (!regexRemolque.test(placaRemolque)) {
-        // Validar el formato de la placa del remolque
-        document.getElementById('txt_placaremolque').classList.add('error-field');
-    }
-    if (!placaCamion) {
-        document.getElementById('txt_placamion').classList.add('error-field');
-    } else if (!regexCamion.test(placaCamion)) {
-        // Validar el formato de la placa del camión
-        document.getElementById('txt_placamion').classList.add('error-field');
-    }
-    if (!tarjeta) {
-        document.getElementById('txt_tarjeta').classList.add('error-field');
-    }
+            // Validación de los campos vacíos
+            if (!licencia) {
+                document.getElementById('txt_licencia').classList.add('error-field');
+            }
+            if (!placaRemolque) {
+                document.getElementById('txt_placaremolque').classList.add('error-field');
+            } else if (!regexRemolque.test(placaRemolque)) {
+                // Validar el formato de la placa del remolque
+                document.getElementById('txt_placaremolque').classList.add('error-field');
+            }
+            if (!placaCamion) {
+                document.getElementById('txt_placamion').classList.add('error-field');
+            } else if (!regexCamion.test(placaCamion)) {
+                // Validar el formato de la placa del camión
+                document.getElementById('txt_placamion').classList.add('error-field');
+            }
+            if (!tarjeta) {
+                document.getElementById('txt_tarjeta').classList.add('error-field');
+            }
 
-    // Si hay algún campo con error, mostramos el mensaje y detenemos la ejecución
-    if (document.querySelectorAll('.error-field').length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Campos con error',
-            text: 'Por favor, complete todos los campos correctamente.',
-            confirmButtonText: 'Aceptar'
-        });
-        return; // Detener la ejecución si algún campo tiene error
-    }
-
-    // Si los campos pasan las validaciones, llamamos al servidor para validar los datos
-    $.ajax({
-        type: "POST",
-        url: "Autorizacion_Camiones.aspx/ValidarDatos",
-        data: JSON.stringify({
-            codigoGeneracion: codigoGeneracion,
-            licencia: licencia,
-            placaRemolque: placaRemolque,
-            placaCamion: placaCamion
-        }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            var resultado = response.d;
-
-            if (resultado.error) {
+            // Si hay algún campo con error, mostramos el mensaje y detenemos la ejecución
+            if (document.querySelectorAll('.error-field').length > 0) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Errores encontrados',
-                    text: 'Por favor revise los campos resaltados.',
+                    title: 'Campos con error',
+                    text: 'Por favor, complete todos los campos correctamente.',
                     confirmButtonText: 'Aceptar'
                 });
-
-                // Limpiar el marcado de error en los campos anteriores
-                resetErrorFields(resultado.camposConError);
-
-                // Marcar los campos con errores
-                resultado.camposConError.forEach(function (campo) {
-                    switch (campo) {
-                        case "licencia":
-                            document.getElementById('txt_licencia').classList.add('error-field');
-                            break;
-                        case "placaRemolque":
-                            document.getElementById('txt_placaremolque').classList.add('error-field');
-                            break;
-                        case "placaCamion":
-                            document.getElementById('txt_placamion').classList.add('error-field');
-                            break;
-                        case "tarjeta":
-                            document.getElementById('txt_tarjeta').classList.add('error-field');
-                            break;
-                    }
-                });
-            } else {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Validación exitosa',
-                    text: resultado.mensaje,
-                    confirmButtonText: 'Aceptar',
-                    showLoaderOnConfirm: true,
-                    preConfirm: () => {
-                        // Llamar a la función asignar tarjeta después de la validación exitosa
-                        return asignartarjeta(codigoGeneracion, tarjeta);
-                    }
-                }).then(() => {
-                    console.log("Tarjeta asignada correctamente.");
-                });
+                return; // Detener la ejecución si algún campo tiene error
             }
-        },
-        error: function (error) {
-            console.error("Error en la solicitud:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al validar los datos.',
-                confirmButtonText: 'Aceptar'
+
+            // Si los campos pasan las validaciones, llamamos al servidor para validar los datos
+            $.ajax({
+                type: "POST",
+                url: "Autorizacion_Camiones.aspx/ValidarDatos",
+                data: JSON.stringify({
+                    codigoGeneracion: codigoGeneracion,
+                    licencia: licencia,
+                    placaRemolque: placaRemolque,
+                    placaCamion: placaCamion
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var resultado = response.d;
+
+                    if (resultado.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errores encontrados',
+                            text: 'Por favor revise los campos resaltados.',
+                            confirmButtonText: 'Aceptar'
+                        });
+
+                        // Limpiar el marcado de error en los campos anteriores
+                        resetErrorFields(resultado.camposConError);
+
+                        // Marcar los campos con errores
+                        resultado.camposConError.forEach(function (campo) {
+                            switch (campo) {
+                                case "licencia":
+                                    document.getElementById('txt_licencia').classList.add('error-field');
+                                    break;
+                                case "placaRemolque":
+                                    document.getElementById('txt_placaremolque').classList.add('error-field');
+                                    break;
+                                case "placaCamion":
+                                    document.getElementById('txt_placamion').classList.add('error-field');
+                                    break;
+                                case "tarjeta":
+                                    document.getElementById('txt_tarjeta').classList.add('error-field');
+                                    break;
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Validación exitosa',
+                            text: resultado.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            showLoaderOnConfirm: true,
+                            preConfirm: () => {
+                                // Llamar a la función asignar tarjeta después de la validación exitosa
+                                return asignartarjeta(codigoGeneracion, tarjeta);
+                            }
+                        }).then(() => {
+                            console.log("Tarjeta asignada correctamente.");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.error("Error en la solicitud:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al validar los datos.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
             });
         }
-    });
-}
 
-// Función para limpiar el marcado de error en los campos
-function resetErrorFields(camposConError) {
-    var campos = [
-        'txt_licencia',
-        'txt_placaremolque',
-        'txt_placamion',
-        'txt_tarjeta'
-    ];
+        // Función para limpiar el marcado de error en los campos
+        function resetErrorFields(camposConError) {
+            var campos = [
+                'txt_licencia',
+                'txt_placaremolque',
+                'txt_placamion',
+                'txt_tarjeta'
+            ];
 
-    campos.forEach(function (campo) {
-        var elemento = document.getElementById(campo);
-        if (elemento && !camposConError.includes(campo)) {
-            // Si el campo no está en la lista de campos con error, quitamos la clase 'error-field'
-            elemento.classList.remove('error-field');
+            campos.forEach(function (campo) {
+                var elemento = document.getElementById(campo);
+                if (elemento && !camposConError.includes(campo)) {
+                    // Si el campo no está en la lista de campos con error, quitamos la clase 'error-field'
+                    elemento.classList.remove('error-field');
+                }
+            });
         }
-    });
-}
 
-// Función para limpiar campos específicos de la modal
-function limpiarCamposModal() {
-    const campos = [
-        'txt_licencia',
-        'txt_placaremolque',
-        'txt_placamion',
-        'txt_tarjeta'
-    ];
+        // Función para limpiar campos específicos de la modal
+        function limpiarCamposModal() {
+            const campos = [
+                'txt_licencia',
+                'txt_placaremolque',
+                'txt_placamion',
+                'txt_tarjeta'
+            ];
 
-    // Limpiar valores de los campos
-    campos.forEach(campoId => {
-        const campo = document.getElementById(campoId);
-        if (campo) {
-            campo.value = ''; // Limpia el valor del campo
-            campo.classList.remove('error-field'); // Limpia las clases de error si existen
+            // Limpiar valores de los campos
+            campos.forEach(campoId => {
+                const campo = document.getElementById(campoId);
+                if (campo) {
+                    campo.value = ''; // Limpia el valor del campo
+                    campo.classList.remove('error-field'); // Limpia las clases de error si existen
+                }
+            });
+
+            // Si el formulario tiene campos adicionales que limpiar
+            const hiddenField = document.getElementById('codigoGeneracionInput');
+            if (hiddenField) {
+                hiddenField.value = '';
+            }
         }
-    });
 
-    // Si el formulario tiene campos adicionales que limpiar
-    const hiddenField = document.getElementById('codigoGeneracionInput');
-    if (hiddenField) {
-        hiddenField.value = '';
-    }
-}
-
-// Evento de cierre de la modal
-$('#rutaModal').on('hidden.bs.modal', function () {
-    limpiarCamposModal(); // Llama a la función para limpiar los campos
-});
+        // Evento de cierre de la modal
+        $('#rutaModal').on('hidden.bs.modal', function () {
+            limpiarCamposModal(); // Llama a la función para limpiar los campos
+        });
     
-
-
         // Funcion para asignar la tarjeta en NAV
         function asignartarjeta(codigoGeneracion, tarjeta) 
         {
@@ -1032,11 +1041,31 @@ $('#rutaModal').on('hidden.bs.modal', function () {
                 success: function(response) 
                 {
                     console.log("Respuesta de la API: ", response.d); 
-                    changeStatus(codigoGeneracion);
+
+                    if (response.d) 
+                    {
+                        changeStatus(codigoGeneracion);
+                    } 
+                    else 
+                    {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo completar la operación. Inténtalo de nuevo.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
                 error: function(xhr, status, error) 
                 {
-                    console.error("Error cambiando el estado: ", error);
+                    console.log("Error en la solicitud: ", error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema con la solicitud. Verifica tu conexión e intenta nuevamente.',
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
             });
         }
@@ -1064,15 +1093,67 @@ $('#rutaModal').on('hidden.bs.modal', function () {
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d); 
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                success: function(response) {
+                    console.log("Respuesta completa de la API:", response);
+                    
+                    if (response.d && typeof response.d === "string") {
+                        console.log("Estructura dentro de response.d:", response.d);
+
+                        let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
+
+                        for (const key in response.d) {
+                            if (response.d.hasOwnProperty(key)) {
+                                let value = response.d[key];
+
+                                // Si el valor es un objeto, lo convertimos en un JSON legible
+                                if (typeof value === "string" && value !== null) {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
+                                } else {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+                                }
+                            }
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualización exitosa!',
+                            text: 'El estado se actualizó correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+
+                    } else {
+                        console.error("La respuesta no es un objeto válido:", response.d);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
-                error: function(xhr, status, error) 
-                {
-                    console.error("Error cambiando el estado: ", error);
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                    try {
+                        let errorResponse = JSON.parse(xhr.responseText);
+                        let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } catch (e) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al realizar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 }
             });
         }
@@ -1133,22 +1214,29 @@ $('#rutaModal').on('hidden.bs.modal', function () {
                 data: JSON.stringify({ codigoGeneracion: codigoGeneracion, comentario: comentario }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
+                success: function(response) {
                     // Analizar el JSON recibido
                     var responseData = response.d; // Asegúrate de adaptar según la estructura de tu backend
                     //console.log("Respuesta del servidor:", responseData);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'El comentario fue procesado correctamente.',
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => 
-                    {
-                        $('#modalReportar').modal('hide'); // Ocultar la modal
-                        location.reload();
-                    });
-                    
+
+                    if (responseData && responseData.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'El comentario fue procesado correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            $('#modalReportar').modal('hide'); // Ocultar la modal
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al procesar el comentario. Inténtalo de nuevo.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
                 error: function(error) 
                 {

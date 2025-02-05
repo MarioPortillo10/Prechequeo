@@ -19,99 +19,113 @@ using System.Diagnostics;
 public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
+{
+    if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
     {
-        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
+        string username = Request.Cookies["username"].Value;
+        string cod_bascula = Request.Cookies["cod_bascula"].Value;
+        string cod_usuario = Request.Cookies["cod_usuario"].Value;
+        string cod_turno = Request.Cookies["cod_turno"].Value;
+
+        this.LogEvent("Inicio de la carga de la página Chequeo de informacion.");
+
+        if (!IsPostBack)
         {
-            string username = Request.Cookies["username"].Value;
-            string cod_bascula = Request.Cookies["cod_bascula"].Value;
-            string cod_usuario = Request.Cookies["cod_usuario"].Value;
-            string cod_turno = Request.Cookies["cod_turno"].Value;
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
-            if (!IsPostBack)
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            using (WebClient client = new WebClient())
             {
-                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
-                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
 
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                using (WebClient client = new WebClient())
+                try
                 {
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
+                    string responseBody = client.DownloadString(url);
 
-                    try
+                    // Deserialización de datos
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Definir la zona horaria de UTC -6
+                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
                     {
-                        string responseBody = client.DownloadString(url);
-
-                        // Deserialización de datos
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        // Ordenar por dateTimePrecheckeo
-                        data = data
-                               .Where(item => item.dateTimePrecheckeo != DateTime.MinValue) // Validar que tenga un valor válido
-                               .OrderBy(item => item.dateTimePrecheckeo) // Ordenar por la propiedad
-                               .ToList();
-
-                        // Filtrado y conteo
-                        var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
-                        var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
-
-                        lblCountP.Text = truckTypeP.Count.ToString();
-                        lblCountV.Text = truckTypeV.Count.ToString();
-
-                        // Actualización de ingenioCounts
-                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
-                        var ingenioCounts = new Dictionary<string, int>();
-
-                        foreach (var item in data)
+                        if (item.dateTimePrecheckeo != DateTime.MinValue)
                         {
-                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                        }
+                    }
+
+                    // Ordenar por dateTimePrecheckeo
+                    data = data
+                           .Where(item => item.dateTimePrecheckeo != DateTime.MinValue) // Validar que tenga un valor válido
+                           .OrderBy(item => item.dateTimePrecheckeo) // Ordenar por la propiedad
+                           .ToList();
+
+                    // Filtrado y conteo
+                    var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                    var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
+
+                    lblCountP.Text = truckTypeP.Count.ToString();
+                    lblCountV.Text = truckTypeV.Count.ToString();
+
+                    // Actualización de ingenioCounts
+                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+                    var ingenioCounts = new Dictionary<string, int>();
+
+                    foreach (var item in data)
+                    {
+                        var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                        if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                        {
+                            if (ingenioCounts.ContainsKey(ingenioNavCode))
                             {
-                                if (ingenioCounts.ContainsKey(ingenioNavCode))
-                                {
-                                    ingenioCounts[ingenioNavCode]++;
-                                }
-                                else
-                                {
-                                    ingenioCounts[ingenioNavCode] = 1;
-                                }
+                                ingenioCounts[ingenioNavCode]++;
+                            }
+                            else
+                            {
+                                ingenioCounts[ingenioNavCode] = 1;
                             }
                         }
-
-                        // Asignar valores a los TextBox correspondientes
-                        for (int i = 1; i <= validIngenios.Length; i++)
-                        {
-                            var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + i.ToString()) as TextBox;
-                            if (txtIngenioQuantity != null)
-                            {
-                                txtIngenioQuantity.Text = ingenioCounts.ContainsKey(validIngenios[i - 1]) 
-                                    ? ingenioCounts[validIngenios[i - 1]].ToString() 
-                                    : "0";
-                            }
-                        }
-
-                        // Vincular datos ordenados a los Repeaters
-                        rptRutas1.DataSource = truckTypeP;
-                        rptRutas1.DataBind();
-
-                        rptRutas2.DataSource = truckTypeV;
-                        rptRutas2.DataBind();
                     }
-                    catch (Exception ex)
+
+                    // Asignar valores a los TextBox correspondientes
+                    for (int i = 1; i <= validIngenios.Length; i++)
                     {
-                        lblCountP.Text = "0";
-                        lblCountV.Text = "0";
-                        // Registrar el error en un archivo de log o consola
-                        Console.WriteLine("Error: " + ex.Message);
+                        var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + i.ToString()) as TextBox;
+                        if (txtIngenioQuantity != null)
+                        {
+                            txtIngenioQuantity.Text = ingenioCounts.ContainsKey(validIngenios[i - 1]) 
+                                ? ingenioCounts[validIngenios[i - 1]].ToString() 
+                                : "0";
+                        }
                     }
+
+                    // Vincular datos ordenados a los Repeaters
+                    rptRutas1.DataSource = truckTypeP;
+                    rptRutas1.DataBind();
+
+                    rptRutas2.DataSource = truckTypeV;
+                    rptRutas2.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    lblCountP.Text = "0";
+                    lblCountV.Text = "0";
+                    // Registrar el error en un archivo de log o consola
+                    Console.WriteLine("Error: " + ex.Message);
                 }
             }
         }
-        else
-        {
-            Response.Redirect("login.aspx");
-        }
     }
+    else
+    {
+        Response.Redirect("login.aspx");
+    }
+}
 
 
     public void LogEvent(object message)
@@ -322,6 +336,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
         public int currentStatus { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime dateTimePrecheckeo { get; set; }
+        public int? idPreTransaccionLeverans { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
@@ -417,7 +432,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
     private string GetImageFromApi(string codigoGeneracion)
     {
         // Simulación de la llamada a la API para obtener la URL de la imagen (puedes usar la lógica que ya tienes)
-        string url = "http://192.168.200.112:3000/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
+        string url = "https://apiclientes.almapac.com:9010/api/shipping/" + codigoGeneracion + "?includeAttachments=true";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
         using (WebClient client = new WebClient())
@@ -545,7 +560,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             return "El código de generación no puede estar vacío.";
         }
 
-         if (tarjeta == null)
+        if (tarjeta == null)
         {
             return "La tarjeta no puede estar vacía.";
         }

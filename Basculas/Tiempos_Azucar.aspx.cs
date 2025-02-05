@@ -19,211 +19,265 @@ using System.Text;
 public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
+{
+    if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
     {
-        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
+        string username = Request.Cookies["username"].Value;
+        string cod_bascula = Request.Cookies["cod_bascula"].Value;
+        string cod_usuario = Request.Cookies["cod_usuario"].Value;
+        string cod_turno = Request.Cookies["cod_turno"].Value;
+
+        if (!IsPostBack)
         {
-            string username = Request.Cookies["username"].Value;
-            string cod_bascula = Request.Cookies["cod_bascula"].Value;
-            string cod_usuario = Request.Cookies["cod_usuario"].Value;
-            string cod_turno = Request.Cookies["cod_turno"].Value;
-            if (!IsPostBack)
+            // URL que deseas hacer el fetch
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
+            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8?includeAttachments=true";
+
+            // Token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            // Definir la zona horaria de UTC -6
+            TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+
+            using (WebClient client = new WebClient())
             {
-                // URL que deseas hacer el fetch
-                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
-                string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8?includeAttachments=true";
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
 
-                // Token
-                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                using (WebClient client = new WebClient())
+                try
                 {
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url);
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    try
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
                     {
-                        //this.LogEvent("Estoy aqui");
-                        string responseBody = client.DownloadString(url);
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
-                        .Select((p, index) =>
+                        if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
                         {
-                            p.IsFirst = (index == 0); // Nueva propiedad
-                            // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
-                            p.TimeForId2 = p.dateTimePrecheckeo != null
-                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-                                : "No hay datos"; // Valor por defecto si es null
-                            return p;
-                        }).ToList();
+                            // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
+                            DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
 
-                        // Depuración: Verifica el conteo de registros
-                        Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
-
-                        if (filteredData.Count > 0)
-                        {
-                            lblTotalRegistros.Text = filteredData.Count.ToString();
-                        }
-                        else
-                        {
-                            lblTotalRegistros.Text = "0";
-                        }
-
-                        // Vincula los datos filtrados al Repeater
-                        rptRutas.DataSource = filteredData;
-                        rptRutas.DataBind();
-
-                        // Depuración: Imprime los datos en la consola
-                        foreach (var item in filteredData)
-                        {
-                            Console.WriteLine(String.Format("ID: {0}, TimeForPrecheck: {1}", item.id, item.TimeForId2));
+                            // Convierte a UTC -6
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
                         }
                     }
-                    catch (Exception ex)
+
+                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
+                    .Select((p, index) =>
                     {
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                        this.LogEvent(ex.Message);
-                        this.LogEvent(ex.StackTrace);
+                        p.IsFirst = (index == 0); // Nueva propiedad
+                        // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                        p.TimeForId2 = p.dateTimePrecheckeo.HasValue
+                            ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                            : "No hay datos"; // Valor por defecto si es null
+                        return p;
+                    }).ToList();
+
+                    // Depuración: Verifica el conteo de registros
+                    Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
+
+                    if (filteredData.Count > 0)
+                    {
+                        lblTotalRegistros.Text = filteredData.Count.ToString();
+                    }
+                    else
+                    {
                         lblTotalRegistros.Text = "0";
                     }
-                }
 
-                using (WebClient client = new WebClient())
-                {
-                    // Añadir el token al encabezado de autorización
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
+                    // Vincula los datos filtrados al Repeater
+                    rptRutas.DataSource = filteredData;
+                    rptRutas.DataBind();
 
-                    try
+                    // Depuración: Imprime los datos en la consola
+                    foreach (var item in filteredData)
                     {
-                        // Realizar la solicitud GET y leer la respuesta
-                        string responseBody = client.DownloadString(url1);
-
-                        // Deserializar la respuesta JSON
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
-                        // y el tipo de camión es 'PLANA'
-                        var filteredData = data.Where(p => p.currentStatus == 8 && p.vehicle != null && p.vehicle.truckType == "P" || p.vehicle.truckType == "R")
-                        .Select((p, index) =>
-                        {
-                            p.IsFirst = (index == 0); // Nueva propiedad
-                            // Comprobar si dateTimePrecheckeo tiene valor y formatearlo
-                            string timeForPrecheck = p.dateTimePrecheckeo.HasValue 
-                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-                                : "No hay datos"; // Valor predeterminado si es null
-                            p.TimeForId2 = timeForPrecheck;
-                            return p;
-                        }).ToList();
-
-                        // Vincular los datos filtrados al control Repeater
-                        rptRutas1.DataSource = filteredData;
-                        rptRutas1.DataBind();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                        this.LogEvent(ex.Message);
-                        this.LogEvent(ex.StackTrace);
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        Console.WriteLine(String.Format("ID: {0}, TimeForPrecheck: {1}", item.id, item.TimeForId2));
                     }
                 }
-
-                using (WebClient client = new WebClient())
+                catch (Exception ex)
                 {
-                    // Añadir el token al encabezado de autorización
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
-                    try
-                    {
-                        // Realizar la solicitud GET y leer la respuesta
-                        string responseBody = client.DownloadString(url);
-
-                        // Deserializar la respuesta JSON
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 7
-                        // y el tipo de camión es 'VOLTEO'
-                        var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
-                        .Select((p, index) =>
-                        {
-                            p.IsFirst = (index == 0); // Nueva propiedad
-                            // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
-                            p.TimeForId2 = p.dateTimePrecheckeo != null
-                                ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
-                                : "No hay datos"; // Valor por defecto si es null
-                            return p;
-                        }).ToList();
-
-                        // Asigna el conteo de los registros filtrados al Label
-                        lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
-
-                        // Vincular los datos filtrados al control Repeater
-                        rptRutas2.DataSource = filteredData;
-                        rptRutas2.DataBind();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                        this.LogEvent(ex.Message);
-                        this.LogEvent(ex.StackTrace);
-                        lblTotalRegistrosV.Text = "0";
-                    }
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    this.LogEvent(ex.Message);
+                    this.LogEvent(ex.StackTrace);
+                    lblTotalRegistros.Text = "0";
                 }
+            }
 
-                using (WebClient client = new WebClient())
+            using (WebClient client = new WebClient())
+            {
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
+
+                try
                 {
-                    // Añadir el token al encabezado de autorización
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
-                    try
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url1);
+
+                    // Deserializar la respuesta JSON
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
                     {
-                        // Realizar la solicitud GET y leer la respuesta
-                        string responseBody = client.DownloadString(url1);
-
-                        // Deserializar la respuesta JSON
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
-                        // y el tipo de camión es 'VOLTEO'
-                        var filteredData = data.Where(p => 
-                            p.currentStatus == 8 && // Filtrar por currentStatus
-                            p.vehicle != null && 
-                            p.vehicle.truckType == "V"
-                        )
-                        .Select(p =>
+                        if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
                         {
-                            // Asignar el tiempo directamente a TimeForId2
-                            p.TimeForId2 = "No disponible"; // Este es el valor por defecto
+                            // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
+                            DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
 
-                            // Retornar el objeto con los datos filtrados
-                            return p;
-                        })
-                        .ToList();
-
-                        // Vincular los datos filtrados al control Repeater
-                        rptRutas3.DataSource = filteredData;
-                        rptRutas3.DataBind();
+                            // Convierte a UTC -6
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                        }
                     }
-                    catch (Exception ex)
+
+                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
+                    // y el tipo de camión es 'PLANA'
+                    var filteredData = data.Where(p => p.currentStatus == 8 && p.vehicle != null && p.vehicle.truckType == "P" || p.vehicle.truckType == "R")
+                    .Select((p, index) =>
                     {
-                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                        this.LogEvent(ex.Message);
-                        this.LogEvent(ex.StackTrace);
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        p.IsFirst = (index == 0); // Nueva propiedad
+                        // Comprobar si dateTimePrecheckeo tiene valor y formatearlo
+                        string timeForPrecheck = p.dateTimePrecheckeo.HasValue
+                            ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                            : "No hay datos"; // Valor predeterminado si es null
+                        p.TimeForId2 = timeForPrecheck;
+                        return p;
+                    }).ToList();
+
+                    // Vincular los datos filtrados al control Repeater
+                    rptRutas1.DataSource = filteredData;
+                    rptRutas1.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    this.LogEvent(ex.Message);
+                    this.LogEvent(ex.StackTrace);
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                }
+            }
+
+            using (WebClient client = new WebClient())
+            {
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
+                try
+                {
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url);
+
+                    // Deserializar la respuesta JSON
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
+                    {
+                        if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
+                        {
+                            // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
+                            DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
+
+                            // Convierte a UTC -6
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                        }
                     }
-                
+
+                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 7
+                    // y el tipo de camión es 'VOLTEO'
+                    var filteredData = data.Where(p => p.currentStatus == 7 && p.vehicle != null && (p.vehicle.truckType == "V"))
+                    .Select((p, index) =>
+                    {
+                        p.IsFirst = (index == 0); // Nueva propiedad
+                        // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                        p.TimeForId2 = p.dateTimePrecheckeo.HasValue
+                            ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                            : "No hay datos"; // Valor por defecto si es null
+                        return p;
+                    }).ToList();
+
+                    // Asigna el conteo de los registros filtrados al Label
+                    lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
+
+                    // Vincular los datos filtrados al control Repeater
+                    rptRutas2.DataSource = filteredData;
+                    rptRutas2.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                    this.LogEvent(ex.Message);
+                    this.LogEvent(ex.StackTrace);
+                    lblTotalRegistrosV.Text = "0";
+                }
+            }
+
+            using (WebClient client = new WebClient())
+            {
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
+                try
+                {
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url1);
+
+                    // Deserializar la respuesta JSON
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
+                    {
+                        if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
+                        {
+                            // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
+                            DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
+
+                            // Convierte a UTC -6
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                        }
+                    }
+
+                    // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
+                    // y el tipo de camión es 'VOLTEO'
+                    var filteredData = data.Where(p =>
+                        p.currentStatus == 8 && // Filtrar por currentStatus
+                        p.vehicle != null &&
+                        p.vehicle.truckType == "V"
+                    )
+                    .Select(p =>
+                    {
+                        // Asignar el tiempo directamente a TimeForId2
+                        p.TimeForId2 = "No disponible"; // Este es el valor por defecto
+
+                        // Retornar el objeto con los datos filtrados
+                        return p;
+                    })
+                    .ToList();
+
+                    // Vincular los datos filtrados al control Repeater
+                    rptRutas3.DataSource = filteredData;
+                    rptRutas3.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    this.LogEvent(ex.Message);
+                    this.LogEvent(ex.StackTrace);
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
                 }
             }
         }
-        else
-        {
-            Response.Redirect("login.aspx");
-        }
     }
-
+    else
+    {
+        Response.Redirect("login.aspx");
+    }
+}
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
     {
@@ -417,7 +471,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public int currentStatus { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime? dateTimePrecheckeo { get; set; }
-
+        public int? idPreTransaccionLeverans { get; set; }
         public int? idNavRecord { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
@@ -551,7 +605,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public int factor1 { get; set; }
         public float factor2 { get; set; }
         public int factor3 { get; set; }
-        public int pesocliente { get; set; }
+        public double pesocliente { get; set; }
         public int equivalencia { get; set; }
         public string ticketgranel { get; set; }
         public string ticketensacado { get; set; }

@@ -209,28 +209,6 @@
 
             <!-- Navbar Links -->
             <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
-                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
-                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
-                </a>
-
-                <div class="relative group hover:bg-gray-100 p-2 rounded">
-                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
-                        <span>Rutas</span>
-                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
-                        </div>
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Actividades
-                        </div>
-                    </div>
-                </div>
-
                 <div class="relative group hover:bg-gray-100 p-2 rounded">
                     <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
                         <span>Monitoreo</span>
@@ -241,7 +219,7 @@
                     <!-- Dropdown Menu -->
                     <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
                         <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
-                            <a href="Autorizacion_Camiones.aspx" style="text-decoration: none;">
+                            <a href="Autorizacion_Camiones.aspx" style="text-decora tion: none;">
                                 <i class="fa fa-truck mr-2"></i>Chequeo de Informacion
                             </a>
                         </div>
@@ -762,7 +740,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        
+        document.addEventListener("DOMContentLoaded", function () {
+            // Evitar recarga al hacer clic en botones del navbar
+            document.querySelectorAll("button").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Evita que el botón recargue la página
+                });
+            });
+        });
     </script>
 
     <!-- JavaScript for Mobile Menu Toggle -->
@@ -818,21 +803,7 @@
             increaseButtonVolteo.addEventListener('click', function() 
             {
                 let currentValue = getValue(numberInputVolteo);
-                if (validateTotal()) 
-                {
-                    numberInputVolteo.value = currentValue + 1;
-                } 
-                else  // Usar SweetAlert para mostrar el mensaje de error
-                {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'La suma total no puede ser mayor que 4',
-                        confirmButtonText: 'Aceptar',
-                        background: '#f8d7da',
-                        confirmButtonColor: '#721c24',
-                    });
-                }
+                numberInputVolteo.value = currentValue + 1;
             });
 
             // Decrementar Plano
@@ -849,22 +820,7 @@
             increaseButtonPlano.addEventListener('click', function() 
             {
                 let currentValue = getValue(numberInputPlano);
-                if (validateTotal()) 
-                {
-                    numberInputPlano.value = currentValue + 1;
-                } 
-                else 
-                {
-                    // Usar SweetAlert para mostrar el mensaje de error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'La suma total no puede ser mayor que 4',
-                        confirmButtonText: 'Aceptar',
-                        background: '#f8d7da',
-                        confirmButtonColor: '#721c24',
-                    });
-                }
+                numberInputPlano.value = currentValue + 1;
             });
 
             // Validación al solicitar Volteo
@@ -910,64 +866,64 @@
                 dataType: "json",
                 success: function(response) 
                 {
-                    // Verificar si la respuesta contiene un estado de error (por ejemplo, error 400)
-                    if (response && response.statusCode === 400) 
+                    // Verificar si la respuesta es un mensaje de éxito en formato de texto
+                    if (typeof response.d === "string" && response.d.includes("Status: waiting_to_send")) 
                     {
+                        // Extraer detalles del mensaje (opcional)
+                        const status = response.d.split(",")[0]; // "Status: waiting_to_send"
+                        const entryTime = response.d.split(",")[1].trim(); // "EntryTime: 04/02/2025 21:40:16"
+
+                        // Mostrar SweetAlert de éxito con los detalles
                         Swal.fire({
-                            icon: 'error',
-                            title: 'No se pueden solicitar unidades',
-                            text: 'Aún hay unidades a la espera de ser despachadas. Por favor, intenta más tarde.',
+                            icon: 'success',
+                            title: '¡Solicitud Enviada!',
+                            html: `
+                                <p>La solicitud se ha procesado correctamente.</p>
+                                <p><strong> Has solicitado ${currentValue} camiones del tipo ${nuevaVariable}.</strong></p>
+                            `,
                             confirmButtonText: 'Aceptar',
-                            
-                            confirmButtonColor: '#721c24',
+                            confirmButtonColor: '#28a745',
                         });
-                    } 
-                    else 
+                    }
+                    // Verificar si la respuesta es un objeto JSON con éxito
+                    else if (response.d && response.d.success) 
                     {
-                        // Si no hay error en la respuesta
+                        // Mostrar SweetAlert de éxito con mensaje personalizado
                         Swal.fire({
                             icon: 'success',
                             title: '¡Solicitud Enviada!',
                             text: `Has solicitado ${currentValue} camiones del tipo ${nuevaVariable}.`,
                             confirmButtonText: 'Aceptar',
-                            
                             confirmButtonColor: '#28a745',
+                        });
+                    }
+                    // Si la respuesta no es exitosa o no tiene el formato esperado
+                    else 
+                    {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.d || 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#dc3545',
                         });
                     }
                 },
                 error: function(xhr, status, error) 
                 {
-                    var errorMessage = xhr.responseText || error;
+                    console.log("Error en la solicitud: ", error);
 
-                    // Verificar si el error es un 400 (si la solicitud fue incorrecta)
-                    if (xhr.status === 400) 
-                    {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'No se pueden solicitar unidades',
-                            text: 'Aún hay unidades a la espera de ser despachadas. Por favor, intenta más tarde.',
-                            confirmButtonText: 'Aceptar',
-                            
-                            confirmButtonColor: '#721c24',
-                        });
-                    } 
-                    else 
-                    {
-                        // Si el error no es 400, mostrar un mensaje más general
-                        console.log("Error en la solicitud AJAX: ", status, error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error de Conexión',
-                            text: 'Hubo un problema al realizar la solicitud. Intenta nuevamente. Detalles del error: ' + errorMessage,
-                            confirmButtonText: 'Aceptar',
-                            
-                            confirmButtonColor: '#721c24',
-                        });
-                    }
+                    // Mostrar SweetAlert de error en caso de fallo en la solicitud AJAX
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema con la solicitud. Verifica tu conexión e intenta nuevamente.',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#dc3545',
+                    });
                 }
             });
         }
-
     </script>
 
     <script>
@@ -1348,21 +1304,73 @@
                 return;
             }
 
-            $.ajax({
+           $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d);     
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                success: function(response) {
+                    console.log("Respuesta completa de la API:", response);
+                    
+                    if (response.d && typeof response.d === "string") {
+                        console.log("Estructura dentro de response.d:", response.d);
+
+                        let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
+
+                        for (const key in response.d) {
+                            if (response.d.hasOwnProperty(key)) {
+                                let value = response.d[key];
+
+                                // Si el valor es un objeto, lo convertimos en un JSON legible
+                                if (typeof value === "string" && value !== null) {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
+                                } else {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+                                }
+                            }
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualización exitosa!',
+                            text: 'El estado se actualizó correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+
+                    } else {
+                        console.error("La respuesta no es un objeto válido:", response.d);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
-                error: function(xhr, status, error) 
-                {
-                    console.error("Error cambiando el estado: ", error);
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                    try {
+                        let errorResponse = JSON.parse(xhr.responseText);
+                        let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } catch (e) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al realizar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 }
             });
         }
@@ -1442,17 +1450,8 @@
             {
                 if (result.isConfirmed) 
                 {
-                    // Mostrar alerta de éxito con SweetAlert2
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Validación exitosa',
-                        text: 'El camión ha sido autorizado correctamente.', // Mensaje de éxito
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => 
-                    {
-                        // Llamar a changeStatus después de la validación exitosa
-                        changeStatus(codigoGeneracion);
-                    });
+                    // Llamar a changeStatus después de la validación exitosa
+                    changeStatus(codigoGeneracion);
                 }
             });
 
@@ -1481,15 +1480,67 @@
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d);     
-                    // Recargar la página cuando el usuario presione "Aceptar"
-                    location.reload();
+                success: function(response) {
+                    console.log("Respuesta completa de la API:", response);
+                    
+                    if (response.d && typeof response.d === "string") {
+                        console.log("Estructura dentro de response.d:", response.d);
+
+                        let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
+
+                        for (const key in response.d) {
+                            if (response.d.hasOwnProperty(key)) {
+                                let value = response.d[key];
+
+                                // Si el valor es un objeto, lo convertimos en un JSON legible
+                                if (typeof value === "string" && value !== null) {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
+                                } else {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+                                }
+                            }
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualización exitosa!',
+                            text: 'El estado se actualizó correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+
+                    } else {
+                        console.error("La respuesta no es un objeto válido:", response.d);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
-                error: function(xhr, status, error) 
-                {
-                    console.error("Error cambiando el estado: ", error);
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                    try {
+                        let errorResponse = JSON.parse(xhr.responseText);
+                        let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } catch (e) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al realizar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 }
             });
         }

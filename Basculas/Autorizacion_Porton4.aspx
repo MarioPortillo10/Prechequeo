@@ -313,7 +313,7 @@
                 <ItemTemplate>
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4 d-flex align-items-stretch">
                         <div class="card border rounded-4 w-100" 
-                            style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); height: 380px; margin-top: 10px; font-family: Gilroy-Bold, sans-serif;"> <!-- Agregado margin-top -->
+                            style="border-color: #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); height: 415px; margin-top: 10px; font-family: Gilroy-Bold, sans-serif;"> <!-- Agregado margin-top -->
                             <asp:LinkButton CssClass="btn" ID="lnk_VerRuta" runat="server" data-toggle="modal" data-target="#rutaModal" data-codigo-generacion='<%# Eval("codeGen") %>'>
                                 <div style="position: relative;">
                                     <!-- Badge centrado y abajo -->
@@ -552,82 +552,80 @@
         });
 
         // Función para manejar el autofocus entre los campos
-function configurarAutofocus() {
-    const campos = [
-        'txt_marchamo1',
-        'txt_marchamo2',
-        'txt_marchamo3',
-        'txt_marchamo4'
-    ];
+        function configurarAutofocus() 
+        {
+            const campos = [
+                'txt_marchamo1',
+                'txt_marchamo2',
+                'txt_marchamo3',
+                'txt_marchamo4'
+            ];
 
-    // Variable para detectar si la modal está abierta o cerrada
-    let modalAbierta = false;
+            // Variable para detectar si la modal está abierta o cerrada
+            let modalAbierta = false;
 
-    // Referencia a la modal
-    const modal = document.getElementById('rutaModal'); // Ajusta el id de tu modal
+            // Referencia a la modal
+            const modal = document.getElementById('rutaModal'); // Ajusta el id de tu modal
 
-    // Usar el evento hidden.bs.modal de Bootstrap para detectar el cierre de la modal
-    $(modal).on('hidden.bs.modal', function () {
-        modalAbierta = false; // Marcar que la modal se ha cerrado
-        limpiarCampos(); // Limpiar los campos cuando se cierre la modal
-    });
+            // Usar el evento hidden.bs.modal de Bootstrap para detectar el cierre de la modal
+            $(modal).on('hidden.bs.modal', function () {
+                modalAbierta = false; // Marcar que la modal se ha cerrado
+                limpiarCampos(); // Limpiar los campos cuando se cierre la modal
+            });
 
-    // Limpiar todos los campos de la modal
-    function limpiarCampos() {
-        campos.forEach(campoId => {
-            const campo = document.getElementById(campoId);
-            if (campo) {
-                campo.value = ''; // Limpiar el valor del campo
-            }
-        });
-    }
-
-    // Cuando se abre la modal, marcarla como abierta
-    const botonAbrirModal = document.getElementById('abrirRutaModal'); // Ajusta este id al de tu botón de apertura
-    if (botonAbrirModal) {
-        botonAbrirModal.addEventListener('click', () => {
-            modalAbierta = true; // Marcar que la modal está abierta
-        });
-    }
-
-    // Si el usuario hace blur (sale de un campo), manejamos el foco y validación
-    campos.forEach((campo, index) => {
-        const elemento = document.getElementById(campo);
-
-        if (elemento) {
-            elemento.addEventListener('blur', function () {
-                // Usamos un timeout para que el foco actual se actualice correctamente
-                setTimeout(() => {
-                    const elementoActivo = document.activeElement;
-                    const esOtroCampo = campos.includes(elementoActivo.id);
-
-                    // Si el usuario no se movió manualmente a otro campo
-                    if (!esOtroCampo) {
-                        // Buscar el primer campo vacío
-                        const campoVacio = campos.find(id => {
-                            const input = document.getElementById(id);
-                            return input && input.value.trim() === ''; // Campo vacío
-                        });
-
-                        if (campoVacio) {
-                            // Mover el foco al primer campo vacío
-                            document.getElementById(campoVacio).focus();
-                        } else if (index === campos.length - 1 && !modalAbierta) {
-                            // Si todos los campos están llenos, y la modal no está abierta, ejecutar validarInformacion
-                            validarInformacion();
-                        }
+            // Limpiar todos los campos de la modal
+            function limpiarCampos() {
+                campos.forEach(campoId => {
+                    const campo = document.getElementById(campoId);
+                    if (campo) {
+                        campo.value = ''; // Limpiar el valor del campo
                     }
-                }, 0);
+                });
+            }
+
+            // Cuando se abre la modal, marcarla como abierta
+            const botonAbrirModal = document.getElementById('abrirRutaModal'); // Ajusta este id al de tu botón de apertura
+            if (botonAbrirModal) {
+                botonAbrirModal.addEventListener('click', () => {
+                    modalAbierta = true; // Marcar que la modal está abierta
+                });
+            }
+
+            // Si el usuario hace blur (sale de un campo), manejamos el foco y validación
+            campos.forEach((campo, index) => {
+                const elemento = document.getElementById(campo);
+
+                if (elemento) {
+                    elemento.addEventListener('blur', function () {
+                        // Usamos un timeout para que el foco actual se actualice correctamente
+                        setTimeout(() => {
+                            const elementoActivo = document.activeElement;
+                            const esOtroCampo = campos.includes(elementoActivo.id);
+
+                            // Si el usuario no se movió manualmente a otro campo
+                            if (!esOtroCampo) {
+                                // Buscar el primer campo vacío
+                                const campoVacio = campos.find(id => {
+                                    const input = document.getElementById(id);
+                                    return input && input.value.trim() === ''; // Campo vacío
+                                });
+
+                                if (campoVacio) {
+                                    // Mover el foco al primer campo vacío
+                                    document.getElementById(campoVacio).focus();
+                                } else if (index === campos.length - 1 && !modalAbierta) {
+                                    // Si todos los campos están llenos, y la modal no está abierta, ejecutar validarInformacion
+                                    validarInformacion();
+                                }
+                            }
+                        }, 0);
+                    });
+                }
             });
         }
-    });
-}
 
-// Configurar el autofocus al cargar la página
-document.addEventListener('DOMContentLoaded', configurarAutofocus);
-
-
-
+        // Configurar el autofocus al cargar la página
+        document.addEventListener('DOMContentLoaded', configurarAutofocus);
 
         function validarInformacion() 
         {
@@ -681,7 +679,6 @@ document.addEventListener('DOMContentLoaded', configurarAutofocus);
                 error: function (error) 
                 {
                     console.error("Error en la solicitud: ", error);
-
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -691,7 +688,6 @@ document.addEventListener('DOMContentLoaded', configurarAutofocus);
                 }
             });
         }
-
 
         // Función para cambiar el estatus después de la validación exitosa
         function changeStatus(codigoGeneracion) 
@@ -716,37 +712,70 @@ document.addEventListener('DOMContentLoaded', configurarAutofocus);
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d);
+                success: function(response) {
+                    console.log("Respuesta completa de la API:", response);
                     
-                    // Mostrar un SweetAlert indicando que el cambio fue exitoso
-                    Swal.fire({
-                        title: "Éxito",
-                        text: "El estatus se cambió correctamente.",
-                        icon: "success",
-                        confirmButtonText: "Aceptar"
-                    }).then(() => {
-                        // Recargar la página después de aceptar
-                        location.reload();
-                    });
+                    if (response.d && typeof response.d === "string") {
+                        console.log("Estructura dentro de response.d:", response.d);
+
+                        let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
+
+                        for (const key in response.d) {
+                            if (response.d.hasOwnProperty(key)) {
+                                let value = response.d[key];
+
+                                // Si el valor es un objeto, lo convertimos en un JSON legible
+                                if (typeof value === "string" && value !== null) {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
+                                } else {
+                                    detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+                                }
+                            }
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualización exitosa!',
+                            text: 'El estado se actualizó correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+
+                    } else {
+                        console.error("La respuesta no es un objeto válido:", response.d);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error cambiando el estado: ", error);
-
-                    // Mostrar un SweetAlert indicando el error
-                    Swal.fire({
-                        title: "Error",
-                        text: "No se pudo cambiar el estatus. Motivo: " + (xhr.responseText || error),
-                        icon: "error",
-                        confirmButtonText: "Aceptar"
-                    });
+                    console.error("Error en la solicitud AJAX:", error);
+                    try {
+                        let errorResponse = JSON.parse(xhr.responseText);
+                        let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } catch (e) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al realizar la solicitud.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 }
-
             });
         }
-
-
     </script>
 
 </body>

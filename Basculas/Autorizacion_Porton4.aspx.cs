@@ -18,65 +18,80 @@ using System.Text;
 public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
+{
+    this.LogEvent("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+    this.LogEvent("Inicio de la carga de la página Chequeo de entrada.");
+    if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
     {
-        this.LogEvent("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        this.LogEvent("Inicio de la carga de la página Chequeo de entrada.");
-        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
+        string username = Request.Cookies["username"].Value;
+        string cod_bascula = Request.Cookies["cod_bascula"].Value;
+        string cod_usuario = Request.Cookies["cod_usuario"].Value;
+        string cod_turno = Request.Cookies["cod_turno"].Value;
+
+        if (!IsPostBack)
         {
-            string username     = Request.Cookies["username"].Value;
-            string cod_bascula  = Request.Cookies["cod_bascula"].Value;
-            string cod_usuario  = Request.Cookies["cod_usuario"].Value;
-            string cod_turno    = Request.Cookies["cod_turno"].Value;
-            if (!IsPostBack)
+            // URL que deseas hacer el fetch
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
+
+            // Token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+
+            // Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            using (WebClient client = new WebClient())
             {
-                // URL que deseas hacer el fetch
-                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
+                // Añadir el token al encabezado de autorización
+                client.Headers.Add("Authorization", "Bearer " + token);
+                client.Encoding = Encoding.UTF8;
 
-                // Token
-                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-                // Forzar el uso de TLS 1.2
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                using (WebClient client = new WebClient())
+                try
                 {
-                    // Añadir el token al encabezado de autorización
-                    client.Headers.Add("Authorization", "Bearer " + token);
-                    client.Encoding = Encoding.UTF8;
-                    try
+                    // Realizar la solicitud GET y leer la respuesta
+                    string responseBody = client.DownloadString(url);
+
+                    // Deserializar la respuesta JSON
+                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                    // Definir la zona horaria de UTC -6
+                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data)
                     {
-
-                        // Realizar la solicitud GET y leer la respuesta
-                        string responseBody = client.DownloadString(url);
-
-                        // Deserializar la respuesta JSON
-                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                        // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 4
-                        var filteredData = data.Where(p => p.currentStatus == 4 && p.dateTimePrecheckeo != null)
-                                            .OrderBy(p => p.dateTimePrecheckeo) // Ordenar por dateTimePrecheckeo
-                                            .ToList();
-
-                        // Vincular los datos filtrados y ordenados al control Repeater
-                        rptRutas.DataSource = filteredData;
-                        rptRutas.DataBind();
+                        if (item.dateTimePrecheckeo != DateTime.MinValue)
+                        {
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
-                        // Log detallado del error
-                        this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
-                        this.LogEvent("Mensaje de excepción: " + ex.Message);
-                        this.LogEvent("Pila de llamadas: " + ex.StackTrace);
-                    }
+
+                    // Filtrar para mostrar solo aquellos registros donde el último estatus tiene id = 4
+                    var filteredData = data.Where(p => p.currentStatus == 4 && p.dateTimePrecheckeo != null)
+                                           .OrderBy(p => p.dateTimePrecheckeo) // Ordenar por dateTimePrecheckeo
+                                           .ToList();
+
+                    // Vincular los datos filtrados y ordenados al control Repeater
+                    rptRutas.DataSource = filteredData;
+                    rptRutas.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+
+                    // Log detallado del error
+                    this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                    this.LogEvent("Mensaje de excepción: " + ex.Message);
+                    this.LogEvent("Pila de llamadas: " + ex.StackTrace);
                 }
             }
         }
-        else
-        {
-            Response.Redirect("login.aspx");
-        }
     }
+    else
+    {
+        Response.Redirect("login.aspx");
+    }
+}
 
 
     [WebMethod]
@@ -262,9 +277,10 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public int currentStatus { get; set; }
-        public int idNavRecord { get; set; }
+        public int? idNavRecord { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime dateTimePrecheckeo { get; set; }
+        public int? idPreTransaccionLeverans { get; set; }
         public bool mapping { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }

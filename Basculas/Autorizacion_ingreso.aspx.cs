@@ -61,6 +61,7 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 
             using (WebClient client = new WebClient())
             {
+                client.Encoding = Encoding.UTF8;
                 client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
@@ -70,6 +71,18 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 
                 if (data1 != null)
                 {
+                    // Definir la zona horaria de UTC -6
+                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+
+                    // Convertir dateTimePrecheckeo a UTC -6
+                    foreach (var item in data1)
+                    {
+                        if (item.dateTimePrecheckeo != DateTime.MinValue)
+                        {
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                        }
+                    }
+
                     var truckTypeP = new List<Post>();
                     var truckTypeV = new List<Post>();
 
@@ -304,6 +317,7 @@ public static string ChangeTransactionStatus(string codeGen)
         public int currentStatus { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime dateTimePrecheckeo { get; set; }
+        public int? idPreTransaccionLeverans { get; set; }
         public Driver driver { get; set; }
         public Vehicle vehicle { get; set; }
         public Ingenio ingenio { get; set; }
@@ -483,4 +497,4 @@ public static string ChangeTransactionStatus(string codeGen)
         // FormsAuthentication.SignOut();
         // FormsAuthentication.RedirectToLoginPage();
     }
-}
+}   

@@ -192,45 +192,45 @@ public static string addBlacklist(string licencia, string tiempo, string observa
     }
 
     // Método para escribir en el Visor de eventos
-public static void LogEventS(object message)
-{
-    try
+    public static void LogEventS(object message)
     {
-        // Convertir la ruta relativa a absoluta
-        string logFilePath = HttpContext.Current.Server.MapPath("~/Logs/MyAppLog.txt");
-        string logDirectory = Path.GetDirectoryName(logFilePath);
-
-        // Crear el directorio si no existe
-        if (!Directory.Exists(logDirectory))
-        {
-            Directory.CreateDirectory(logDirectory);
-        }
-
-        // Convertir el mensaje a string
-        string logMessage;
         try
         {
-            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+            // Convertir la ruta relativa a absoluta
+            string logFilePath = HttpContext.Current.Server.MapPath("~/Logs/MyAppLog.txt");
+            string logDirectory = Path.GetDirectoryName(logFilePath);
+
+            // Crear el directorio si no existe
+            if (!Directory.Exists(logDirectory))
+            {
+                Directory.CreateDirectory(logDirectory);
+            }
+
+            // Convertir el mensaje a string
+            string logMessage;
+            try
+            {
+                logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+            }
+            catch
+            {
+                // Si la serialización falla, usar el método ToString() o "null" si es nulo
+                logMessage = (message != null) ? message.ToString() : "null";
+            }
+
+            // Formatear el mensaje de log
+            string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+            // Escribir el log en el archivo
+            File.AppendAllText(logFilePath, formattedLog);
         }
-        catch
+        catch (Exception ex)
         {
-            // Si la serialización falla, usar el método ToString() o "null" si es nulo
-            logMessage = (message != null) ? message.ToString() : "null";
+            // Manejar errores al escribir el log
+            // Considera usar un método de respaldo como Event Viewer
+            Console.WriteLine("Error al escribir el log: " + ex.Message);
         }
-
-        // Formatear el mensaje de log
-        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
-
-        // Escribir el log en el archivo
-        File.AppendAllText(logFilePath, formattedLog);
     }
-    catch (Exception ex)
-    {
-        // Manejar errores al escribir el log
-        // Considera usar un método de respaldo como Event Viewer
-        Console.WriteLine("Error al escribir el log: " + ex.Message);
-    }
-}
 
 
     public class Post
