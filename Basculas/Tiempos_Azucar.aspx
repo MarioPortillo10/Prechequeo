@@ -163,6 +163,62 @@
       gap: 10px; /* Espacio de 10px entre los botones */
     }
 
+    /* Fondo oscuro con centrado total */
+    #spinner-overlay {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        overflow: hidden;
+    }
+
+    /* Contenedor de los elementos alineados */
+    .animation-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 300px; /* Área donde se moverán los elementos */
+        height: 150px;
+        overflow: hidden; /* Evita desbordamientos */
+    }
+
+    /* Camión fijo en el centro */
+    .truck-icon {
+        font-size: 80px;
+        filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Ruedas del camión */
+    .truck-wheels {
+        position: absolute;
+        bottom: 30px;
+        display: flex;
+        gap: 30px; /* Espaciado entre ruedas */
+    }
+
+    /* Nube en movimiento */
+    .cloud-icon {
+        font-size: 70px;
+        color: #ffffff;
+        position: absolute;
+        bottom: 85px; /* Nube más arriba */
+        animation: moveCenter 5s linear infinite alternate;
+    }
+
+    /* Animación de los elementos moviéndose SOLO en el centro */
+    @keyframes moveCenter {
+        0% { transform: translateX(-50px); }
+        100% { transform: translateX(50px); }
+    }
 </style>
 
 </head>
@@ -725,6 +781,15 @@
             </div>
         </div>
 
+        <div id="spinner-overlay">
+            <div class="animation-container">
+                <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
+                <div class="truck-container">
+                    <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+
     </form>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -736,11 +801,12 @@
 
     <!-- SweetAlert2 (latest version) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        $("#spinner-overlay").hide();
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Evitar recarga al hacer clic en botones del navbar
             document.querySelectorAll("button").forEach(button => {
                 button.addEventListener("click", function (event) {
@@ -1303,13 +1369,17 @@
                 });
                 return;
             }
-
-           $.ajax({
+            $("#spinner-overlay").css("display", "flex");
+            $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                beforeSend: function () 
+                {
+                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+                },
                 success: function(response) {
                     console.log("Respuesta completa de la API:", response);
                     
@@ -1339,6 +1409,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
+                                $("#spinner-overlay").hide(); 
                             }
                         });
 
@@ -1350,7 +1421,11 @@
                             text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
                             confirmButtonText: 'Aceptar'
                         });
+                        $("#spinner-overlay").hide(); 
                     }
+                },
+                complete: function () {
+                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);
@@ -1474,6 +1549,7 @@
                 return;
             }
 
+            $("#spinner-overlay").css("display", "flex");
             $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
@@ -1509,6 +1585,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
+                                $("#spinner-overlay").show(); 
                             }
                         });
 
@@ -1521,6 +1598,9 @@
                             confirmButtonText: 'Aceptar'
                         });
                     }
+                },
+                complete: function () {
+                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);

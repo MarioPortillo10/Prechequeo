@@ -186,7 +186,62 @@
             border: 2px solid red !important; /* Asegúrate de que se aplique incluso si hay otras reglas */
             background-color: #f8d7da !important; /* Fondo suave para resaltar el error */
         }
+        /* Fondo oscuro con centrado total */
+        #spinner-overlay {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            overflow: hidden;
+        }
 
+        /* Contenedor de los elementos alineados */
+        .animation-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 300px; /* Área donde se moverán los elementos */
+            height: 150px;
+            overflow: hidden; /* Evita desbordamientos */
+        }
+
+        /* Camión fijo en el centro */
+        .truck-icon {
+            font-size: 80px;
+            filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ruedas del camión */
+        .truck-wheels {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 30px; /* Espaciado entre ruedas */
+        }
+
+        /* Nube en movimiento */
+        .cloud-icon {
+            font-size: 70px;
+            color: #ffffff;
+            position: absolute;
+            bottom: 85px; /* Nube más arriba */
+            animation: moveCenter 5s linear infinite alternate;
+        }
+
+        /* Animación de los elementos moviéndose SOLO en el centro */
+        @keyframes moveCenter {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
 
     </style>
 
@@ -660,7 +715,7 @@
     </footer>
 
 
-       
+
         <!-- Modal RESTABLECER CONTRASEÑA -->
         <div class="modal fade" id="editPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -758,9 +813,15 @@
             </div>
         </div>
 
-
     </form>
-
+            <div id="spinner-overlay">
+                <div class="animation-container">
+                    <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
+                    <div class="truck-container">
+                        <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -784,7 +845,8 @@
         });
     </script>
 
-     <script>
+    <script>
+        $("#spinner-overlay").hide();
         $(document).ready(function () 
         {
             $('#rutaModal').on('show.bs.modal', function (event) {
@@ -1038,6 +1100,7 @@
                 data: JSON.stringify({ codigoGeneracion: codigoGeneracion, tarjeta: tarjeta }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+
                 success: function(response) 
                 {
                     console.log("Respuesta de la API: ", response.d); 
@@ -1086,6 +1149,7 @@
                 });
                 return;
             }
+            $("#spinner-overlay").css("display", "flex");
 
             $.ajax({
                 type: "POST",
@@ -1093,9 +1157,14 @@
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) {
+                beforeSend: function () 
+                {
+                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+                },
+                success: function (response) 
+                {
                     console.log("Respuesta completa de la API:", response);
-                    
+
                     if (response.d && typeof response.d === "string") {
                         console.log("Estructura dentro de response.d:", response.d);
 
@@ -1121,6 +1190,7 @@
                             confirmButtonText: 'Aceptar'
                         }).then((result) => {
                             if (result.isConfirmed) {
+                                $("#spinner-overlay").show();
                                 location.reload();
                             }
                         });
@@ -1133,7 +1203,12 @@
                             text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
                             confirmButtonText: 'Aceptar'
                         });
+                        $("#spinner-overlay").hide(); 
+
                     }
+                },
+                complete: function () {
+                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);

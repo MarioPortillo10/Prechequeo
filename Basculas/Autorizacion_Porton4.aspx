@@ -177,6 +177,62 @@
             justify-content: center;
             margin: 0.5rem; /* Espaciado entre tarjetas */
         }
+        /* Fondo oscuro con centrado total */
+        #spinner-overlay {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            overflow: hidden;
+        }
+
+        /* Contenedor de los elementos alineados */
+        .animation-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 300px; /* Área donde se moverán los elementos */
+            height: 150px;
+            overflow: hidden; /* Evita desbordamientos */
+        }
+
+        /* Camión fijo en el centro */
+        .truck-icon {
+            font-size: 80px;
+            filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ruedas del camión */
+        .truck-wheels {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 30px; /* Espaciado entre ruedas */
+        }
+
+        /* Nube en movimiento */
+        .cloud-icon {
+            font-size: 70px;
+            color: #ffffff;
+            position: absolute;
+            bottom: 85px; /* Nube más arriba */
+            animation: moveCenter 5s linear infinite alternate;
+        }
+
+        /* Animación de los elementos moviéndose SOLO en el centro */
+        @keyframes moveCenter {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
     </style>
 </head>
 <body>
@@ -467,6 +523,15 @@
         </div>
     </form>
 
+    <div id="spinner-overlay">
+        <div class="animation-container">
+            <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
+            <div class="truck-container">
+                <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+            </div>
+        <div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -510,6 +575,7 @@
     <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
 
     <script>
+        $("#spinner-overlay").hide();
         document.addEventListener("DOMContentLoaded", function () {
             // Evitar recarga al hacer clic en botones del navbar
             document.querySelectorAll("button").forEach(button => {
@@ -706,12 +772,17 @@
                 return;
             }
 
+            $("#spinner-overlay").css("display", "flex");
             $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                beforeSend: function () 
+                {
+                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+                },
                 success: function(response) {
                     console.log("Respuesta completa de la API:", response);
                     
@@ -741,6 +812,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
+                                $("#spinner-overlay").show();
                             }
                         });
 
@@ -753,6 +825,9 @@
                             confirmButtonText: 'Aceptar'
                         });
                     }
+                },
+                complete: function () {
+                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);
