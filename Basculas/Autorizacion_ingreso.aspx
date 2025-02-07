@@ -568,6 +568,12 @@
                                                     Text='<%# Eval("codeGen") %>' />
                                             </p>
 
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-credit-card text-primary"></i> <strong>No. Tarjeta:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblTarjeta" runat="server"
+                                                    Text='<%# Eval("magneticCard") %>' />
+                                            </p>
+
                                             <!-- Línea divisoria con grosor y color especificados -->
                                             <hr style="border: 2px solid #ff7300; margin: 10px 0;" />
 
@@ -637,6 +643,12 @@
                                             <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
                                                 <asp:Label ID="lblNombre" runat="server"
                                                     Text='<%# Eval("codeGen") %>' />
+                                            </p>
+
+                                            <p class="text-start" style="font-size: 0.9rem;"><i class="fas fa-credit-card text-primary"></i> <strong>No. Tarjeta:</strong></p>
+                                            <p class="text-muted mb-1 text-start" style="font-size: 0.85rem;">
+                                                <asp:Label ID="lblTarjeta" runat="server"
+                                                    Text='<%# Eval("magneticCard") %>' />
                                             </p>
 
                                             <!-- Línea divisoria con grosor y color especificados -->

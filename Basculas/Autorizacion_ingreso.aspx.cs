@@ -315,6 +315,7 @@ public static string ChangeTransactionStatus(string codeGen)
         public DateTime updatedAt { get; set; }
         public bool mapping { get; set; }
         public int currentStatus { get; set; }
+        public int? magneticCard { get; set; }
         public DateTime dateTimeCurrentStatus { get; set; }
         public DateTime dateTimePrecheckeo { get; set; }
         public int? idPreTransaccionLeverans { get; set; }
