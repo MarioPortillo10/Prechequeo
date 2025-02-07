@@ -186,6 +186,7 @@
             border: 2px solid red !important; /* Asegúrate de que se aplique incluso si hay otras reglas */
             background-color: #f8d7da !important; /* Fondo suave para resaltar el error */
         }
+
         /* Fondo oscuro con centrado total */
         #spinner-overlay {
             display: flex;
@@ -194,7 +195,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
             z-index: 1050;
@@ -207,25 +208,74 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 300px; /* Área donde se moverán los elementos */
+            width: 300px;
             height: 150px;
-            overflow: hidden; /* Evita desbordamientos */
+            overflow: hidden;
         }
 
-        /* Camión fijo en el centro */
+        /* Contenedor del camión */
+        .truck-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Camión */
         .truck-icon {
             font-size: 80px;
-            filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+            filter: grayscale(100%);
             position: relative;
-            z-index: 10;
+            z-index: 1; /* Asegurar que el camión quede en el fondo */
+            margin-top: 20px; /* Baja el camión para que las ruedas queden encima */
         }
 
-        /* Ruedas del camión */
+        /* Contenedor de ruedas */
         .truck-wheels {
             position: absolute;
-            bottom: 30px;
+            bottom: 0px; /* Ajustar posición */
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 30px; /* Espaciado entre ruedas */
+            gap: 22px;
+            z-index: 2; /* Ruedas sobre el camión */
+        }
+
+        /* Estilo de ruedas */
+        .wheel {
+            width: 28px;
+            height: 28px;
+            background: #242424;
+            border: 3px solid white; /* Borde blanco para visibilidad */
+            border-radius: 50%;
+            position: relative;
+            animation: wheel-spin 0.8s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Rines dentro de las ruedas */
+        .wheel::before,
+        .wheel::after {
+            content: "";
+            position: absolute;
+            width: 15px; /* Largo de las líneas del rin */
+            height: 2px; /* Grosor de las líneas */
+            background: white; /* Color del rin */
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+        }
+
+        /* Línea horizontal del rin */
+        .wheel::before {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        /* Línea vertical del rin */
+        .wheel::after {
+            transform: translate(-50%, -50%) rotate(90deg);
         }
 
         /* Nube en movimiento */
@@ -233,16 +283,21 @@
             font-size: 70px;
             color: #ffffff;
             position: absolute;
-            bottom: 85px; /* Nube más arriba */
-            animation: moveCenter 5s linear infinite alternate;
+            bottom: 85px;
+            animation: moveLeft 8s linear infinite; /* Aplica la nueva animación */
         }
 
-        /* Animación de los elementos moviéndose SOLO en el centro */
-        @keyframes moveCenter {
-            0% { transform: translateX(-50px); }
-            100% { transform: translateX(50px); }
+        /* Animación de movimiento de la nube de derecha a izquierda */
+        @keyframes moveLeft {
+            0% { transform: translateX(50px); }  /* Comienza a la derecha */
+            100% { transform: translateX(-50px); } /* Se mueve a la izquierda */
         }
 
+        /* Animación de giro de las ruedas y rines */
+        @keyframes wheel-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
 </head>
@@ -783,8 +838,6 @@
     </div>
 </div>
 
-
-
         <div class="modal fade" tabindex="-1" role="dialog" id="modalReportar" aria-labelledby="modalReportarLabel" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -814,14 +867,20 @@
         </div>
 
     </form>
-            <div id="spinner-overlay">
-                <div class="animation-container">
-                    <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
-                    <div class="truck-container">
-                        <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
-                    </div>
-                </div>
+        <div id="spinner-overlay">
+    <div class="animation-container">
+        <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
+        <div class="truck-container">
+            <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+            <div class="truck-wheels">
+                <div class="wheel"></div>
+                <div class="wheel"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -1100,36 +1159,112 @@
                 data: JSON.stringify({ codigoGeneracion: codigoGeneracion, tarjeta: tarjeta }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-
-                success: function(response) 
+                success: function (response) 
                 {
-                    console.log("Respuesta de la API: ", response.d); 
+                    console.log("Código de estado HTTP:", 200);
+                    console.log("Tipo de respuesta:", typeof response);
+                    console.log("Respuesta completa de la API:", response);
 
-                    if (response.d) 
-                    {
-                        changeStatus(codigoGeneracion);
-                    } 
-                    else 
-                    {
+                    try {
+                        // Extraemos el contenido de `d` si existe
+                        let responseData = response.d ? response.d : response;
+
+                        if (typeof responseData === "string") {
+                            // Buscamos la primera llave '{' para extraer el JSON real
+                            let jsonStart = responseData.indexOf('{');
+                            if (jsonStart !== -1) {
+                                let jsonString = responseData.substring(jsonStart); // Extraemos solo la parte JSON
+                                
+                                try {
+                                    responseData = JSON.parse(jsonString);
+                                } catch (parseError) {
+                                    console.error("❌ Error al parsear la respuesta:", parseError);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'No se pudo interpretar la respuesta de la API.',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                    return;
+                                }
+                            } else {
+                                console.error("❌ No se encontró JSON válido en la respuesta.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'La respuesta de la API no contiene datos válidos.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                                return;
+                            }
+                        }
+
+                        console.log("📌 Respuesta después del parseo:", responseData);
+
+                        // Validamos si la respuesta contiene los datos esperados
+                        if (responseData.error) {
+                            // Si existe un error en la respuesta, mostrar el mensaje de error
+                            console.error("❌ Error en la API:", responseData.message || "Error desconocido");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: responseData.message || 'Error desconocido',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        } else if (responseData.id && responseData.codeGen) {
+                            // Validamos que los campos esperados estén presentes para una respuesta exitosa
+                            console.log("✅ Respuesta válida con estructura correcta.");
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                text: 'Tarjeta asignada correctamente.',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                $("#spinner-overlay").show();
+                                changeStatus(codigoGeneracion);
+                            });
+                        } else {
+                            // Si no contiene los datos esperados, mostramos un error
+                            console.error("❌ Respuesta con estructura incorrecta.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'La respuesta de la API no tiene la estructura esperada.',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+
+                    } catch (error) {
+                        console.error("❌ Error inesperado:", error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'No se pudo completar la operación. Inténtalo de nuevo.',
+                            text: 'Ocurrió un problema al procesar la respuesta.',
                             confirmButtonText: 'Aceptar'
                         });
                     }
                 },
-                error: function(xhr, status, error) 
-                {
-                    console.log("Error en la solicitud: ", error);
+                error: function (xhr) {
+                    console.log("⚠️ Error en la solicitud AJAX");
+                    console.log("Código de estado HTTP:", xhr.status);
+                    console.log("Respuesta de error:", xhr.responseText);
+
+                    let errorMessage = "Ocurrió un error en la solicitud.";
+                    try {
+                        let errorResponse = JSON.parse(xhr.responseText);
+                        errorMessage = errorResponse.message || errorMessage;
+                    } catch (e) {
+                        console.error("Error al parsear la respuesta de error:", e);
+                    }
 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Hubo un problema con la solicitud. Verifica tu conexión e intenta nuevamente.',
+                        text: errorMessage,
                         confirmButtonText: 'Aceptar'
                     });
                 }
+
             });
         }
 
