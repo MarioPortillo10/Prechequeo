@@ -28,7 +28,8 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     public static string tokenStatic = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
     protected void Page_Load(object sender, EventArgs e)
     {
-       
+        this.LogEvent("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        this.LogEvent("Inicio de la carga de la página Prechequeo.");
     }
 
     protected void lnkBuscar_Click(object sender, EventArgs e)
@@ -44,16 +45,9 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             try
             {
                 // Log de la solicitud
-                this.LogEvent("Realizando solicitud GET a la URL: " + url);
-                this.LogEvent("Método de solicitud: GET");
-                this.LogEvent("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 string responseBody = client.DownloadString(url);
                 var data = JsonConvert.DeserializeObject<Post>(responseBody);
                 Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));  // Imprime el objeto completo
-
-                // Log de la respuesta
-                this.LogEvent("Respuesta recibida:");
-                this.LogEvent(responseBody);
 
                 if (data == null || string.IsNullOrEmpty(data.transporter))
                 {
@@ -102,6 +96,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             catch (WebException webEx)
             {
                 this.LogEvent(string.Format("Error en la solicitud: {0}", webEx.Message));
+                this.LogEvent(webEx.StackTrace);
 
                 var response = webEx.Response as HttpWebResponse;
 
@@ -116,6 +111,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "generalErrorAlert", 
                     "swal('Error', 'Ocurrió un error: " + ex.Message + "', 'error');", true);
                 this.LogEvent(ex);
+                this.LogEvent(ex.StackTrace);
             }
         }
     }
@@ -183,8 +179,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     [WebMethod]
     public static string ChangeTransactionStatus(string codeGen, int predefinedStatusId, string imageData)
     {
-        LogEventS("Funcion para cambiar estatus; Hola");
-
         // Validar que la transacción no esté vacía
         if (string.IsNullOrEmpty(codeGen))
         {
@@ -206,33 +200,23 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzM0MTYwMDUsImV4cCI6MjUyMjM1NjAwNX0.Pl21ggXNCFcnLFl0moDHKbC19W3vM6U_H-lFXPltlTU";
         string responseContent;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Ssl3;
-
-
+        
         using (var client = new WebClient())
         {
-            // Log de la solicitud
-            LogEventS("Realizando solicitud POST a la URL: " + url);
-            LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
-            LogEventS("Configurando cliente de WebClient");
-
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
             client.Encoding = Encoding.UTF8;
             
             var requestBody = new { codeGen = codeGen, predefinedStatusId = predefinedStatusId, imageData = imageData };
             var json = JsonConvert.SerializeObject(requestBody);
-            LogEventS("Cuerpo de la solicitud JSON: " + json);
-
+        
             // Log de la respuesta
             //LogEventS("Cuerpo de la solicitud JSON:");
             //LogEventS(json);  // Aquí loggeas el JSON serializado
 
             try
             {
-                LogEventS("Enviando solicitud a la API: " + url);
                 responseContent = client.UploadString(url, "POST", json);
-                LogEventS("Respuesta de la API: ");
-                LogEventS(responseContent);
             }
             catch (WebException webEx)
             {
@@ -263,11 +247,12 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
     [WebMethod]
     public static string UploadPhoto(string imageData, string codeGen)
     {
-        LogEventS("Vamo a mandar una picture");
+        
         try
         {
             if (string.IsNullOrEmpty(imageData)) 
             {
+                LogEventS("La picture no fue enviada");
                 return "Error: La imagen no fue recibida.";
             }
 
@@ -285,10 +270,6 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
 
             using (WebClient client = new WebClient())
             {
-                // Log de la solicitud
-                LogEventS("Realizando solicitud POST a la URL: " + baseUrlStatic + "shipping/upload");
-                LogEventS("Método de solicitud: POST");
-                LogEventS("Encabezados de solicitud: " + string.Join(", ", client.Headers.AllKeys.Select(key => key + ": " + client.Headers[key])));
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
                 client.Headers[HttpRequestHeader.Authorization] = "Bearer " + tokenStatic;
 

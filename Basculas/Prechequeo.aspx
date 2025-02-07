@@ -549,15 +549,18 @@
                 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                     <ContentTemplate>
                         <p>Prechequeo</p>
-                        <asp:TextBox ID="txtTransaccion" CssClass="precheck-input" runat="server" placeholder="Número de prechequeo" required="required" />
+                        <asp:TextBox ID="txtTransaccion" CssClass="precheck-input" runat="server"
+                                    placeholder="Número de prechequeo" required="required" />
 
                         <asp:HiddenField ID="dataFound" runat="server" Value="false" />
                         <br><br>
-                        
+
                         <input type="hidden" id="hfTransaccion" runat="server" />
                         <asp:UpdatePanel ID="UpdatePanelBuscar" runat="server">
                             <ContentTemplate>
-                                <asp:LinkButton ID="lnkBuscar" CssClass="precheck-button" OnClick="lnkBuscar_Click" runat="server" Text="Verificar" OnClientClick="checkInput(); return true;" style="text-decoration:none" />
+                                <asp:LinkButton ID="lnkBuscar" CssClass="precheck-button" OnClick="lnkBuscar_Click"
+                                                runat="server" Text="Verificar" OnClientClick="checkInput(); return true;"
+                                                style="text-decoration:none" />
                             </ContentTemplate>
                         </asp:UpdatePanel>
                     </ContentTemplate>
@@ -822,6 +825,29 @@
             valor = valor.replace(/'/g, '-');
             // Establecer el nuevo valor en el input
             $(this).val(valor);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputTransaccion = document.querySelector('.precheck-input');
+        const verifyButton = document.getElementById('<%= lnkBuscar.ClientID %>');
+
+        // Asegurar que el input tenga el foco al cargar la página
+        inputTransaccion.focus();
+
+        // Detectar pérdida de enfoque del input y activar el botón Verificar si el input no está vacío
+        inputTransaccion.addEventListener('blur', function () {
+            if (inputTransaccion.value.trim() !== '') {
+                console.log('Input perdió el foco. Disparando verificación.');
+                verifyButton.click();
+            } else {
+                console.log('Input vacío, no se ejecuta verificación.');
+            }
+        });
+
+        // Volver a dar foco al input cuando pierda el foco
+        document.getElementById('editModal').addEventListener('hidden.bs.modal', function () {
+            setTimeout(() => inputTransaccion.focus(), 0); // Evitar conflicto con otros eventos
         });
     });
 
