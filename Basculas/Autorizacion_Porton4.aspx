@@ -696,10 +696,26 @@
         function validarInformacion() 
         {
             var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
-            var marchamo1 = document.getElementById('txt_marchamo1').value;
-            var marchamo2 = document.getElementById('txt_marchamo2').value;
-            var marchamo3 = document.getElementById('txt_marchamo3').value;
-            var marchamo4 = document.getElementById('txt_marchamo4').value;
+            var marchamos = [
+                document.getElementById('txt_marchamo1').value,
+                document.getElementById('txt_marchamo2').value,
+                document.getElementById('txt_marchamo3').value,
+                document.getElementById('txt_marchamo4').value
+            ];
+
+            // Filtrar valores no vacíos y verificar duplicados
+            let marchamosUnicos = new Set(marchamos.filter(m => m.trim() !== ""));
+            
+            if (marchamosUnicos.size !== marchamos.filter(m => m.trim() !== "").length) 
+            {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en la validación',
+                    text: 'Los números de marchamo no pueden repetirse.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
 
             // Realizar la solicitud AJAX
             $.ajax({
@@ -707,10 +723,10 @@
                 url: "Autorizacion_Porton4.aspx/ValidarDatos",
                 data: JSON.stringify({
                     codigoGeneracion: codigoGeneracion,
-                    marchamo1: marchamo1,
-                    marchamo2: marchamo2,
-                    marchamo3: marchamo3,
-                    marchamo4: marchamo4
+                    marchamo1: marchamos[0],
+                    marchamo2: marchamos[1],
+                    marchamo3: marchamos[2],
+                    marchamo4: marchamos[3]
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -720,20 +736,18 @@
 
                     if (resultado.includes("Validación exitosa")) 
                     {
-                        // Mostrar alerta de éxito con SweetAlert2
                         Swal.fire({
                             icon: 'success',
                             title: 'Validación exitosa',
                             text: resultado,
                             confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            // Llamar a changeStatus después de la validación exitosa
+                        }).then(() => 
+                        {
                             changeStatus(codigoGeneracion);
                         });
                     } 
                     else 
                     {
-                        // Mostrar alerta de error con SweetAlert2
                         Swal.fire({
                             icon: 'error',
                             title: 'Error en la validación',
