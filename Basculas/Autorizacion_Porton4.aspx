@@ -185,7 +185,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
             z-index: 1050;
@@ -198,40 +198,81 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 300px; /* Área donde se moverán los elementos */
-            height: 150px;
-            overflow: hidden; /* Evita desbordamientos */
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
         }
 
-        /* Camión fijo en el centro */
-        .truck-icon {
-            font-size: 80px;
-            filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+        /* Contenedor del camión */
+        .truck-container {
             position: relative;
-            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: truck-shake 0.2s ease-in-out infinite;
         }
 
-        /* Ruedas del camión */
+        /* Camión */
+        .truck-icon 
+        {
+            width: 275px; /* Ajusta el tamaño según necesites */
+            height: auto;
+            position: relative;
+            z-index: 1; /* Mantiene la imagen en el fondo */
+            margin-top: 20px; /* Ajusta la posición */
+        }
+
+
+        /* Contenedor de ruedas */
         .truck-wheels {
             position: absolute;
-            bottom: 30px;
+            bottom: 80px; /* Ajustar posición */
+            left: 58%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 30px; /* Espaciado entre ruedas */
+            gap: 55px;
+            z-index: 2; /* Ruedas sobre el camión */
         }
 
-        /* Nube en movimiento */
-        .cloud-icon {
-            font-size: 70px;
+        /* Nube principal (ya existente) */
+        .cloud1 {
+            font-size: 75px; /* Aumenta el tamaño */
             color: #ffffff;
             position: absolute;
-            bottom: 85px; /* Nube más arriba */
-            animation: moveCenter 5s linear infinite alternate;
+            bottom: 185px;
+            animation: moveLeft 12s linear infinite;
+            transform: scaleX(2); /* Aumenta aún más el ancho */
         }
 
-        /* Animación de los elementos moviéndose SOLO en el centro */
-        @keyframes moveCenter {
+        /* Segunda nube con diferente tamaño, velocidad y dirección */
+        .cloud2 {
+            font-size: 50px; /* Un poco más pequeña */
+            color: #ffffff;
+            position: absolute;
+            bottom: 220px; /* Más arriba para variar posiciones */
+            opacity: 0.8; /* Un poco más transparente */
+            animation: moveLeftReverse 12s linear infinite;
+        }
+
+        /* Animación de movimiento de la nube de derecha a izquierda */
+        @keyframes moveLeft {
+            0% { transform: translateX(50px); }  
+            100% { transform: translateX(-50px); } 
+        }
+        /* Movimiento opuesto y más lento para la segunda nube */
+        @keyframes moveLeftReverse {
             0% { transform: translateX(-50px); }
             100% { transform: translateX(50px); }
+        }
+        @keyframes truck-move {
+            0% { transform: translateX(-100px); }  /* Inicia fuera de la pantalla */
+            50% { transform: translateX(100px); } /* Se mueve hacia la derecha */
+            100% { transform: translateX(-100px); } /* Regresa a la posición inicial */
+        }
+        @keyframes truck-shake {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); } /* Mueve el camión ligeramente hacia arriba */
+            100% { transform: translateY(0px); }
         }
     </style>
 </head>
@@ -278,27 +319,6 @@
 
             <!-- Navbar Links -->
             <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
-                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
-                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
-                </a>
-
-                <div class="relative group hover:bg-gray-100 p-2 rounded">
-                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
-                        <span>Rutas</span>
-                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
-                        </div>
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Actividades
-                        </div>
-                    </div>
-                </div>
 
                 <div class="relative group hover:bg-gray-100 p-2 rounded">
                     <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
@@ -331,7 +351,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-600 flex items-center" style="text-decoration: none;">
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-800 flex items-center mt-2" style="text-decoration: none;">
                     <i class="fas fa-clock mr-2"></i>Recepción Azúcar
                 </a>
             </nav>
@@ -524,13 +544,14 @@
     </form>
 
     <div id="spinner-overlay">
-        <div class="animation-container">
-            <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
-            <div class="truck-container">
-                <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+            <div class="animation-container">
+                <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
+                <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
+                <div class="truck-container">
+                    <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
+                </div>
             </div>
-        <div>
-    </div>
+        </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -565,21 +586,56 @@
     <!-- Picturefill (for responsive images) -->
     <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
 
-    <!-- LightGallery and Plugins -->
-    <script src="https://cdn.rawgit.com/sachinchoolur/lightgallery.js/master/dist/js/lightgallery.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-autoplay.js/master/dist/lg-autoplay.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-hash.js/master/dist/lg-hash.js"></script>
-    <script src="https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () 
+        {
+            let menuOpciones = getCookie("menuOpciones");
+            if (menuOpciones) 
+            {
+                let opciones = menuOpciones.split(",");
+
+                // Ocultar todas las opciones del menú
+                document.querySelectorAll("#navbar a, #mobile-menu a").forEach(link => 
+                {
+                    link.style.display = "none";
+                });
+
+                // Mostrar solo las opciones permitidas
+                opciones.forEach(opcion => 
+                {
+                    document.querySelectorAll(`a[href='${opcion}']`).forEach(link => 
+                    {
+                        link.style.display = "block";
+                    });
+                });
+            }
+        });
+
+        function getCookie(name) 
+        {
+            let cookieArr = document.cookie.split(";");
+            for (let i = 0; i < cookieArr.length; i++) 
+            {
+                let cookiePair = cookieArr[i].split("=");
+                if (name === cookiePair[0].trim()) 
+                {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+    </script>
 
     <script>
         $("#spinner-overlay").hide();
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Evitar recarga al hacer clic en botones del navbar
-            document.querySelectorAll("button").forEach(button => {
-                button.addEventListener("click", function (event) {
+            document.querySelectorAll("button").forEach(button => 
+            {
+                button.addEventListener("click", function (event) 
+                {
                     event.preventDefault(); // Evita que el botón recargue la página
                 });
             });
@@ -604,7 +660,8 @@
             const input = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.querySelectorAll('.card');
             
-            cards.forEach(card => {
+            cards.forEach(card => 
+            {
                 const text = card.textContent.toLowerCase();
                 card.style.display = text.includes(input) ? '' : 'none';
             });
@@ -634,16 +691,20 @@
             const modal = document.getElementById('rutaModal'); // Ajusta el id de tu modal
 
             // Usar el evento hidden.bs.modal de Bootstrap para detectar el cierre de la modal
-            $(modal).on('hidden.bs.modal', function () {
+            $(modal).on('hidden.bs.modal', function () 
+            {
                 modalAbierta = false; // Marcar que la modal se ha cerrado
                 limpiarCampos(); // Limpiar los campos cuando se cierre la modal
             });
 
             // Limpiar todos los campos de la modal
-            function limpiarCampos() {
-                campos.forEach(campoId => {
+            function limpiarCampos() 
+            {
+                campos.forEach(campoId => 
+                {
                     const campo = document.getElementById(campoId);
-                    if (campo) {
+                    if (campo) 
+                    {
                         campo.value = ''; // Limpiar el valor del campo
                     }
                 });
@@ -651,35 +712,46 @@
 
             // Cuando se abre la modal, marcarla como abierta
             const botonAbrirModal = document.getElementById('abrirRutaModal'); // Ajusta este id al de tu botón de apertura
-            if (botonAbrirModal) {
-                botonAbrirModal.addEventListener('click', () => {
+            if (botonAbrirModal) 
+            {
+                botonAbrirModal.addEventListener('click', () => 
+                {
                     modalAbierta = true; // Marcar que la modal está abierta
                 });
             }
 
             // Si el usuario hace blur (sale de un campo), manejamos el foco y validación
-            campos.forEach((campo, index) => {
+            campos.forEach((campo, index) => 
+            {
                 const elemento = document.getElementById(campo);
 
-                if (elemento) {
-                    elemento.addEventListener('blur', function () {
+                if (elemento) 
+                {
+                    elemento.addEventListener('blur', function () 
+                    {
                         // Usamos un timeout para que el foco actual se actualice correctamente
-                        setTimeout(() => {
+                        setTimeout(() => 
+                        {
                             const elementoActivo = document.activeElement;
                             const esOtroCampo = campos.includes(elementoActivo.id);
 
                             // Si el usuario no se movió manualmente a otro campo
-                            if (!esOtroCampo) {
+                            if (!esOtroCampo) 
+                            {
                                 // Buscar el primer campo vacío
-                                const campoVacio = campos.find(id => {
+                                const campoVacio = campos.find(id => 
+                                {
                                     const input = document.getElementById(id);
                                     return input && input.value.trim() === ''; // Campo vacío
                                 });
 
-                                if (campoVacio) {
+                                if (campoVacio) 
+                                {
                                     // Mover el foco al primer campo vacío
                                     document.getElementById(campoVacio).focus();
-                                } else if (index === campos.length - 1 && !modalAbierta) {
+                                } 
+                                else if (index === campos.length - 1 && !modalAbierta) 
+                                {
                                     // Si todos los campos están llenos, y la modal no está abierta, ejecutar validarInformacion
                                     validarInformacion();
                                 }
@@ -695,18 +767,44 @@
 
         function validarInformacion() 
         {
-            var codigoGeneracion = document.getElementById('codigoGeneracionInput').value;
+            var codigoGeneracion = document.getElementById('codigoGeneracionInput').value.trim();
             var marchamos = [
-                document.getElementById('txt_marchamo1').value,
-                document.getElementById('txt_marchamo2').value,
-                document.getElementById('txt_marchamo3').value,
-                document.getElementById('txt_marchamo4').value
+                document.getElementById('txt_marchamo1').value.trim(),
+                document.getElementById('txt_marchamo2').value.trim(),
+                document.getElementById('txt_marchamo3').value.trim(),
+                document.getElementById('txt_marchamo4').value.trim()
             ];
 
-            // Filtrar valores no vacíos y verificar duplicados
-            let marchamosUnicos = new Set(marchamos.filter(m => m.trim() !== ""));
-            
-            if (marchamosUnicos.size !== marchamos.filter(m => m.trim() !== "").length) 
+            // Verificar si el código de generación está vacío
+            if (codigoGeneracion === "") 
+            {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en la validación',
+                    text: 'El código de generación no puede estar vacío.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Filtrar valores no vacíos
+            let marchamosNoVacios = marchamos.filter(m => m !== "");
+
+            // Verificar si todos los marchamos están vacíos
+            if (marchamosNoVacios.length === 0) 
+            {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en la validación',
+                    text: 'Debe ingresar al menos un número de marchamo.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Verificar duplicados en los marchamos ingresados
+            let marchamosUnicos = new Set(marchamosNoVacios);
+            if (marchamosUnicos.size !== marchamosNoVacios.length) 
             {
                 Swal.fire({
                     icon: 'error',
@@ -723,15 +821,14 @@
                 url: "Autorizacion_Porton4.aspx/ValidarDatos",
                 data: JSON.stringify({
                     codigoGeneracion: codigoGeneracion,
-                    marchamo1: marchamos[0],
-                    marchamo2: marchamos[1],
-                    marchamo3: marchamos[2],
-                    marchamo4: marchamos[3]
+                    marchamo1: marchamos[0] || null,
+                    marchamo2: marchamos[1] || null,
+                    marchamo3: marchamos[2] || null,
+                    marchamo4: marchamos[3] || null
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function (response) 
-                {
+                success: function (response) {
                     var resultado = response.d;
 
                     if (resultado.includes("Validación exitosa")) 
@@ -741,8 +838,7 @@
                             title: 'Validación exitosa',
                             text: resultado,
                             confirmButtonText: 'Aceptar'
-                        }).then(() => 
-                        {
+                        }).then(() => {
                             changeStatus(codigoGeneracion);
                         });
                     } 
@@ -797,22 +893,29 @@
                 {
                     $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
                 },
-                success: function(response) {
+                success: function(response) 
+                {
                     console.log("Respuesta completa de la API:", response);
                     
-                    if (response.d && typeof response.d === "string") {
+                    if (response.d && typeof response.d === "string") 
+                    {
                         console.log("Estructura dentro de response.d:", response.d);
 
                         let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
 
-                        for (const key in response.d) {
-                            if (response.d.hasOwnProperty(key)) {
+                        for (const key in response.d) 
+                        {
+                            if (response.d.hasOwnProperty(key)) 
+                            {
                                 let value = response.d[key];
 
                                 // Si el valor es un objeto, lo convertimos en un JSON legible
-                                if (typeof value === "string" && value !== null) {
+                                if (typeof value === "string" && value !== null) 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
-                                } else {
+                                } 
+                                else 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
                                 }
                             }
@@ -823,14 +926,17 @@
                             title: '¡Actualización exitosa!',
                             text: 'El estado se actualizó correctamente.',
                             confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
+                        }).then((result) => 
+                        {
+                            if (result.isConfirmed) 
+                            {
                                 location.reload();
                                 $("#spinner-overlay").show();
                             }
                         });
-
-                    } else {
+                    } 
+                    else 
+                    {
                         console.error("La respuesta no es un objeto válido:", response.d);
                         Swal.fire({
                             icon: 'error',
@@ -840,12 +946,15 @@
                         });
                     }
                 },
-                complete: function () {
+                complete: function () 
+                {
                     $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, status, error) 
+                {
                     console.error("Error en la solicitud AJAX:", error);
-                    try {
+                    try 
+                    {
                         let errorResponse = JSON.parse(xhr.responseText);
                         let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
                         Swal.fire({
@@ -854,7 +963,9 @@
                             text: errorMessage,
                             confirmButtonText: 'Aceptar'
                         });
-                    } catch (e) {
+                    } 
+                    catch (e) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -866,6 +977,5 @@
             });
         }
     </script>
-
 </body>
 </html>
