@@ -164,14 +164,15 @@
     }
 
     /* Fondo oscuro con centrado total */
-    #spinner-overlay {
+    #spinner-overlay 
+    {
         display: flex;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+        background: rgba(0, 0, 0, 0.5);
         align-items: center;
         justify-content: center;
         z-index: 1050;
@@ -179,45 +180,93 @@
     }
 
     /* Contenedor de los elementos alineados */
-    .animation-container {
+    .animation-container 
+    {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 300px; /* Área donde se moverán los elementos */
-        height: 150px;
-        overflow: hidden; /* Evita desbordamientos */
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
     }
 
-    /* Camión fijo en el centro */
-    .truck-icon {
-        font-size: 80px;
-        filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+    /* Contenedor del camión */
+    .truck-container 
+    {
         position: relative;
-        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: truck-shake 0.2s ease-in-out infinite;
     }
 
-    /* Ruedas del camión */
+    /* Camión */
+    .truck-icon 
+    {
+        width: 275px; /* Ajusta el tamaño según necesites */
+        height: auto;
+        position: relative;
+        z-index: 1; /* Mantiene la imagen en el fondo */
+        margin-top: 20px; /* Ajusta la posición */
+    }
+
+
+    /* Contenedor de ruedas */
     .truck-wheels {
         position: absolute;
-        bottom: 30px;
+        bottom: 80px; /* Ajustar posición */
+        left: 58%;
+        transform: translateX(-50%);
         display: flex;
-        gap: 30px; /* Espaciado entre ruedas */
+        gap: 55px;
+        z-index: 2; /* Ruedas sobre el camión */
     }
 
-    /* Nube en movimiento */
-    .cloud-icon {
-        font-size: 70px;
+    /* Nube principal (ya existente) */
+    .cloud1 {
+        font-size: 75px; /* Aumenta el tamaño */
         color: #ffffff;
         position: absolute;
-        bottom: 85px; /* Nube más arriba */
-        animation: moveCenter 5s linear infinite alternate;
+        bottom: 185px;
+        animation: moveLeft 12s linear infinite;
+        transform: scaleX(2); /* Aumenta aún más el ancho */
     }
 
-    /* Animación de los elementos moviéndose SOLO en el centro */
-    @keyframes moveCenter {
+    /* Segunda nube con diferente tamaño, velocidad y dirección */
+    .cloud2 
+    {
+        font-size: 50px; /* Un poco más pequeña */
+        color: #ffffff;
+        position: absolute;
+        bottom: 220px; /* Más arriba para variar posiciones */
+        opacity: 0.8; /* Un poco más transparente */
+        animation: moveLeftReverse 12s linear infinite;
+    }
+
+    /* Animación de movimiento de la nube de derecha a izquierda */
+    @keyframes moveLeft 
+    {
+        0% { transform: translateX(50px); }  
+        100% { transform: translateX(-50px); } 
+    }
+    /* Movimiento opuesto y más lento para la segunda nube */
+    @keyframes moveLeftReverse 
+    {
         0% { transform: translateX(-50px); }
         100% { transform: translateX(50px); }
+    }
+    @keyframes truck-move 
+    {
+        0% { transform: translateX(-100px); }  /* Inicia fuera de la pantalla */
+        50% { transform: translateX(100px); } /* Se mueve hacia la derecha */
+        100% { transform: translateX(-100px); } /* Regresa a la posición inicial */
+    }
+    @keyframes truck-shake 
+    {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-2px); } /* Mueve el camión ligeramente hacia arriba */
+        100% { transform: translateY(0px); }
     }
 </style>
 
@@ -655,7 +704,7 @@
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+        <span>© 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
 
     <!-- Modal para seleccionar tipo de barrido -->
@@ -781,16 +830,17 @@
             </div>
         </div>
 
-        <div id="spinner-overlay">
-            <div class="animation-container">
-                <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
-                <div class="truck-container">
-                    <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
-                </div>
+    </form>
+
+    <div id="spinner-overlay">
+        <div class="animation-container">
+            <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
+            <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
+            <div class="truck-container">
+                <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
             </div>
         </div>
-
-    </form>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -801,12 +851,12 @@
 
     <!-- SweetAlert2 (latest version) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        $("#spinner-overlay").hide();
-        document.addEventListener("DOMContentLoaded", function () 
-        {
+         $("#spinner-overlay").hide();
+        document.addEventListener("DOMContentLoaded", function () {
             // Evitar recarga al hacer clic en botones del navbar
             document.querySelectorAll("button").forEach(button => {
                 button.addEventListener("click", function (event) {
@@ -1369,17 +1419,13 @@
                 });
                 return;
             }
-            $("#spinner-overlay").css("display", "flex");
-            $.ajax({
+
+           $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                beforeSend: function () 
-                {
-                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
-                },
                 success: function(response) {
                     console.log("Respuesta completa de la API:", response);
                     
@@ -1409,7 +1455,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
-                                $("#spinner-overlay").hide(); 
+                                $("#spinner-overlay").show();
                             }
                         });
 
@@ -1421,11 +1467,7 @@
                             text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
                             confirmButtonText: 'Aceptar'
                         });
-                        $("#spinner-overlay").hide(); 
                     }
-                },
-                complete: function () {
-                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);
@@ -1475,6 +1517,7 @@
                     console.log("Respuesta de la API: ", response.d);     
 
                     // Funcion para cambiar estatus de la Transacción
+                    $("#spinner-overlay").css("display", "flex");
                     changeStatusAzucar(codigoGeneracion);
                 },
                 error: function(xhr, status, error) 
@@ -1549,7 +1592,6 @@
                 return;
             }
 
-            $("#spinner-overlay").css("display", "flex");
             $.ajax({
                 type: "POST",
                 url: "Autorizacion_Camiones.aspx/ChangeTransactionStatus",
@@ -1585,7 +1627,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
-                                $("#spinner-overlay").show(); 
+                                $("#spinner-overlay").show();
                             }
                         });
 
@@ -1598,9 +1640,6 @@
                             confirmButtonText: 'Aceptar'
                         });
                     }
-                },
-                complete: function () {
-                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", error);
