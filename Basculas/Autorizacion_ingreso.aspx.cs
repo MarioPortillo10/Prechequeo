@@ -164,62 +164,62 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 
 
     [WebMethod]
-public static string ChangeTransactionStatus(string codeGen)
-{
-    // Validar que codeGen no sea nulo o vacío
-    if (string.IsNullOrEmpty(codeGen))
+    public static string ChangeTransactionStatus(string codeGen)
     {
-        return JsonConvert.SerializeObject(new { errorMessage = "El parámetro 'codeGen' no puede ser nulo o vacío." });
-    }
-
-    try
-    {
-        // Configurar la URL y el token
-        string url = string.Format("https://apiclientes.almapac.com:9010/api/queue/send/{0}", codeGen);
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-
-        // Configurar el protocolo de seguridad
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-        using (var client = new WebClient())
+        // Validar que codeGen no sea nulo o vacío
+        if (string.IsNullOrEmpty(codeGen))
         {
-            // Configurar encabezados de solicitud
-            client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
-            client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
-            // Realizar la solicitud POST
-            string responseContent = client.UploadString(url, "POST", ""); // Sin cuerpo en la solicitud
-            return JsonConvert.SerializeObject(new { successMessage = "Cambio de estatus exitoso", response = responseContent });
+            return JsonConvert.SerializeObject(new { errorMessage = "El parámetro 'codeGen' no puede ser nulo o vacío." });
         }
-    }
-    catch (WebException webEx)
-    {
-        string errorMessage = string.Empty;
+
         try
         {
-            using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+            // Configurar la URL y el token
+            string url = string.Format("https://apiclientes.almapac.com:9010/api/queue/send/{0}", codeGen);
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+
+            // Configurar el protocolo de seguridad
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            using (var client = new WebClient())
             {
-                errorMessage = reader.ReadToEnd();
+                // Configurar encabezados de solicitud
+                client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                // Realizar la solicitud POST
+                string responseContent = client.UploadString(url, "POST", ""); // Sin cuerpo en la solicitud
+                return JsonConvert.SerializeObject(new { successMessage = "Cambio de estatus exitoso", response = responseContent });
             }
         }
-        catch
+        catch (WebException webEx)
         {
-            errorMessage = "No se pudo leer la respuesta del servidor.";
+            string errorMessage = string.Empty;
+            try
+            {
+                using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
+                {
+                    errorMessage = reader.ReadToEnd();
+                }
+            }
+            catch
+            {
+                errorMessage = "No se pudo leer la respuesta del servidor.";
+            }
+
+            LogEventS("Error al realizar la solicitud o procesar la respuesta.");
+            LogEventS("Mensaje de excepción: " + webEx.Message);
+            LogEventS("Pila de llamadas: " + webEx.StackTrace);
+
+            return new JavaScriptSerializer().Serialize(new { errorMessage = "Error en la solicitud: " + webEx.Message + ". " + errorMessage });
         }
-
-        LogEventS("Error al realizar la solicitud o procesar la respuesta.");
-        LogEventS("Mensaje de excepción: " + webEx.Message);
-        LogEventS("Pila de llamadas: " + webEx.StackTrace);
-
-        return new JavaScriptSerializer().Serialize(new { errorMessage = "Error en la solicitud: " + webEx.Message + ". " + errorMessage });
+        catch (Exception ex)
+        {
+            LogEventS("Error inesperado: " + ex.Message);
+            LogEventS("Pila de llamadas: " + ex.StackTrace);
+            return JsonConvert.SerializeObject(new { errorMessage = "Error inesperado: " + ex.Message });
+        }
     }
-    catch (Exception ex)
-    {
-        LogEventS("Error inesperado: " + ex.Message);
-        LogEventS("Pila de llamadas: " + ex.StackTrace);
-        return JsonConvert.SerializeObject(new { errorMessage = "Error inesperado: " + ex.Message });
-    }
-}
 
 
     private void DataBind()
@@ -288,8 +288,6 @@ public static string ChangeTransactionStatus(string codeGen)
         // Escribir el log en el archivo
         File.AppendAllText(logFilePath, formattedLog);
     }
-
-
 
     public class IngenioCount
     {

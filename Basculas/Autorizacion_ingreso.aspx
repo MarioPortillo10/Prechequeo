@@ -177,7 +177,7 @@
         justify-content: center;
         margin: 0.5rem; /* Espaciado entre tarjetas */
     }
-            /* Fondo oscuro con centrado total */
+    /* Fondo oscuro con centrado total */
         #spinner-overlay {
             display: flex;
             position: fixed;
@@ -185,7 +185,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
             z-index: 1050;
@@ -198,40 +198,81 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 300px; /* Área donde se moverán los elementos */
-            height: 150px;
-            overflow: hidden; /* Evita desbordamientos */
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
         }
 
-        /* Camión fijo en el centro */
-        .truck-icon {
-            font-size: 80px;
-            filter: grayscale(100%); /* Convierte el icono a blanco y negro */
+        /* Contenedor del camión */
+        .truck-container {
             position: relative;
-            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: truck-shake 0.2s ease-in-out infinite;
         }
 
-        /* Ruedas del camión */
+        /* Camión */
+        .truck-icon 
+        {
+            width: 275px; /* Ajusta el tamaño según necesites */
+            height: auto;
+            position: relative;
+            z-index: 1; /* Mantiene la imagen en el fondo */
+            margin-top: 20px; /* Ajusta la posición */
+        }
+
+
+        /* Contenedor de ruedas */
         .truck-wheels {
             position: absolute;
-            bottom: 30px;
+            bottom: 80px; /* Ajustar posición */
+            left: 58%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 30px; /* Espaciado entre ruedas */
+            gap: 55px;
+            z-index: 2; /* Ruedas sobre el camión */
         }
 
-        /* Nube en movimiento */
-        .cloud-icon {
-            font-size: 70px;
+        /* Nube principal (ya existente) */
+        .cloud1 {
+            font-size: 75px; /* Aumenta el tamaño */
             color: #ffffff;
             position: absolute;
-            bottom: 85px; /* Nube más arriba */
-            animation: moveCenter 5s linear infinite alternate;
+            bottom: 185px;
+            animation: moveLeft 12s linear infinite;
+            transform: scaleX(2); /* Aumenta aún más el ancho */
         }
 
-        /* Animación de los elementos moviéndose SOLO en el centro */
-        @keyframes moveCenter {
+        /* Segunda nube con diferente tamaño, velocidad y dirección */
+        .cloud2 {
+            font-size: 50px; /* Un poco más pequeña */
+            color: #ffffff;
+            position: absolute;
+            bottom: 220px; /* Más arriba para variar posiciones */
+            opacity: 0.8; /* Un poco más transparente */
+            animation: moveLeftReverse 12s linear infinite;
+        }
+
+        /* Animación de movimiento de la nube de derecha a izquierda */
+        @keyframes moveLeft {
+            0% { transform: translateX(50px); }  
+            100% { transform: translateX(-50px); } 
+        }
+        /* Movimiento opuesto y más lento para la segunda nube */
+        @keyframes moveLeftReverse {
             0% { transform: translateX(-50px); }
             100% { transform: translateX(50px); }
+        }
+        @keyframes truck-move {
+            0% { transform: translateX(-100px); }  /* Inicia fuera de la pantalla */
+            50% { transform: translateX(100px); } /* Se mueve hacia la derecha */
+            100% { transform: translateX(-100px); } /* Regresa a la posición inicial */
+        }
+        @keyframes truck-shake {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); } /* Mueve el camión ligeramente hacia arriba */
+            100% { transform: translateY(0px); }
         }
 </style>
 
@@ -284,24 +325,6 @@
                 </a>
 
                 <div class="relative group hover:bg-gray-100 p-2 rounded">
-                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
-                        <span>Rutas</span>
-                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
-                        </div>
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Actividades
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative group hover:bg-gray-100 p-2 rounded">
                     <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
                         <span>Monitoreo</span>
                         <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -332,7 +355,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-600 flex items-center" style="text-decoration: none;">
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-800 flex items-center mt-2" style="text-decoration: none;">
                     <i class="fas fa-clock mr-2"></i>Recepción Azúcar
                 </a>
             </nav>
@@ -687,7 +710,7 @@
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+        <span>© 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
 
 
@@ -721,13 +744,14 @@
 
     </form>
     <div id="spinner-overlay">
-        <div class="animation-container">
-            <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
-            <div class="truck-container">
-                <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
+            <div class="animation-container">
+                <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
+                <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
+                <div class="truck-container">
+                    <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
+                </div>
             </div>
-        <div>
-    </div>
+        </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -741,10 +765,50 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () 
+        {
+            let menuOpciones = getCookie("menuOpciones");
+            if (menuOpciones) 
+            {
+                let opciones = menuOpciones.split(",");
+
+                // Ocultar todas las opciones del menú
+                document.querySelectorAll("#navbar a, #mobile-menu a").forEach(link => 
+                {
+                    link.style.display = "none";
+                });
+
+                // Mostrar solo las opciones permitidas
+                opciones.forEach(opcion => 
+                {
+                    document.querySelectorAll(`a[href='${opcion}']`).forEach(link => 
+                    {
+                        link.style.display = "block";
+                    });
+                });
+            }
+        });
+
+        function getCookie(name) 
+        {
+            let cookieArr = document.cookie.split(";");
+            for (let i = 0; i < cookieArr.length; i++) 
+            {
+                let cookiePair = cookieArr[i].split("=");
+                if (name === cookiePair[0].trim()) 
+                {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+    </script>
 
     <!-- JavaScript for Mobile Menu Toggle -->
     <script>
-        document.getElementById('menu-toggle').addEventListener('click', function() {
+        document.getElementById('menu-toggle').addEventListener('click', function() 
+        {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
         });
@@ -752,10 +816,13 @@
 
     <script>
         $("#spinner-overlay").hide();
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Evitar recarga al hacer clic en botones del navbar
-            document.querySelectorAll("button").forEach(button => {
-                button.addEventListener("click", function (event) {
+            document.querySelectorAll("button").forEach(button => 
+            {
+                button.addEventListener("click", function (event) 
+                {
                     event.preventDefault(); // Evita que el botón recargue la página
                 });
             });
@@ -838,121 +905,135 @@
     }
 
     function changeStatus(codigoGeneracion) 
-{
-    if (!codigoGeneracion || codigoGeneracion.trim() === '') 
     {
-        Swal.fire({
-            title: 'Error',
-            text: 'Por favor, ingrese un Código de Generación',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Aceptar'
-        });
-        return;
-    }
-    $("#spinner-overlay").css("display", "flex");
-    $.ajax({
-        type: "POST",
-        url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
-        data: JSON.stringify({ codeGen: codigoGeneracion}),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        beforeSend: function () 
+        if (!codigoGeneracion || codigoGeneracion.trim() === '') 
         {
-            $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
-        },
-        success: function(response) 
-        {
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, ingrese un Código de Generación',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        $("#spinner-overlay").css("display", "flex");
+        $.ajax({
+            type: "POST",
+            url: "Autorizacion_ingreso.aspx/ChangeTransactionStatus",
+            data: JSON.stringify({ codeGen: codigoGeneracion}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            beforeSend: function () 
+            {
+                $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+            },
+            success: function(response) 
+            {
                 // Verificar la respuesta en la consola para depuración
                 console.log("Respuesta de la API:", response.d); // Mostrar el contenido de la respuesta
 
                 // Verificar si response.d es un objeto o una cadena
-                if (typeof response.d === "string") {
+                if (typeof response.d === "string") 
+                {
                     console.log("response.d es una cadena:", response.d); // Mostrar si es una cadena
-                } else {
+                } 
+                else 
+                {
                     console.log("response.d no es una cadena, es un objeto:", response.d); // Mostrar si es un objeto
                 }
 
-            // Si la respuesta contiene un mensaje de éxito, mostramos el modal de éxito
-            if (response.d.includes("exitoso")) {
-                Swal.fire({
-                    title: '¡Operación exitosa!',
-                    text: 'El Ingreso a sido autorizado', // Mostrar el mensaje de la API
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                        $("#spinner-overlay").show();
-                    }
-                });
-            } else {
-                // Mostrar los logs cuando haya un error
-                console.log("No contiene 'exitoso', mostrando error...");
-                
-                // Verificar si 'response.d' es un objeto y contiene el campo 'message'
-                let errorResponse = response.d;
-                console.log("errorResponse:", errorResponse); // Verifica la respuesta completa
-
-                try {
-                    // Si es un objeto, parseamos y verificamos el campo 'message'
-                    let parsedError = JSON.parse(errorResponse);
-                    console.log("parsedError:", parsedError); // Verifica la estructura de 'errorMessage'
-                    console.log("message:", parsedError.message); // Verifica el valor de 'message'
+                // Si la respuesta contiene un mensaje de éxito, mostramos el modal de éxito
+                if (response.d.includes("exitoso")) 
+                {
+                    Swal.fire({
+                        title: '¡Operación exitosa!',
+                        text: 'El Ingreso a sido autorizado', // Mostrar el mensaje de la API
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        if (result.isConfirmed) 
+                        {
+                            location.reload();
+                            $("#spinner-overlay").show();
+                        }
+                    });
+                } 
+                else 
+                {
+                    // Mostrar los logs cuando haya un error
+                    console.log("No contiene 'exitoso', mostrando error...");
                     
-                    // Ahora mostramos el error con el mensaje específico
+                    // Verificar si 'response.d' es un objeto y contiene el campo 'message'
+                    let errorResponse = response.d;
+                    console.log("errorResponse:", errorResponse); // Verifica la respuesta completa
+
+                    try 
+                    {
+                        // Si es un objeto, parseamos y verificamos el campo 'message'
+                        let parsedError = JSON.parse(errorResponse);
+                        console.log("parsedError:", parsedError); // Verifica la estructura de 'errorMessage'
+                        console.log("message:", parsedError.message); // Verifica el valor de 'message'
+                        
+                        // Ahora mostramos el error con el mensaje específico
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.d, // Mostrar el mensaje de error específico
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } 
+                    catch (e) 
+                    {
+                        console.log("Error al parsear la respuesta:", e); // Si no se puede parsear, mostramos el error completo
+                        Swal.fire({
+                            title: 'Error',
+                            text: errorResponse, // Mostrar la respuesta completa si no se puede parsear
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                }
+            },
+            complete: function () 
+            {
+                $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
+            },
+            error: function(xhr, status, error) 
+            {
+                // Verificar el error en la consola para depuración
+                console.error("Error al cambiar el estado:", error);
+
+                // Intentar extraer y mostrar el 'message' de la respuesta JSON si está disponible
+                try 
+                {
+                    // Si la respuesta es un JSON, intentamos analizarla
+                    let errorResponse = JSON.parse(xhr.responseText);
+                    let errorMessage = errorResponse.message || 'Hubo un problema al cambiar el estado.';
+
+                    // Mostrar el mensaje de error específico
                     Swal.fire({
                         title: 'Error',
-                        text: response.d, // Mostrar el mensaje de error específico
+                        text: errorMessage, // Mostrar solo el 'message'
                         icon: 'error',
                         confirmButtonText: 'Aceptar'
                     });
-                } catch (e) {
-                    console.log("Error al parsear la respuesta:", e); // Si no se puede parsear, mostramos el error completo
+                } 
+                catch (e) 
+                {
+                    // Si no es un JSON válido, mostrar el error genérico
                     Swal.fire({
                         title: 'Error',
-                        text: errorResponse, // Mostrar la respuesta completa si no se puede parsear
+                        text: 'Hubo un problema al cambiar el estado: ' + error,
                         icon: 'error',
                         confirmButtonText: 'Aceptar'
                     });
                 }
             }
-        },
-        complete: function () {
-            $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
-        },
-        error: function(xhr, status, error) 
-        {
-            // Verificar el error en la consola para depuración
-            console.error("Error al cambiar el estado:", error);
+        });
+    }
 
-            // Intentar extraer y mostrar el 'message' de la respuesta JSON si está disponible
-            try {
-                // Si la respuesta es un JSON, intentamos analizarla
-                let errorResponse = JSON.parse(xhr.responseText);
-                let errorMessage = errorResponse.message || 'Hubo un problema al cambiar el estado.';
-
-                // Mostrar el mensaje de error específico
-                Swal.fire({
-                    title: 'Error',
-                    text: errorMessage, // Mostrar solo el 'message'
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            } catch (e) {
-                // Si no es un JSON válido, mostrar el error genérico
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al cambiar el estado: ' + error,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        }
-    });
-}
-
-</script>
+    </script>
 
 </body>
 </html>
