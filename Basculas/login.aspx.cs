@@ -47,6 +47,8 @@ public partial class Basculas_login : System.Web.UI.Page
                 Response.Cookies["cod_rol"].Value = Convert.ToString(ob_login.rol(cod_usuario));
                 Response.Cookies["cod_rol"].Expires = DateTime.Now.AddDays(1);
 
+                
+
                 // Evalúa el ReturnURL del link.
                 if (string.IsNullOrEmpty(Request.QueryString["ReturnUrl"]))
                     Response.Redirect("/Basculas/Autorizacion_Camiones.aspx", false);
