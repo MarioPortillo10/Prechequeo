@@ -473,7 +473,7 @@
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+        <span>© 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
 
 
@@ -544,14 +544,14 @@
     </form>
 
     <div id="spinner-overlay">
-            <div class="animation-container">
-                <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
-                <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
-                <div class="truck-container">
-                    <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
-                </div>
+        <div class="animation-container">
+            <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
+            <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
+            <div class="truck-container">
+                <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
             </div>
         </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
