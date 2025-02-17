@@ -792,7 +792,7 @@
 
     <!-- Footer -->
     <footer>
-        © 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados
+        © 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados
     </footer>
 </form>
 

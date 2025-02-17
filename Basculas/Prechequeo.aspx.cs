@@ -232,7 +232,7 @@ public partial class Basculas_Prechequeo : System.Web.UI.Page
             }
             catch (Exception ex)
             {
-                LogEventS("Error Ccatch");
+                LogEventS("Error catch");
                 LogEventS(ex);
                 return "Error inesperado: " + ex.Message;
             }
