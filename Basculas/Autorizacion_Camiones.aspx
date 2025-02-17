@@ -209,7 +209,7 @@
             align-items: center;
             justify-content: center;
             width: 300px;
-            height: 150px;
+            height: 300px;
             overflow: hidden;
         }
 
@@ -219,84 +219,70 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            animation: truck-shake 0.2s ease-in-out infinite;
         }
 
         /* Camión */
-        .truck-icon {
-            font-size: 80px;
-            filter: grayscale(100%);
+        .truck-icon 
+        {
+            width: 275px; /* Ajusta el tamaño según necesites */
+            height: auto;
             position: relative;
-            z-index: 1; /* Asegurar que el camión quede en el fondo */
-            margin-top: 20px; /* Baja el camión para que las ruedas queden encima */
+            z-index: 1; /* Mantiene la imagen en el fondo */
+            margin-top: 20px; /* Ajusta la posición */
         }
+
 
         /* Contenedor de ruedas */
         .truck-wheels {
             position: absolute;
-            bottom: 0px; /* Ajustar posición */
-            left: 50%;
+            bottom: 80px; /* Ajustar posición */
+            left: 58%;
             transform: translateX(-50%);
             display: flex;
-            gap: 22px;
+            gap: 55px;
             z-index: 2; /* Ruedas sobre el camión */
         }
 
-        /* Estilo de ruedas */
-        .wheel {
-            width: 28px;
-            height: 28px;
-            background: #242424;
-            border: 3px solid white; /* Borde blanco para visibilidad */
-            border-radius: 50%;
-            position: relative;
-            animation: wheel-spin 0.8s linear infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Rines dentro de las ruedas */
-        .wheel::before,
-        .wheel::after {
-            content: "";
-            position: absolute;
-            width: 15px; /* Largo de las líneas del rin */
-            height: 2px; /* Grosor de las líneas */
-            background: white; /* Color del rin */
-            top: 50%;
-            left: 50%;
-            transform-origin: center;
-        }
-
-        /* Línea horizontal del rin */
-        .wheel::before {
-            transform: translate(-50%, -50%) rotate(0deg);
-        }
-
-        /* Línea vertical del rin */
-        .wheel::after {
-            transform: translate(-50%, -50%) rotate(90deg);
-        }
-
-        /* Nube en movimiento */
-        .cloud-icon {
-            font-size: 70px;
+        /* Nube principal (ya existente) */
+        .cloud1 {
+            font-size: 75px; /* Aumenta el tamaño */
             color: #ffffff;
             position: absolute;
-            bottom: 85px;
-            animation: moveLeft 8s linear infinite; /* Aplica la nueva animación */
+            bottom: 185px;
+            animation: moveLeft 12s linear infinite;
+            transform: scaleX(2); /* Aumenta aún más el ancho */
+        }
+
+        /* Segunda nube con diferente tamaño, velocidad y dirección */
+        .cloud2 {
+            font-size: 50px; /* Un poco más pequeña */
+            color: #ffffff;
+            position: absolute;
+            bottom: 220px; /* Más arriba para variar posiciones */
+            opacity: 0.8; /* Un poco más transparente */
+            animation: moveLeftReverse 12s linear infinite;
         }
 
         /* Animación de movimiento de la nube de derecha a izquierda */
         @keyframes moveLeft {
-            0% { transform: translateX(50px); }  /* Comienza a la derecha */
-            100% { transform: translateX(-50px); } /* Se mueve a la izquierda */
+            0% { transform: translateX(50px); }  
+            100% { transform: translateX(-50px); } 
         }
-
-        /* Animación de giro de las ruedas y rines */
-        @keyframes wheel-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Movimiento opuesto y más lento para la segunda nube */
+        @keyframes moveLeftReverse {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
+        @keyframes truck-move {
+            0% { transform: translateX(-100px); }  /* Inicia fuera de la pantalla */
+            50% { transform: translateX(100px); } /* Se mueve hacia la derecha */
+            100% { transform: translateX(-100px); } /* Regresa a la posición inicial */
+        }
+        @keyframes truck-shake {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); } /* Mueve el camión ligeramente hacia arriba */
+            100% { transform: translateY(0px); }
         }
     </style>
 
@@ -342,29 +328,8 @@
                 </svg>
             </button>
 
-            <!-- Navbar Links -->
+             <!-- Navbar Links -->
             <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
-                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
-                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
-                </a>
-
-                <div class="relative group hover:bg-gray-100 p-2 rounded">
-                    <button class="hover:text-orange-600 px-2 py-1 flex items-center focus:outline-none">
-                        <span>Rutas</span>
-                        <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M5.23 7.21a.75.75 0 111.06-1.06L10 9.86l3.71-3.71a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4z" />
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Transacciones
-                        </div>
-                        <div class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-road mr-2"></i>Rutas Actividades
-                        </div>
-                    </div>
-                </div>
 
                 <div class="relative group hover:bg-gray-100 p-2 rounded">
                     <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
@@ -397,7 +362,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-600 flex items-center" style="text-decoration: none;">
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-800 flex items-center px-2 py-2" style="text-decoration: none;">
                     <i class="fas fa-clock mr-2"></i>Recepción Azúcar
                 </a>
             </nav>
@@ -766,7 +731,7 @@
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+        <span>© 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
 
 
@@ -868,17 +833,14 @@
 
     </form>
         <div id="spinner-overlay">
-    <div class="animation-container">
-        <i class="fa fa-cloud cloud-icon" aria-hidden="true"></i>
-        <div class="truck-container">
-            <i class="fa fa-truck truck-icon" aria-hidden="true"></i>
-            <div class="truck-wheels">
-                <div class="wheel"></div>
-                <div class="wheel"></div>
+            <div class="animation-container">
+                <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
+                <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
+                <div class="truck-container">
+                    <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/main/Quickpass.png" alt="Camión" class="truck-icon">
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -894,10 +856,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () 
+        {
+            let menuOpciones = getCookie("menuOpciones");
+            if (menuOpciones) 
+            {
+                let opciones = menuOpciones.split(",");
+
+                // Ocultar todas las opciones del menú
+                document.querySelectorAll("#navbar a, #mobile-menu a").forEach(link => 
+                {
+                    link.style.display = "none";
+                });
+
+                // Mostrar solo las opciones permitidas
+                opciones.forEach(opcion => 
+                {
+                    document.querySelectorAll(`a[href='${opcion}']`).forEach(link => 
+                    {
+                        link.style.display = "block";
+                    });
+                });
+            }
+        });
+
+        function getCookie(name) 
+        {
+            let cookieArr = document.cookie.split(";");
+            for (let i = 0; i < cookieArr.length; i++) 
+            {
+                let cookiePair = cookieArr[i].split("=");
+                if (name === cookiePair[0].trim()) 
+                {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Evitar recarga al hacer clic en botones del navbar
-            document.querySelectorAll("button").forEach(button => {
-                button.addEventListener("click", function (event) {
+            document.querySelectorAll("button").forEach(button => 
+            {
+                button.addEventListener("click", function (event) 
+                {
                     event.preventDefault(); // Evita que el botón recargue la página
                 });
             });
@@ -908,7 +914,8 @@
         $("#spinner-overlay").hide();
         $(document).ready(function () 
         {
-            $('#rutaModal').on('show.bs.modal', function (event) {
+            $('#rutaModal').on('show.bs.modal', function (event) 
+            {
                 var button = $(event.relatedTarget); // Botón que abrió el modal
                 var codigoGeneracion = button.data('codigo-generacion'); // Extraer la información del atributo data-codigo-generacion
                 var modal = $(this);
@@ -1001,27 +1008,36 @@
             resetErrorFields([]);
 
             // Validación de los campos vacíos
-            if (!licencia) {
+            if (!licencia) 
+            {
                 document.getElementById('txt_licencia').classList.add('error-field');
             }
-            if (!placaRemolque) {
+            if (!placaRemolque) 
+            {
                 document.getElementById('txt_placaremolque').classList.add('error-field');
-            } else if (!regexRemolque.test(placaRemolque)) {
+            } 
+            else if (!regexRemolque.test(placaRemolque)) 
+            {
                 // Validar el formato de la placa del remolque
                 document.getElementById('txt_placaremolque').classList.add('error-field');
             }
-            if (!placaCamion) {
+            if (!placaCamion) 
+            {
                 document.getElementById('txt_placamion').classList.add('error-field');
-            } else if (!regexCamion.test(placaCamion)) {
+            } 
+            else if (!regexCamion.test(placaCamion)) 
+            {
                 // Validar el formato de la placa del camión
                 document.getElementById('txt_placamion').classList.add('error-field');
             }
-            if (!tarjeta) {
+            if (!tarjeta) 
+            {
                 document.getElementById('txt_tarjeta').classList.add('error-field');
             }
 
             // Si hay algún campo con error, mostramos el mensaje y detenemos la ejecución
-            if (document.querySelectorAll('.error-field').length > 0) {
+            if (document.querySelectorAll('.error-field').length > 0) 
+            {
                 Swal.fire({
                     icon: 'error',
                     title: 'Campos con error',
@@ -1043,10 +1059,12 @@
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function (response) {
+                success: function (response) 
+                {
                     var resultado = response.d;
 
-                    if (resultado.error) {
+                    if (resultado.error) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Errores encontrados',
@@ -1058,8 +1076,10 @@
                         resetErrorFields(resultado.camposConError);
 
                         // Marcar los campos con errores
-                        resultado.camposConError.forEach(function (campo) {
-                            switch (campo) {
+                        resultado.camposConError.forEach(function (campo) 
+                        {
+                            switch (campo) 
+                            {
                                 case "licencia":
                                     document.getElementById('txt_licencia').classList.add('error-field');
                                     break;
@@ -1074,23 +1094,28 @@
                                     break;
                             }
                         });
-                    } else {
+                    } 
+                    else 
+                    {
                         Swal.fire({
                             icon: 'success',
                             title: 'Validación exitosa',
                             text: resultado.mensaje,
                             confirmButtonText: 'Aceptar',
                             showLoaderOnConfirm: true,
-                            preConfirm: () => {
+                            preConfirm: () => 
+                            {
                                 // Llamar a la función asignar tarjeta después de la validación exitosa
                                 return asignartarjeta(codigoGeneracion, tarjeta);
                             }
-                        }).then(() => {
-                            console.log("Tarjeta asignada correctamente.");
+                        }).then(() => 
+                        {
+                            //console.log("Tarjeta asignada correctamente.");
                         });
                     }
                 },
-                error: function (error) {
+                error: function (error) 
+                {
                     console.error("Error en la solicitud:", error);
                     Swal.fire({
                         icon: 'error',
@@ -1103,7 +1128,8 @@
         }
 
         // Función para limpiar el marcado de error en los campos
-        function resetErrorFields(camposConError) {
+        function resetErrorFields(camposConError) 
+        {
             var campos = [
                 'txt_licencia',
                 'txt_placaremolque',
@@ -1111,9 +1137,11 @@
                 'txt_tarjeta'
             ];
 
-            campos.forEach(function (campo) {
+            campos.forEach(function (campo) 
+            {
                 var elemento = document.getElementById(campo);
-                if (elemento && !camposConError.includes(campo)) {
+                if (elemento && !camposConError.includes(campo)) 
+                {
                     // Si el campo no está en la lista de campos con error, quitamos la clase 'error-field'
                     elemento.classList.remove('error-field');
                 }
@@ -1121,7 +1149,8 @@
         }
 
         // Función para limpiar campos específicos de la modal
-        function limpiarCamposModal() {
+        function limpiarCamposModal() 
+        {
             const campos = [
                 'txt_licencia',
                 'txt_placaremolque',
@@ -1130,9 +1159,11 @@
             ];
 
             // Limpiar valores de los campos
-            campos.forEach(campoId => {
+            campos.forEach(campoId => 
+            {
                 const campo = document.getElementById(campoId);
-                if (campo) {
+                if (campo) 
+                {
                     campo.value = ''; // Limpia el valor del campo
                     campo.classList.remove('error-field'); // Limpia las clases de error si existen
                 }
@@ -1140,13 +1171,15 @@
 
             // Si el formulario tiene campos adicionales que limpiar
             const hiddenField = document.getElementById('codigoGeneracionInput');
-            if (hiddenField) {
+            if (hiddenField) 
+            {
                 hiddenField.value = '';
             }
         }
 
         // Evento de cierre de la modal
-        $('#rutaModal').on('hidden.bs.modal', function () {
+        $('#rutaModal').on('hidden.bs.modal', function () 
+        {
             limpiarCamposModal(); // Llama a la función para limpiar los campos
         });
     
@@ -1165,19 +1198,25 @@
                     console.log("Tipo de respuesta:", typeof response);
                     console.log("Respuesta completa de la API:", response);
 
-                    try {
+                    try 
+                    {
                         // Extraemos el contenido de `d` si existe
                         let responseData = response.d ? response.d : response;
 
-                        if (typeof responseData === "string") {
+                        if (typeof responseData === "string") 
+                        {
                             // Buscamos la primera llave '{' para extraer el JSON real
                             let jsonStart = responseData.indexOf('{');
-                            if (jsonStart !== -1) {
+                            if (jsonStart !== -1) 
+                            {
                                 let jsonString = responseData.substring(jsonStart); // Extraemos solo la parte JSON
                                 
-                                try {
+                                try 
+                                {
                                     responseData = JSON.parse(jsonString);
-                                } catch (parseError) {
+                                } 
+                                catch (parseError) 
+                                {
                                     console.error("❌ Error al parsear la respuesta:", parseError);
                                     Swal.fire({
                                         icon: 'error',
@@ -1187,7 +1226,9 @@
                                     });
                                     return;
                                 }
-                            } else {
+                            } 
+                            else 
+                            {
                                 console.error("❌ No se encontró JSON válido en la respuesta.");
                                 Swal.fire({
                                     icon: 'error',
@@ -1202,7 +1243,8 @@
                         console.log("📌 Respuesta después del parseo:", responseData);
 
                         // Validamos si la respuesta contiene los datos esperados
-                        if (responseData.error) {
+                        if (responseData.error) 
+                        {
                             // Si existe un error en la respuesta, mostrar el mensaje de error
                             console.error("❌ Error en la API:", responseData.message || "Error desconocido");
                             Swal.fire({
@@ -1211,7 +1253,9 @@
                                 text: responseData.message || 'Error desconocido',
                                 confirmButtonText: 'Aceptar'
                             });
-                        } else if (responseData.id && responseData.codeGen) {
+                        } 
+                        else if (responseData.id && responseData.codeGen) 
+                        {
                             // Validamos que los campos esperados estén presentes para una respuesta exitosa
                             console.log("✅ Respuesta válida con estructura correcta.");
                             Swal.fire({
@@ -1219,11 +1263,14 @@
                                 title: '¡Éxito!',
                                 text: 'Tarjeta asignada correctamente.',
                                 confirmButtonText: 'Aceptar'
-                            }).then(() => {
+                            }).then(() => 
+                            {
                                 $("#spinner-overlay").show();
                                 changeStatus(codigoGeneracion);
                             });
-                        } else {
+                        } 
+                        else 
+                        {
                             // Si no contiene los datos esperados, mostramos un error
                             console.error("❌ Respuesta con estructura incorrecta.");
                             Swal.fire({
@@ -1234,7 +1281,9 @@
                             });
                         }
 
-                    } catch (error) {
+                    } 
+                    catch (error) 
+                    {
                         console.error("❌ Error inesperado:", error);
                         Swal.fire({
                             icon: 'error',
@@ -1244,16 +1293,20 @@
                         });
                     }
                 },
-                error: function (xhr) {
+                error: function (xhr) 
+                {
                     console.log("⚠️ Error en la solicitud AJAX");
                     console.log("Código de estado HTTP:", xhr.status);
                     console.log("Respuesta de error:", xhr.responseText);
 
                     let errorMessage = "Ocurrió un error en la solicitud.";
-                    try {
+                    try 
+                    {
                         let errorResponse = JSON.parse(xhr.responseText);
                         errorMessage = errorResponse.message || errorMessage;
-                    } catch (e) {
+                    } 
+                    catch (e) 
+                    {
                         console.error("Error al parsear la respuesta de error:", e);
                     }
 
@@ -1264,7 +1317,6 @@
                         confirmButtonText: 'Aceptar'
                     });
                 }
-
             });
         }
 
@@ -1300,19 +1352,25 @@
                 {
                     console.log("Respuesta completa de la API:", response);
 
-                    if (response.d && typeof response.d === "string") {
+                    if (response.d && typeof response.d === "string") 
+                    {
                         console.log("Estructura dentro de response.d:", response.d);
 
                         let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
 
-                        for (const key in response.d) {
-                            if (response.d.hasOwnProperty(key)) {
+                        for (const key in response.d) 
+                        {
+                            if (response.d.hasOwnProperty(key)) 
+                            {
                                 let value = response.d[key];
 
                                 // Si el valor es un objeto, lo convertimos en un JSON legible
-                                if (typeof value === "string" && value !== null) {
+                                if (typeof value === "string" && value !== null) 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
-                                } else {
+                                } 
+                                else 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
                                 }
                             }
@@ -1323,14 +1381,17 @@
                             title: '¡Actualización exitosa!',
                             text: 'El estado se actualizó correctamente.',
                             confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
+                        }).then((result) => 
+                        {
+                            if (result.isConfirmed) 
+                            {
                                 $("#spinner-overlay").show();
                                 location.reload();
                             }
                         });
-
-                    } else {
+                    } 
+                    else 
+                    {
                         console.error("La respuesta no es un objeto válido:", response.d);
                         Swal.fire({
                             icon: 'error',
@@ -1338,16 +1399,19 @@
                             text: typeof response.d === "string" ? response.d : 'Hubo un problema al procesar la solicitud.',
                             confirmButtonText: 'Aceptar'
                         });
-                        $("#spinner-overlay").hide(); 
 
+                        $("#spinner-overlay").hide(); 
                     }
                 },
-                complete: function () {
+                complete: function () 
+                {
                     $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, status, error) 
+                {
                     console.error("Error en la solicitud AJAX:", error);
-                    try {
+                    try 
+                    {
                         let errorResponse = JSON.parse(xhr.responseText);
                         let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
                         Swal.fire({
@@ -1356,7 +1420,9 @@
                             text: errorMessage,
                             confirmButtonText: 'Aceptar'
                         });
-                    } catch (e) {
+                    } 
+                    catch (e) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -1390,7 +1456,6 @@
         {
             // Cerrar modalReportar
             $('#modalReportar').modal('hide');
-
             // Abrir rutaModal
             $('#rutaModal').modal('show');
         });
@@ -1424,22 +1489,27 @@
                 data: JSON.stringify({ codigoGeneracion: codigoGeneracion, comentario: comentario }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) {
+                success: function(response) 
+                {
                     // Analizar el JSON recibido
                     var responseData = response.d; // Asegúrate de adaptar según la estructura de tu backend
                     //console.log("Respuesta del servidor:", responseData);
 
-                    if (responseData && responseData.success) {
+                    if (responseData && responseData.success) 
+                    {
                         Swal.fire({
                             icon: 'success',
                             title: 'Éxito',
                             text: 'El comentario fue procesado correctamente.',
                             confirmButtonText: 'Aceptar'
-                        }).then(() => {
+                        }).then(() => 
+                        {
                             $('#modalReportar').modal('hide'); // Ocultar la modal
                             location.reload();
                         });
-                    } else {
+                    } 
+                    else 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -1461,6 +1531,5 @@
             });
         }
     </script>
-
 </body>
 </html>

@@ -15,122 +15,150 @@ using System.Web.Services;
 using System.Text;
 using System.Diagnostics;
 
-
 public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
-{
-    if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
     {
-        string username = Request.Cookies["username"].Value;
-        string cod_bascula = Request.Cookies["cod_bascula"].Value;
-        string cod_usuario = Request.Cookies["cod_usuario"].Value;
-        string cod_turno = Request.Cookies["cod_turno"].Value;
-
-        this.LogEvent("Inicio de la carga de la página Chequeo de informacion.");
-
-        if (!IsPostBack)
+        if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
         {
-            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            string username = Request.Cookies["username"].Value;
+            string cod_bascula = Request.Cookies["cod_bascula"].Value;
+            string cod_usuario = Request.Cookies["cod_usuario"].Value;
+            string cod_turno = Request.Cookies["cod_turno"].Value;
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            using (WebClient client = new WebClient())
+            this.LogEvent("Inicio de la carga de la página Chequeo de informacion.");
+
+            if (!IsPostBack)
             {
-                client.Headers.Add("Authorization", "Bearer " + token);
-                client.Encoding = Encoding.UTF8;
+                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
+                string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
-                try
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                using (WebClient client = new WebClient())
                 {
-                    string responseBody = client.DownloadString(url);
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
 
-                    // Deserialización de datos
-                    var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
-
-                    // Definir la zona horaria de UTC -6
-                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
-
-                    // Convertir dateTimePrecheckeo a UTC -6
-                    foreach (var item in data)
+                    try
                     {
-                        if (item.dateTimePrecheckeo != DateTime.MinValue)
+                        string responseBody = client.DownloadString(url);
+
+                        // Deserialización de datos
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                        // Definir la zona horaria de UTC -6
+                        TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+
+                        // Convertir dateTimePrecheckeo a UTC -6
+                        foreach (var item in data)
                         {
-                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
-                        }
-                    }
-
-                    // Ordenar por dateTimePrecheckeo
-                    data = data
-                           .Where(item => item.dateTimePrecheckeo != DateTime.MinValue) // Validar que tenga un valor válido
-                           .OrderBy(item => item.dateTimePrecheckeo) // Ordenar por la propiedad
-                           .ToList();
-
-                    // Filtrado y conteo
-                    var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
-                    var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
-
-                    lblCountP.Text = truckTypeP.Count.ToString();
-                    lblCountV.Text = truckTypeV.Count.ToString();
-
-                    // Actualización de ingenioCounts
-                    var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
-                    var ingenioCounts = new Dictionary<string, int>();
-
-                    foreach (var item in data)
-                    {
-                        var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
-                        if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
-                        {
-                            if (ingenioCounts.ContainsKey(ingenioNavCode))
+                            if (item.dateTimePrecheckeo != DateTime.MinValue)
                             {
-                                ingenioCounts[ingenioNavCode]++;
-                            }
-                            else
-                            {
-                                ingenioCounts[ingenioNavCode] = 1;
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
                             }
                         }
-                    }
 
-                    // Asignar valores a los TextBox correspondientes
-                    for (int i = 1; i <= validIngenios.Length; i++)
-                    {
-                        var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + i.ToString()) as TextBox;
-                        if (txtIngenioQuantity != null)
+                        // Ordenar por dateTimePrecheckeo
+                        data = data
+                            .Where(item => item.dateTimePrecheckeo != DateTime.MinValue) // Validar que tenga un valor válido
+                            .OrderBy(item => item.dateTimePrecheckeo) // Ordenar por la propiedad
+                            .ToList();
+
+                        // Filtrado y conteo
+                        var truckTypeP = data.Where(item => item.vehicle.truckType == "P" || item.vehicle.truckType == "R").ToList();
+                        var truckTypeV = data.Where(item => item.vehicle.truckType == "V").ToList();
+
+                        lblCountP.Text = truckTypeP.Count.ToString();
+                        lblCountV.Text = truckTypeV.Count.ToString();
+
+                        // Actualización de ingenioCounts
+                        var validIngenios = new string[] { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+                        var ingenioCounts = new Dictionary<string, int>();
+
+                        foreach (var item in data)
                         {
-                            txtIngenioQuantity.Text = ingenioCounts.ContainsKey(validIngenios[i - 1]) 
-                                ? ingenioCounts[validIngenios[i - 1]].ToString() 
-                                : "0";
+                            var ingenioNavCode = item.ingenio != null ? item.ingenio.ingenioNavCode : null;
+                            if (ingenioNavCode != null && validIngenios.Contains(ingenioNavCode))
+                            {
+                                if (ingenioCounts.ContainsKey(ingenioNavCode))
+                                {
+                                    ingenioCounts[ingenioNavCode]++;
+                                }
+                                else
+                                {
+                                    ingenioCounts[ingenioNavCode] = 1;
+                                }
+                            }
                         }
+
+                        // Asignar valores a los TextBox correspondientes
+                        for (int i = 1; i <= validIngenios.Length; i++)
+                        {
+                            var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + i.ToString()) as TextBox;
+                            if (txtIngenioQuantity != null)
+                            {
+                                txtIngenioQuantity.Text = ingenioCounts.ContainsKey(validIngenios[i - 1]) 
+                                    ? ingenioCounts[validIngenios[i - 1]].ToString() 
+                                    : "0";
+                            }
+                        }
+
+                        // Vincular datos ordenados a los Repeaters
+                        rptRutas1.DataSource = truckTypeP;
+                        rptRutas1.DataBind();
+
+                        rptRutas2.DataSource = truckTypeV;
+                        rptRutas2.DataBind();
                     }
-
-                    // Vincular datos ordenados a los Repeaters
-                    rptRutas1.DataSource = truckTypeP;
-                    rptRutas1.DataBind();
-
-                    rptRutas2.DataSource = truckTypeV;
-                    rptRutas2.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    lblCountP.Text = "0";
-                    lblCountV.Text = "0";
-                    // Registrar el error en un archivo de log o consola
-                    Console.WriteLine("Error: " + ex.Message);
+                    catch (Exception ex)
+                    {
+                        lblCountP.Text = "0";
+                        lblCountV.Text = "0";
+                        // Registrar el error en un archivo de log o consola
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
                 }
             }
         }
+        else
+        {
+            Response.Redirect("login.aspx");
+        }
     }
-    else
-    {
-        Response.Redirect("login.aspx");
-    }
-}
-
 
     public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
+        string logDirectory = Path.GetDirectoryName(logFilePath);
+
+        // Crear el directorio si no existe
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Convertir el mensaje a string
+        string logMessage;
+        try
+        {
+            logMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+        }
+        catch
+        {
+            // Si la serialización falla, usar el método ToString() o "null" si es nulo
+            logMessage = (message != null) ? message.ToString() : "null";
+        }
+
+        // Formatear el mensaje de log
+        string formattedLog = String.Format("{0:yyyy-MM-dd HH:mm:ss} - {1}{2}", DateTime.Now, logMessage, Environment.NewLine);
+
+        // Escribir el log en el archivo
+        File.AppendAllText(logFilePath, formattedLog);
+    }
+    // Método para escribir en el Visor de eventos
+    public static void LogEventS(object message)
+    {
+        string logFilePath = "C:/trasacciones-almapac-main/Logs/MyAppLog.txt"; // Ruta absoluta
         string logDirectory = Path.GetDirectoryName(logFilePath);
 
         // Crear el directorio si no existe
@@ -519,9 +547,14 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             return "Error: La transacción no puede estar vacía.";
         }
 
+        // Obtener el username de las cookies
+        string username = HttpContext.Current.Request.Cookies["username"] != null 
+                        ? HttpContext.Current.Request.Cookies["username"].Value 
+                        : "Usuario no identificado";
+
         string url = "https://apiclientes.almapac.com:9010/api/status/push/";
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-        
+
         string responseContent;
 
         using (var client = new WebClient())
@@ -529,7 +562,12 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-            var requestBody = new { codeGen = codeGen, predefinedStatusId = predefinedStatusId };
+            var requestBody = new 
+            { 
+                codeGen = codeGen, 
+                predefinedStatusId = predefinedStatusId 
+               // leveransUsername = username  // Enviar el username en la solicitud si es necesario
+            };
             var json = JsonConvert.SerializeObject(requestBody);
 
             try
@@ -538,18 +576,22 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             }
             catch (WebException webEx)
             {
-                using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
-                {
-                    return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + reader.ReadToEnd();
-                }
+                string errorMessage = string.Format("Error en la solicitud: {0} - Respuesta del servidor: {1}", 
+                                                webEx.Message, new StreamReader(webEx.Response.GetResponseStream()).ReadToEnd());
+                LogEventS(errorMessage);
+                return errorMessage;
             }
+            
             catch (Exception ex)
             {
-                return "Error inesperado: " + ex.Message;
+                string errorMessage = string.Format("Error inesperado: {0}", ex.Message);
+                LogEventS(errorMessage);
+                return errorMessage;
             }
         }
 
-        return "Respuesta del servidor: " + responseContent;
+        return string.Format("Respuesta del servidor: {0}. Usuario que realizó la solicitud: {1}", 
+                            responseContent, username);
     }
 
     [WebMethod]
