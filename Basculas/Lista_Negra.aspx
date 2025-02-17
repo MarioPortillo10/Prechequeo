@@ -413,7 +413,7 @@
     <!-- Footer -->
     <footer class="flex items-center justify-center py-2 text-sm text-gray-300 font-bold" 
             style="font-family: 'Gilroy-Light', sans-serif; background-color: #242424; color: white; width: 100%; position: fixed; bottom: 0; left: 0;">
-        <span>© 2024 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
+        <span>© 2025 Almacenadora del Pacífico S.A. de C.V. - Todos los derechos reservados</span>
     </footer>
        
         <!-- Modal RESTABLECER CONTRASEÑA -->

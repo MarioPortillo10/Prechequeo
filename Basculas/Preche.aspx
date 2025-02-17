@@ -436,7 +436,7 @@
 
     <!-- Footer -->
     <footer>
-        © 2024 Almacenes del Pacífico - Todos los derechos reservados
+        © 2025 Almacenes del Pacífico - Todos los derechos reservados
     </footer>
 </form>
 

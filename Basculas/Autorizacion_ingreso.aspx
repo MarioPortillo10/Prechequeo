@@ -320,10 +320,6 @@
 
             <!-- Navbar Links -->
             <nav id="navbar" class="hidden md:flex space-x-4 text-sm text-gray-600">
-                <a href="Default.aspx" class="hover:text-orange-600 flex items-center">
-                    <i class="far fa-file-alt mr-2"></i>Pre-Transacciones
-                </a>
-
                 <div class="relative group hover:bg-gray-100 p-2 rounded">
                     <button class="bg-primary text-white flex items-center px-2 py-1 rounded focus:outline-none">
                         <span>Monitoreo</span>
@@ -355,7 +351,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-800 flex items-center mt-2" style="text-decoration: none;">
+                <a href="Tiempos_Azucar.aspx" class="hover:text-orange-800 flex items-center px-2 py-2" style="text-decoration: none;">
                     <i class="fas fa-clock mr-2"></i>Recepción Azúcar
                 </a>
             </nav>
