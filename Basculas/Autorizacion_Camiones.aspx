@@ -1433,7 +1433,7 @@
                 }
             });
         }
-
+        document.getElementById("btnReportar").style.display = "none";
         document.getElementById('btnReportar').addEventListener('click', function() 
         {
             // Obtener el valor de codigoGeneracion desde el input
