@@ -55,7 +55,7 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
     {
         try
         {
-            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3";
+            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3?page=1&size=10000";
             string url2 = "https://apiclientes.almapac.com:9010/api/queue/count/";
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc"; // Token de autenticación
 

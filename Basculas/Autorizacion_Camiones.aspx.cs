@@ -30,7 +30,7 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
 
             if (!IsPostBack)
             {
-                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?includeAttachments=true";
+                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/2?page=1&size=10000&includeAttachments=true";
                 string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
