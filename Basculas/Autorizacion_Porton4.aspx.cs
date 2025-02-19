@@ -31,7 +31,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         if (!IsPostBack)
         {
             // URL que deseas hacer el fetch
-            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4";
+            string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4?page=1&size=10000&includeAttachments=true";
 
             // Token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
