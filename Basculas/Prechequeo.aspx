@@ -83,26 +83,53 @@
         color: white;
     }
 
-    .truck-image-container 
-    {
-        display: flex;
-        align-items: flex-start;
-        flex: 0 0 auto;
-        min-height: 200px;
-        margin-top: -120px;
-        position: relative;
-        top: -80px;
-        left: -150px;
-    }
+    .truck-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
 
-    .truck-image 
-    {
-        max-width: 1000px;
-        height: auto;
-        max-height: 100%;
-        align-self: flex-start;
-        margin-top: 0;
-    }
+.truck-image {
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 5px solid white; /* Borde blanco */
+    object-fit: cover;
+    position: relative;
+    z-index: 2; /* Asegura que la imagen esté frente al primer círculo pero detrás del segundo */
+    top: 65px;  /* Ajuste fino de la posición */
+    left: 50px; /* Ajuste fino de la posición */
+}
+
+/* Primer círculo gris */
+.truck-image-container::after {
+    content: "";
+    position: absolute;
+    width: 265px;  
+    height: 265px;
+    background-color: rgba(183, 183, 186, 0.6); 
+    border-radius: 50%;
+    top: 40px;  
+    left: -20px; 
+    z-index: 1; /* Asegura que este círculo esté detrás de la imagen */
+}
+
+/* Segundo círculo gris */
+.truck-image-container::before {
+    content: "";
+    position: absolute;
+    width: 175px; /* Tamaño del segundo círculo */
+    height: 175px;
+    background-color: rgba(183, 183, 186, 0.6); /* Color gris más transparente */
+    border-radius: 50%;
+    top: 300px; /* Ajusta la posición */
+    left: 305px; /* Ajusta la posición */
+    z-index: 3; /* Asegura que el segundo círculo quede frente a la imagen */
+}
+
+
+
 
     .text-section 
     {
@@ -534,7 +561,7 @@
     <main class="main">
         <!-- Truck Image -->
         <div class="truck-image-container">
-            <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/refs/heads/main/imagen-camionero-_1_.webp" alt="Truck Image" class="truck-image">
+            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/DSC_0013-2%20(1).jpg?raw=true" alt="Truck Image" class="truck-image">
         </div>
 
         <!-- Text Section -->
