@@ -856,45 +856,92 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () 
-        {
-            let menuOpciones = getCookie("menuOpciones");
-            if (menuOpciones) 
-            {
-                let opciones = menuOpciones.split(",");
-
-                // Ocultar todas las opciones del menú
-                document.querySelectorAll("#navbar a, #mobile-menu a").forEach(link => 
-                {
-                    link.style.display = "none";
-                });
-
-                // Mostrar solo las opciones permitidas
-                opciones.forEach(opcion => 
-                {
-                    document.querySelectorAll(`a[href='${opcion}']`).forEach(link => 
-                    {
-                        link.style.display = "block";
-                    });
-                });
-            }
-        });
-
-        function getCookie(name) 
-        {
-            let cookieArr = document.cookie.split(";");
-            for (let i = 0; i < cookieArr.length; i++) 
-            {
-                let cookiePair = cookieArr[i].split("=");
-                if (name === cookiePair[0].trim()) 
-                {
-                    return decodeURIComponent(cookiePair[1]);
+        // Función para obtener el valor de una cookie
+        function getCookie(nombre) {
+            let nombreEQ = nombre + "=";
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nombreEQ) === 0) {
+                    return cookie.substring(nombreEQ.length, cookie.length);
                 }
             }
             return null;
         }
-    </script>
 
+        // Función que define qué opciones están permitidas según el rol del usuario y usuario específico
+        function obtenerOpcionesPorRol(codRol, username) {
+            let opcionesGenerales = {
+                1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
+                2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
+                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx"], // Pesador
+                4: ["Tiempos_Azucar.aspx"], // Operador (por defecto)
+                5: ["Autorizacion_Porton4.aspx"]
+            };
+
+            let opcionesEspecificasRol4 = {
+                "S0001": ["Autorizacion_Camiones.aspx"],
+                "S0002": ["Autorizacion_Camiones.aspx"],
+                "S0003": ["Autorizacion_ingreso.aspx"],
+                "S0004": ["Autorizacion_Porton4.aspx"],
+                "S0005": ["Autorizacion_Porton4.aspx"],
+                "S0006": ["Autorizacion_Porton4.aspx"]
+            };
+
+            // Si el usuario es rol 4 y tiene permisos específicos, retornarlos; de lo contrario, usar los permisos generales del rol
+            if (codRol === 4) {
+                return opcionesEspecificasRol4[username] || opcionesGenerales[4];
+            }
+
+            return opcionesGenerales[codRol] || [];
+        }
+
+        // Función para ocultar enlaces del menú según los permisos y redirigir si es necesario
+        function filtrarOpcionesMenu() {
+            let username = getCookie("username");
+            let codRol = parseInt(getCookie("cod_rol"), 10);
+
+            if (!username || isNaN(codRol)) {
+                console.error("No se encontraron las cookies de usuario o rol.");
+                return;
+            }
+
+            let opcionesPermitidas = obtenerOpcionesPorRol(codRol, username);
+            console.log("Usuario:", username);
+            console.log("Código de Rol:", codRol);
+            console.log("Opciones Permitidas:", opcionesPermitidas);
+
+            // Si el usuario solo tiene una opción disponible, redirigirlo automáticamente
+            if (opcionesPermitidas.length === 1) {
+                let urlDestino = opcionesPermitidas[0];
+                if (window.location.pathname !== "/" + urlDestino) {
+                    window.location.href = urlDestino; // Redirigir automáticamente
+                    return;
+                }
+            }
+
+            // Ocultar enlaces no permitidos
+            document.querySelectorAll("nav a").forEach((enlace) => {
+                let href = enlace.getAttribute("href");
+
+                if (!opcionesPermitidas.includes(href)) {
+                    enlace.style.display = "none";
+                }
+            });
+
+            // Ocultar elementos dentro de dropdowns
+            document.querySelectorAll(".relative.group .block a").forEach((enlace) => {
+                let href = enlace.getAttribute("href");
+
+                if (!opcionesPermitidas.includes(href)) {
+                    enlace.parentElement.style.display = "none";
+                }
+            });
+        }
+
+        // Ejecutar la función cuando la página haya cargado
+        document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () 
@@ -1385,8 +1432,8 @@
                         {
                             if (result.isConfirmed) 
                             {
-                                $("#spinner-overlay").show();
                                 location.reload();
+                                $("#spinner-overlay").show();
                             }
                         });
                     } 
@@ -1433,7 +1480,7 @@
                 }
             });
         }
-        document.getElementById("btnReportar").style.display = "none";
+
         document.getElementById('btnReportar').addEventListener('click', function() 
         {
             // Obtener el valor de codigoGeneracion desde el input
