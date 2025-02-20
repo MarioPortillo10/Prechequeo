@@ -22,7 +22,7 @@
     body 
     {
         font-family: 'Poppins', sans-serif;
-        background-color: #f3f3f3;
+        background-color: #fff;
         display: flex;
         flex-direction: column;
         margin: 0;
@@ -83,53 +83,54 @@
         color: white;
     }
 
-    .truck-image-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+    .truck-image-container 
+    {
+        display: flex;
+        align-items: flex-start;
+        flex: 0 0 auto;
+        position: relative;
+    }
 
-.truck-image {
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    border: 5px solid white; /* Borde blanco */
-    object-fit: cover;
-    position: relative;
-    z-index: 2; /* Asegura que la imagen esté frente al primer círculo pero detrás del segundo */
-    top: 65px;  /* Ajuste fino de la posición */
-    left: 50px; /* Ajuste fino de la posición */
-}
+    .truck-image 
+    {
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        border: 5px solid white; /* Borde blanco */
+        object-fit: cover;
+        position: relative;
+        z-index: 2; /* Asegura que la imagen esté frente al primer círculo pero detrás del segundo */
+        top: 105px;  /* Ajuste fino de la posición */
+        left: 50px; /* Ajuste fino de la posición */
+    }
 
-/* Primer círculo gris */
-.truck-image-container::after {
-    content: "";
-    position: absolute;
-    width: 265px;  
-    height: 265px;
-    background-color: rgba(183, 183, 186, 0.6); 
-    border-radius: 50%;
-    top: 40px;  
-    left: -20px; 
-    z-index: 1; /* Asegura que este círculo esté detrás de la imagen */
-}
+    /* Primer círculo gris */
+    .truck-image-container::after 
+    {
+        content: "";
+        position: absolute;
+        width: 265px;  
+        height: 265px;
+        background-color: rgba(183, 183, 186, 0.6); 
+        border-radius: 50%;
+        top: 70px;  
+        left: -20px; 
+        z-index: 1; /* Asegura que este círculo esté detrás de la imagen */
+    }
 
-/* Segundo círculo gris */
-.truck-image-container::before {
-    content: "";
-    position: absolute;
-    width: 175px; /* Tamaño del segundo círculo */
-    height: 175px;
-    background-color: rgba(183, 183, 186, 0.6); /* Color gris más transparente */
-    border-radius: 50%;
-    top: 300px; /* Ajusta la posición */
-    left: 305px; /* Ajusta la posición */
-    z-index: 3; /* Asegura que el segundo círculo quede frente a la imagen */
-}
-
-
-
+    /* Segundo círculo gris */
+    .truck-image-container::before 
+    {
+        content: "";
+        position: absolute;
+        width: 175px; /* Tamaño del segundo círculo */
+        height: 175px;
+        background-color: rgba(183, 183, 186, 0.6); /* Color gris más transparente */
+        border-radius: 50%;
+        top: 335px; /* Ajusta la posición */
+        left: 295px; /* Ajusta la posición */
+        z-index: 3; /* Asegura que el segundo círculo quede frente a la imagen */
+    }
 
     .text-section 
     {
@@ -269,7 +270,7 @@
         width: 100%;
         max-width: 1200px;
         height: 1075px; /* Altura ajustable */
-        background-image: url('https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/Imagenes/tickets%20(1).png?raw=true');
+        background-image: url('https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/refs/heads/main/tickets-_1_-_1_.webp');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: bottom; /* Imagen alineada al bottom */
@@ -561,7 +562,7 @@
     <main class="main">
         <!-- Truck Image -->
         <div class="truck-image-container">
-            <img src="https://github.com/MarioPortillo10/Imagenes-ALMAPAC/blob/main/DSC_0013-2%20(1).jpg?raw=true" alt="Truck Image" class="truck-image">
+            <img src="https://raw.githubusercontent.com/MarioPortillo10/Imagenes-ALMAPAC/refs/heads/main/DSC_0013-2-_2_.webp" alt="Truck Image" class="truck-image">
         </div>
 
         <!-- Text Section -->
