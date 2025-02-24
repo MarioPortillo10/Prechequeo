@@ -844,74 +844,74 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        function obtenerOpcionesPorRol(codRol) 
-        {
-            let opciones = {
-                1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
-                2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
-                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
-                4: ["Tiempos_Azucar.aspx"], // Rol 4
-                5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
-            };
+        function obtenerOpcionesPorRol(codRol) {
+    let opciones = {
+        1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
+        2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
+        3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
+        4: ["Tiempos_Azucar.aspx"], // Rol 4 solo tiene acceso a esta página
+        5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
+    };
 
-            return opciones[codRol] || [];
+    return opciones[codRol] || [];
+}
+
+function filtrarOpcionesMenu() {
+    let codRol = parseInt(getCookie("cod_rol"), 10);
+    let urlActual = window.location.pathname.split('/').pop(); // Obtiene solo el nombre del archivo
+
+    if (isNaN(codRol)) {
+        console.error("No se encontró rol en las cookies");
+        return;
+    }
+
+    let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
+    console.log("Código de Rol:", codRol);
+    console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
+    console.log("URL Actual:", urlActual);
+
+    // 🔹 Si el usuario solo tiene acceso a una página, ocultar el menú y redirigir si es necesario
+    if (opcionesPermitidas.length === 1) {
+        let menu = document.querySelector("nav"); // Asegúrate de que el selector coincide con tu menú
+        if (menu) {
+            menu.style.display = "none"; // Oculta el menú completamente
         }
 
-        function filtrarOpcionesMenu() 
-        {
-            let codRol = parseInt(getCookie("cod_rol"), 10);
-            let urlActual = window.location.pathname; // Obtiene la URL actual sin el dominio
-
-            if (isNaN(codRol)) 
-            {
-                console.error("No se encontró rol en las cookies");
-                return;
-            }
-
-            let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
-            console.log("Código de Rol:", codRol);
-            console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
-            console.log("URL Actual:", urlActual);
-
-            // 🔹 Ocultar TODAS las opciones del menú (dentro y fuera de dropdowns)
-            document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => 
-            {
-                let urlPagina = enlace.getAttribute("href");
-                if (!opcionesPermitidas.includes(urlPagina)) 
-                {
-                    enlace.style.display = "none";
-                    console.log("Enlace oculto:", urlPagina);
-                }
-            });
-
-            // 🔹 Redirigir si solo tiene acceso a una página
-            if (opcionesPermitidas.length === 1 && urlActual !== opcionesPermitidas[0]) 
-            {
-                console.log("Redirigiendo a:", opcionesPermitidas[0]);
-                window.location.replace(opcionesPermitidas[0]);
-            }
+        if (urlActual !== opcionesPermitidas[0]) {
+            console.log("Redirigiendo a:", opcionesPermitidas[0]);
+            window.location.replace(opcionesPermitidas[0]);
         }
+        return; // 🚨 Evita que el código siga ejecutándose
+    }
 
-        // Función para obtener cookies
-        function getCookie(nombre) 
-        {
-            let nombreEQ = nombre + "=";
-            let cookies = document.cookie.split(";");
-
-            for (let i = 0; i < cookies.length; i++) 
-            {
-                let cookie = cookies[i].trim();
-                if (cookie.indexOf(nombreEQ) === 0) 
-                {
-                    return cookie.substring(nombreEQ.length);
-                }
-            }
-
-            return null;
+    // 🔹 Ocultar opciones del menú según el rol
+    document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => {
+        let urlPagina = enlace.getAttribute("href").split('/').pop();
+        if (!opcionesPermitidas.includes(urlPagina)) {
+            enlace.style.display = "none";
+            console.log("Enlace oculto:", urlPagina);
         }
+    });
+}
 
-        // Ejecutar cuando el DOM esté completamente cargado
-        document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
+// Función para obtener cookies
+function getCookie(nombre) {
+    let nombreEQ = nombre + "=";
+    let cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        if (cookie.indexOf(nombreEQ) === 0) {
+            return cookie.substring(nombreEQ.length);
+        }
+    }
+
+    return null;
+}
+
+// Ejecutar cuando el DOM esté completamente cargado
+document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
+
     </script>
     
     <script>
