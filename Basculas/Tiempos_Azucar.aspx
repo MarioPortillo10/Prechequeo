@@ -844,90 +844,73 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        // Función para obtener el valor de una cookie
-        function getCookie(nombre) {
-            let nombreEQ = nombre + "=";
-            let cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.indexOf(nombreEQ) === 0) {
-                    return cookie.substring(nombreEQ.length, cookie.length);
-                }
-            }
-            return null;
-        }
-
-        // Función que define qué opciones están permitidas según el rol del usuario y usuario específico
-        function obtenerOpcionesPorRol(codRol, username) {
-            let opcionesGenerales = {
+        function obtenerOpcionesPorRol(codRol) 
+        {
+            let opciones = {
                 1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
                 2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
-                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx"], // Pesador
-                4: ["Tiempos_Azucar.aspx"], // Operador (por defecto)
-                5: ["Autorizacion_Porton4.aspx"]
+                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
+                4: ["Tiempos_Azucar.aspx"], // Rol 4
+                5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
             };
 
-            let opcionesEspecificasRol4 = {
-                "S0001": ["Autorizacion_Camiones.aspx"],
-                "S0002": ["Autorizacion_Camiones.aspx"],
-                "S0003": ["Autorizacion_ingreso.aspx"],
-                "S0004": ["Autorizacion_Porton4.aspx"],
-                "S0005": ["Autorizacion_Porton4.aspx"],
-                "S0006": ["Autorizacion_Porton4.aspx"]
-            };
-
-            // Si el usuario es rol 4 y tiene permisos específicos, retornarlos; de lo contrario, usar los permisos generales del rol
-            if (codRol === 4) {
-                return opcionesEspecificasRol4[username] || opcionesGenerales[4];
-            }
-
-            return opcionesGenerales[codRol] || [];
+            return opciones[codRol] || [];
         }
 
-        // Función para ocultar enlaces del menú según los permisos y redirigir si es necesario
-        function filtrarOpcionesMenu() {
-            let username = getCookie("username");
+        function filtrarOpcionesMenu() 
+        {
             let codRol = parseInt(getCookie("cod_rol"), 10);
+            let urlActual = window.location.pathname; // Obtiene la URL actual sin el dominio
 
-            if (!username || isNaN(codRol)) {
-                console.error("No se encontraron las cookies de usuario o rol.");
+            if (isNaN(codRol)) 
+            {
+                console.error("No se encontró rol en las cookies");
                 return;
             }
 
-            let opcionesPermitidas = obtenerOpcionesPorRol(codRol, username);
-            console.log("Usuario:", username);
+            let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
             console.log("Código de Rol:", codRol);
-            console.log("Opciones Permitidas:", opcionesPermitidas);
+            console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
+            console.log("URL Actual:", urlActual);
 
-            // Si el usuario solo tiene una opción disponible, redirigirlo automáticamente
-            if (opcionesPermitidas.length === 1) {
-                let urlDestino = opcionesPermitidas[0];
-                if (window.location.pathname !== "/" + urlDestino) {
-                    window.location.href = urlDestino; // Redirigir automáticamente
-                    return;
+            // 🔹 Ocultar TODAS las opciones del menú (dentro y fuera de dropdowns)
+            document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => 
+            {
+                let urlPagina = enlace.getAttribute("href");
+                if (!opcionesPermitidas.includes(urlPagina)) 
+                {
+                    enlace.style.display = "none";
+                    console.log("Enlace oculto:", urlPagina);
+                }
+            });
+
+            // 🔹 Redirigir si solo tiene acceso a una página
+            if (opcionesPermitidas.length === 1 && urlActual !== opcionesPermitidas[0]) 
+            {
+                console.log("Redirigiendo a:", opcionesPermitidas[0]);
+                window.location.replace(opcionesPermitidas[0]);
+            }
+        }
+
+        // Función para obtener cookies
+        function getCookie(nombre) 
+        {
+            let nombreEQ = nombre + "=";
+            let cookies = document.cookie.split(";");
+
+            for (let i = 0; i < cookies.length; i++) 
+            {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nombreEQ) === 0) 
+                {
+                    return cookie.substring(nombreEQ.length);
                 }
             }
 
-            // Ocultar enlaces no permitidos
-            document.querySelectorAll("nav a").forEach((enlace) => {
-                let href = enlace.getAttribute("href");
-
-                if (!opcionesPermitidas.includes(href)) {
-                    enlace.style.display = "none";
-                }
-            });
-
-            // Ocultar elementos dentro de dropdowns
-            document.querySelectorAll(".relative.group .block a").forEach((enlace) => {
-                let href = enlace.getAttribute("href");
-
-                if (!opcionesPermitidas.includes(href)) {
-                    enlace.parentElement.style.display = "none";
-                }
-            });
+            return null;
         }
 
-        // Ejecutar la función cuando la página haya cargado
+        // Ejecutar cuando el DOM esté completamente cargado
         document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
     </script>
     
