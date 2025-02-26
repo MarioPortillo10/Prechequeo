@@ -762,7 +762,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        function obtenerOpcionesPorRol(codRol) {
+       function obtenerOpcionesPorRol(codRol) {
     let opciones = {
         1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
         2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
@@ -829,7 +829,6 @@ function getCookie(nombre) {
 
 // Ejecutar cuando el DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
-
     </script>
 
     <script>

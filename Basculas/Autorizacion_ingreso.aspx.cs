@@ -53,28 +53,33 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 
     private void CargarDatos()
     {
-        try
+        // Forzamos el uso de TLS 1.2
+        System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+        string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3?page=1&size=10000&includeAttachments=true";
+        string url2 = "https://apiclientes.almapac.com:9010/api/queue/count/";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+
+        // Array con los códigos válidos para ingenio
+        string[] validIngenios = { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+
+        using (WebClient client = new WebClient())
         {
-            string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/3?page=1&size=10000&includeAttachments=true";
-            string url2 = "https://apiclientes.almapac.com:9010/api/queue/count/";
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc"; // Token de autenticación
+            client.Encoding = Encoding.UTF8;
+            client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-            using (WebClient client = new WebClient())
+            // Procesamos la primera API (url1)
+            try
             {
-                client.Encoding = Encoding.UTF8;
-                client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
-                client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
-                // Petición a la primera API
                 string response1 = client.DownloadString(url1);
                 var data1 = JsonConvert.DeserializeObject<List<Post>>(response1);
 
                 if (data1 != null)
                 {
-                    // Definir la zona horaria de UTC -6
-                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+                    // Definir la zona horaria UTC -6 (verifica que el ID sea correcto en tu entorno)
+                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
 
-                    // Convertir dateTimePrecheckeo a UTC -6
                     foreach (var item in data1)
                     {
                         if (item.dateTimePrecheckeo != DateTime.MinValue)
@@ -97,10 +102,11 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
                         }
                     }
 
+                    // Asignar conteos de trucks
                     lblCountP.Text = truckTypeP.Count.ToString();
                     lblCountV.Text = truckTypeV.Count.ToString();
 
-                    string[] validIngenios = { "001001-003", "007001-001", "007001-003", "001001-001", "001001-004", "001001-002" };
+                    // Contar ingenios
                     var ingenioCounts = new Dictionary<string, int>();
 
                     foreach (var item in data1)
@@ -115,6 +121,7 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
                         }
                     }
 
+                    // Asignar los valores a txtIngenioQuantity o "0" si no hay datos
                     for (int i = 0; i < validIngenios.Length; i++)
                     {
                         var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + (i + 1)) as TextBox;
@@ -126,14 +133,47 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
                         }
                     }
 
+                    // Enlazar datos a repeater
                     rptRutas1.DataSource = truckTypeP;
                     rptRutas1.DataBind();
 
                     rptRutas2.DataSource = truckTypeV;
                     rptRutas2.DataBind();
                 }
+                else
+                {
+                    // En ausencia de datos, asignamos valores predeterminados
+                    lblCountP.Text = "0";
+                    lblCountV.Text = "0";
+                    for (int i = 0; i < validIngenios.Length; i++)
+                    {
+                        var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + (i + 1)) as TextBox;
+                        if (txtIngenioQuantity != null)
+                        {
+                            txtIngenioQuantity.Text = "0";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex1)
+            {
+                this.LogEvent("Error al cargar datos de url1: " + ex1.Message);
+                // En caso de error, asignar valores predeterminados a los controles relacionados con url1
+                lblCountP.Text = "0";
+                lblCountV.Text = "0";
+                for (int i = 0; i < validIngenios.Length; i++)
+                {
+                    var txtIngenioQuantity = this.FindControl("txtIngenioQuantity" + (i + 1)) as TextBox;
+                    if (txtIngenioQuantity != null)
+                    {
+                        txtIngenioQuantity.Text = "0";
+                    }
+                }
+            }
 
-                // Petición a la segunda API
+            // Procesamos la segunda API (url2)
+            try
+            {
                 string response2 = client.DownloadString(url2);
                 var queueData = JsonConvert.DeserializeObject<QueueData>(response2);
 
@@ -148,17 +188,12 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
                     lblP.Text = "0";
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            lblV.Text = "0";
-            lblP.Text = "0";
-            lblCountP.Text = "0";
-            lblCountV.Text = "0";
-
-            this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
-            this.LogEvent("Mensaje de excepción: " + ex.Message);
-            this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+            catch (Exception ex2)
+            {
+                this.LogEvent("Error al cargar datos de url2: " + ex2.Message);
+                lblV.Text = "0";
+                lblP.Text = "0";
+            }
         }
     }
 

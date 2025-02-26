@@ -655,7 +655,6 @@ function getCookie(nombre) {
 
 // Ejecutar cuando el DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
-
     </script>
 
     <script>
