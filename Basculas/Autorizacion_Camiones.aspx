@@ -497,7 +497,6 @@
                                 <asp:TextBox ID="txtIngenioQuantity1" runat="server" ReadOnly="true" 
                                     Width="50px" CssClass="text-black text-center"
                                     style="background-color: white; border: none; color: black; border-radius: 5px;" />
-                             
                             </div>
                         </div>
 
@@ -514,7 +513,6 @@
                 </div>
             </div>
         </section>
-
 
         <div class="row ml-3" style="border: solid 0px;">
             <div class="col mt-2 mb-2">
@@ -718,10 +716,6 @@
                     </asp:Repeater>
                 </div>
             </div>
-
-
-
-
 
             </div>
         </section>
@@ -1532,6 +1526,7 @@
                             text: responseData.message,
                             confirmButtonText: 'Aceptar'
                         }).then(() => {
+                            $("#spinner-overlay").show();
                             $('#modalReportar').modal('hide'); // Ocultar la modal
                             location.reload();
                         });
