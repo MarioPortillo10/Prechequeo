@@ -296,23 +296,19 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
             string responseContent;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            // Crear la solicitud DELETE utilizando HttpWebRequest
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "DELETE"; // Especificar el método DELETE
+            request.Method = "DELETE";
             request.Headers.Add("Authorization", "Bearer " + token);
             request.ContentType = "application/json";
 
-            // Crear el objeto para enviar en el body (comentario)
             var requestBody = new { reason = comentario };
             string json = JsonConvert.SerializeObject(requestBody);
 
-            // Escribir el cuerpo de la solicitud
             using (StreamWriter writer = new StreamWriter(request.GetRequestStream()))
             {
                 writer.Write(json);
             }
 
-            // Obtener la respuesta de la solicitud
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             {
                 using (StreamReader reader = new StreamReader(response.GetResponseStream()))
@@ -321,23 +317,22 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                 }
             }
 
-            return "Respuesta del servidor: " + responseContent;
+            // Convertir la respuesta del servidor en un objeto JSON
+            return JsonConvert.SerializeObject(new { success = true, message = "Comentario guardado correctamente.", serverResponse = responseContent });
         }
         catch (WebException webEx)
         {
-            // Manejar los errores de la solicitud
             using (var reader = new StreamReader(webEx.Response.GetResponseStream()))
             {
-                return "Error en la solicitud: " + webEx.Message + " - Respuesta del servidor: " + reader.ReadToEnd();
+                string errorResponse = reader.ReadToEnd();
+                return JsonConvert.SerializeObject(new { success = false, message = "Error en la solicitud: " + webEx.Message, serverError = errorResponse });
             }
         }
         catch (Exception ex)
         {
-            // Manejar errores inesperados
-            return "Error inesperado: " + ex.Message;
+            return JsonConvert.SerializeObject(new { success = false, message = "Error inesperado: " + ex.Message });
         }
     }
-
 
     public class IngenioCount
     {

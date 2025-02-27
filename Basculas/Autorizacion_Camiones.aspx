@@ -342,7 +342,7 @@
                     <div class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden group-hover:block group-focus-within:block">
                         <div class="block px-4 py-2 bg-primary text-white rounded hover:bg-opacity-80">
                             <a href="Autorizacion_Camiones.aspx" style="text-decoration: none;">
-                                <i class="fa fa-truck mr-2"></i>Chequeo de Informacion
+                                <i class="fa fa-truck mr-2"></i>Chequeo de Información
                             </a>
                         </div>
                         <div class="block px-4 py-2 hover:bg-gray-100 text-gray-700">
@@ -387,11 +387,10 @@
         </div>
     </header>
 
- 
-  <!-- Banner -->
-  <section class="custom-banner text-center">
-    <h1>Chequeo de Informacion</h1>
-  </section>
+    <!-- Banner -->
+    <section class="custom-banner text-center">
+        <h1>Chequeo de Información</h1>
+    </section>
 
     <!-- Main Content -->
     <main class="container mx-auto py-8">
@@ -857,72 +856,72 @@
 
     <script>
        function obtenerOpcionesPorRol(codRol) {
-    let opciones = {
-        1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
-        2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
-        3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
-        4: ["Tiempos_Azucar.aspx"], // Rol 4 solo tiene acceso a esta página
-        5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
-    };
+            let opciones = {
+                1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
+                2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
+                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
+                4: ["Tiempos_Azucar.aspx"], // Rol 4 solo tiene acceso a esta página
+                5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
+            };
 
-    return opciones[codRol] || [];
-}
-
-function filtrarOpcionesMenu() {
-    let codRol = parseInt(getCookie("cod_rol"), 10);
-    let urlActual = window.location.pathname.split('/').pop(); // Obtiene solo el nombre del archivo
-
-    if (isNaN(codRol)) {
-        console.error("No se encontró rol en las cookies");
-        return;
-    }
-
-    let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
-    console.log("Código de Rol:", codRol);
-    console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
-    console.log("URL Actual:", urlActual);
-
-    // 🔹 Si el usuario solo tiene acceso a una página, ocultar el menú y redirigir si es necesario
-    if (opcionesPermitidas.length === 1) {
-        let menu = document.querySelector("nav"); // Asegúrate de que el selector coincide con tu menú
-        if (menu) {
-            menu.style.display = "none"; // Oculta el menú completamente
+            return opciones[codRol] || [];
         }
 
-        if (urlActual !== opcionesPermitidas[0]) {
-            console.log("Redirigiendo a:", opcionesPermitidas[0]);
-            window.location.replace(opcionesPermitidas[0]);
+        function filtrarOpcionesMenu() {
+            let codRol = parseInt(getCookie("cod_rol"), 10);
+            let urlActual = window.location.pathname.split('/').pop(); // Obtiene solo el nombre del archivo
+
+            if (isNaN(codRol)) {
+                console.error("No se encontró rol en las cookies");
+                return;
+            }
+
+            let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
+            console.log("Código de Rol:", codRol);
+            console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
+            console.log("URL Actual:", urlActual);
+
+            // 🔹 Si el usuario solo tiene acceso a una página, ocultar el menú y redirigir si es necesario
+            if (opcionesPermitidas.length === 1) {
+                let menu = document.querySelector("nav"); // Asegúrate de que el selector coincide con tu menú
+                if (menu) {
+                    menu.style.display = "none"; // Oculta el menú completamente
+                }
+
+                if (urlActual !== opcionesPermitidas[0]) {
+                    console.log("Redirigiendo a:", opcionesPermitidas[0]);
+                    window.location.replace(opcionesPermitidas[0]);
+                }
+                return; // 🚨 Evita que el código siga ejecutándose
+            }
+
+            // 🔹 Ocultar opciones del menú según el rol
+            document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => {
+                let urlPagina = enlace.getAttribute("href").split('/').pop();
+                if (!opcionesPermitidas.includes(urlPagina)) {
+                    enlace.style.display = "none";
+                    console.log("Enlace oculto:", urlPagina);
+                }
+            });
         }
-        return; // 🚨 Evita que el código siga ejecutándose
-    }
 
-    // 🔹 Ocultar opciones del menú según el rol
-    document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => {
-        let urlPagina = enlace.getAttribute("href").split('/').pop();
-        if (!opcionesPermitidas.includes(urlPagina)) {
-            enlace.style.display = "none";
-            console.log("Enlace oculto:", urlPagina);
+        // Función para obtener cookies
+        function getCookie(nombre) {
+            let nombreEQ = nombre + "=";
+            let cookies = document.cookie.split(";");
+
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nombreEQ) === 0) {
+                    return cookie.substring(nombreEQ.length);
+                }
+            }
+
+            return null;
         }
-    });
-}
 
-// Función para obtener cookies
-function getCookie(nombre) {
-    let nombreEQ = nombre + "=";
-    let cookies = document.cookie.split(";");
-
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i].trim();
-        if (cookie.indexOf(nombreEQ) === 0) {
-            return cookie.substring(nombreEQ.length);
-        }
-    }
-
-    return null;
-}
-
-// Ejecutar cuando el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
+        // Ejecutar cuando el DOM esté completamente cargado
+        document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
     </script>
 
     <script>
@@ -1518,37 +1517,34 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 data: JSON.stringify({ codigoGeneracion: codigoGeneracion, comentario: comentario }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
-                {
-                    // Analizar el JSON recibido
-                    var responseData = response.d; // Asegúrate de adaptar según la estructura de tu backend
-                    //console.log("Respuesta del servidor:", responseData);
+                success: function(response) {
+                    console.log("Respuesta cruda del servidor:", response);
 
-                    if (responseData && responseData.success) 
-                    {
+                    // Convertir la respuesta si viene en formato string JSON
+                    var responseData = response.d ? JSON.parse(response.d) : response;
+
+                    console.log("Datos procesados:", responseData);
+
+                    if (responseData.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Éxito',
-                            text: 'El comentario fue procesado correctamente.',
+                            text: responseData.message,
                             confirmButtonText: 'Aceptar'
-                        }).then(() => 
-                        {
+                        }).then(() => {
                             $('#modalReportar').modal('hide'); // Ocultar la modal
                             location.reload();
                         });
-                    } 
-                    else 
-                    {
+                    } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Hubo un problema al procesar el comentario. Inténtalo de nuevo.',
+                            text: responseData.message || 'Hubo un problema al procesar el comentario. Inténtalo de nuevo.',
                             confirmButtonText: 'Aceptar'
                         });
                     }
                 },
-                error: function(error) 
-                {
+                error: function(error) {
                     console.error("Error en la solicitud:", error);
                     Swal.fire({
                         icon: 'error',
@@ -1556,7 +1552,7 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                         text: 'Ocurrió un error al guardar el comentario.',
                         confirmButtonText: 'Aceptar'
                     });
-                }   
+                }
             });
         }
     </script>
