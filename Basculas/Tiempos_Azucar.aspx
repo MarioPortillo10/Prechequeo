@@ -162,6 +162,7 @@
       display: flex; /* Usa flexbox para el diseño */
       gap: 10px; /* Espacio de 10px entre los botones */
     }
+
     /* Fondo oscuro con centrado total */
         #spinner-overlay {
             display: flex;
@@ -259,7 +260,7 @@
             50% { transform: translateY(-2px); } /* Mueve el camión ligeramente hacia arriba */
             100% { transform: translateY(0px); }
         }
-</style>
+    </style>
 
 </head>
 <body>
@@ -372,7 +373,7 @@
         <!-- Unidad en Espera & Solicitar Unidades -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" style="font-family: 'Gilroy-Bold', sans-serif;">
             <div class="bg-white">
-                <h2 class="text-lg font-bold mb-4 text-center">UNIDAD EN ESPERA</h2>
+                <h2 class="text-lg font-bold mb-4 text-center">UNIDADES EN ESPERA DE INGRESO</h2>
                 <div class="grid grid-cols-2 gap-4">
                     
                     <!-- Plano -->
@@ -424,9 +425,9 @@
                             <!-- Contador en la parte inferior con los botones -->
                             <div class="flex items-center space-x mt-1">
                                 <button id="decreaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
-                                <input id="numberInputPlano" type="text" value="0" data-type="plano" style="width: 50px; text-align: center; margin: 0 5px; border-radius: 5px; padding: 5px; font-size: 19px; transition: border-color 0.3s; color: black;" 
-                                    onfocus="this.style.borderColor='#C9E9D2';" 
-                                    onblur="this.style.borderColor='#4472C4';" readonly />
+                                <asp:Label ID="numberInputPlano" runat="server" CssClass="text-center font-bold" 
+                                    Style="display: inline-block; width: 50px; text-align: center; margin: 0 5px; border-radius: 5px; padding: 5px; font-size: 19px; transition: border-color 0.3s; color: black; border: 1px solid #4472C4; background-color: white;">
+                                </asp:Label>
                                 <button id="increaseButtonPlano" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
                             </div>
                         </div>
@@ -447,8 +448,11 @@
                             <!-- Contador en la parte inferior con los botones -->
                             <div class="flex items-center space-x mt-1">
                                 <button id="decreaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">-</button>
-                                <input id="numberInputVolteo" type="text" value="0" data-type="plano" style="width: 50px; text-align: center; margin: 0 5px; border-radius: 5px; padding: 5px; font-size: 19px; transition: border-color 0.3s; color: black;" 
-                                    onfocus="this.style.borderColor='#4472C4';" onblur="this.style.borderColor='#C9E9D2';" />
+                                <asp:Label ID="numberInputVolteo" runat="server" CssClass="text-center font-bold" 
+                                    Style="display: inline-block; width: 50px; text-align: center; margin: 0 5px; border-radius: 5px; padding: 5px; font-size: 19px; transition: border-color 0.3s; color: black; border: 1px solid #C9E9D2; background-color: white;"
+                                    onmouseover="this.style.borderColor='#4472C4';" 
+                                    onmouseout="this.style.borderColor='#C9E9D2';">
+                                </asp:Label>
                                 <button id="increaseButtonVolteo" class="bg-gray-700 text-white px-2 py-1 rounded-md" type="button">+</button>
                             </div>
                         </div>
@@ -607,6 +611,73 @@
                             </div>
                         </div>
                     </div>
+
+                        <!-- Info 1 -->
+                        <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
+                            <p>
+                                <strong>Transacción:</strong>
+                                <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
+                            </p>
+                                
+                            <p>
+                                <strong>Ingenio:</strong> 
+                                <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Motorista:</strong>
+                                <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                            </p>
+                            
+                            <p>
+                                <strong>Placa Remolque:</strong>
+                                <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Placa Camión:</strong> 
+                                <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                            </p>
+
+                            <p>
+                                <strong>Hora de Ingreso:</strong> 
+                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
+                            </p>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+                <asp:Repeater ID="rptRutas4" runat="server">
+                    <HeaderTemplate>
+                        <% if ((bool)(ViewState["ShowHeaderInRutas4"] ?? false)) { %>
+                            <h2 class="text-lg font-bold mb-4 text-center">UNIDADES DE VOLTEO</h2>
+                        <% } %>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #242424; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
+                                <div class="w-1/4 flex flex-col items-center">
+                                    <div id="progressCircle3" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
+                                        <div id="timerText3" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-2 flex flex-col items-center">
+                                    <div class="flex justify-center">
+                                        <button id="startButton3" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
+                                            data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
+                                        <button id="stopButton3" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" 
+                                            onclick="console.log('Detener Cronómetro 3'); stopTimer('stopButton3')" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                                    </div>
+                                    <!-- Texto condicional con recuadro -->
+                                    <span class="text-gray-500 font-bold mt-2" 
+                                        runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
+                                        style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
+                                        Se Requiere Barrido
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Info 1 -->
                         <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
@@ -821,8 +892,7 @@
             </div>
         </div>
 
-    </form>
-    <div id="spinner-overlay">
+        <div id="spinner-overlay">
             <div class="animation-container">
                 <i class="fa fa-cloud cloud-icon cloud1" aria-hidden="true"></i>
                 <i class="fa fa-cloud cloud-icon cloud2" aria-hidden="true"></i>
@@ -831,6 +901,9 @@
                 </div>
             </div>
         </div>
+
+    </form>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -840,85 +913,89 @@
 
     <!-- SweetAlert2 (latest version) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
         function obtenerOpcionesPorRol(codRol) {
-    let opciones = {
-        1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
-        2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
-        3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
-        4: ["Tiempos_Azucar.aspx"], // Rol 4 solo tiene acceso a esta página
-        5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
-    };
+            let opciones = {
+                1: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx", "Lista_Negra.aspx", "Tiempos_Azucar.aspx"], // Admin
+                2: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Supervisor
+                3: ["Autorizacion_Camiones.aspx", "Autorizacion_ingreso.aspx", "Autorizacion_Porton4.aspx"], // Pesador
+                4: ["Tiempos_Azucar.aspx"], // Rol 4 solo tiene acceso a esta página
+                5: ["Autorizacion_Porton4.aspx"] // Rol 5 solo tiene acceso a esta página
+            };
 
-    return opciones[codRol] || [];
-}
-
-function filtrarOpcionesMenu() {
-    let codRol = parseInt(getCookie("cod_rol"), 10);
-    let urlActual = window.location.pathname.split('/').pop(); // Obtiene solo el nombre del archivo
-
-    if (isNaN(codRol)) {
-        console.error("No se encontró rol en las cookies");
-        return;
-    }
-
-    let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
-    console.log("Código de Rol:", codRol);
-    console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
-    console.log("URL Actual:", urlActual);
-
-    // 🔹 Si el usuario solo tiene acceso a una página, ocultar el menú y redirigir si es necesario
-    if (opcionesPermitidas.length === 1) {
-        let menu = document.querySelector("nav"); // Asegúrate de que el selector coincide con tu menú
-        if (menu) {
-            menu.style.display = "none"; // Oculta el menú completamente
+            return opciones[codRol] || [];
         }
 
-        if (urlActual !== opcionesPermitidas[0]) {
-            console.log("Redirigiendo a:", opcionesPermitidas[0]);
-            window.location.replace(opcionesPermitidas[0]);
+        function filtrarOpcionesMenu() 
+        {
+            let codRol = parseInt(getCookie("cod_rol"), 10);
+            let urlActual = window.location.pathname.split('/').pop(); // Obtiene solo el nombre del archivo
+
+            if (isNaN(codRol))  
+            {
+                console.error("No se encontró rol en las cookies");
+                return;
+            }
+
+            let opcionesPermitidas = obtenerOpcionesPorRol(codRol);
+            console.log("Código de Rol:", codRol);
+            console.log("Opciones Permitidas para el Rol:", opcionesPermitidas);
+            console.log("URL Actual:", urlActual);
+
+            // 🔹 Redirigir inmediatamente si el usuario solo tiene una página permitida y no está en ella
+            if (opcionesPermitidas.length === 1 && urlActual !== opcionesPermitidas[0]) 
+            {
+                console.log("Redirigiendo a:", opcionesPermitidas[0]);
+                window.location.replace(opcionesPermitidas[0]);
+                return; // 🚨 Evita que el código siga ejecutándose
+            }
+
+            // 🔹 Ocultar opciones del menú según el rol
+            document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => 
+            {
+                let urlPagina = enlace.getAttribute("href").split('/').pop();
+                if (!opcionesPermitidas.includes(urlPagina)) 
+                {
+                    enlace.style.display = "none";
+                    console.log("Enlace oculto:", urlPagina);
+                }
+            });
         }
-        return; // 🚨 Evita que el código siga ejecutándose
-    }
 
-    // 🔹 Ocultar opciones del menú según el rol
-    document.querySelectorAll("nav a, .group-hover\\:block a").forEach(enlace => {
-        let urlPagina = enlace.getAttribute("href").split('/').pop();
-        if (!opcionesPermitidas.includes(urlPagina)) {
-            enlace.style.display = "none";
-            console.log("Enlace oculto:", urlPagina);
+        // Función para obtener cookies
+        function getCookie(nombre) 
+        {
+            let nombreEQ = nombre + "=";
+            let cookies = document.cookie.split(";");
+
+            for (let i = 0; i < cookies.length; i++) 
+            {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nombreEQ) === 0) 
+                {
+                    return cookie.substring(nombreEQ.length);
+                }
+            }
+
+            return null;
         }
-    });
-}
 
-// Función para obtener cookies
-function getCookie(nombre) {
-    let nombreEQ = nombre + "=";
-    let cookies = document.cookie.split(";");
+        // Ejecutar cuando el DOM esté completamente cargado
+        document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
 
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i].trim();
-        if (cookie.indexOf(nombreEQ) === 0) {
-            return cookie.substring(nombreEQ.length);
-        }
-    }
-
-    return null;
-}
-
-// Ejecutar cuando el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
     </script>
     
     <script>
         $("#spinner-overlay").hide();
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Evitar recarga al hacer clic en botones del navbar
-            document.querySelectorAll("button").forEach(button => {
-                button.addEventListener("click", function (event) {
+            document.querySelectorAll("button").forEach(button => 
+            {
+                button.addEventListener("click", function (event) 
+                {
                     event.preventDefault(); // Evita que el botón recargue la página
                 });
             });
@@ -935,177 +1012,244 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() 
+        document.addEventListener('DOMContentLoaded', function () 
         {
+            // Contadores de decremento e incremento
+            let decrementCountVolteo = 0;
+            let decrementCountPlano = 0;
+            let incrementCountVolteo = 0;
+            let incrementCountPlano = 0;
+
             // Configuración de botones y contadores para Volteo
             const decreaseButtonVolteo = document.getElementById('decreaseButtonVolteo');
             const increaseButtonVolteo = document.getElementById('increaseButtonVolteo');
-            const numberInputVolteo    = document.getElementById('numberInputVolteo');
-            const solicitarVolteo      = document.getElementById('solicitarv');
-        
+            const numberInputVolteo = document.getElementById('numberInputVolteo');
+            const solicitarVolteo = document.getElementById('solicitarv');
+
             // Configuración de botones y contadores para Plano
             const decreaseButtonPlano = document.getElementById('decreaseButtonPlano');
             const increaseButtonPlano = document.getElementById('increaseButtonPlano');
-            const numberInputPlano    = document.getElementById('numberInputPlano');
-            const solicitarPlano      = document.getElementById('solicitarp');
+            const numberInputPlano = document.getElementById('numberInputPlano');
+            const solicitarPlano = document.getElementById('solicitarp');
 
             // Función para obtener el valor como número entero
-            function getValue(input) 
+            function getValue(label) 
             {
-                let value = parseInt(input.value);
+                let value = parseInt(label.innerText);
                 return isNaN(value) ? 0 : value; // Si no es un número, regresa 0
             }
 
-            // Validación para asegurarse de que la suma no pase de 4
-            function validateTotal() 
-            {
-                let volteoValue = getValue(numberInputVolteo);
-                let planoValue = getValue(numberInputPlano);
-                return (volteoValue + planoValue) <= 3;
-            }
-
-            // Decrementar Volteo
-            decreaseButtonVolteo.addEventListener('click', function() 
+            // 🔽 Decrementar Volteo (Solo cuenta los clics)
+            decreaseButtonVolteo.addEventListener('click', function () 
             {
                 let currentValue = getValue(numberInputVolteo);
-                if (currentValue > 0) // Evitar valores negativos
-                { 
-                    numberInputVolteo.value = currentValue - 1;
+                if (currentValue > 0) 
+                {
+                    numberInputVolteo.innerText = currentValue - 1;
+                    decrementCountVolteo++; // Contar decremento
                 }
             });
 
-            // Incrementar Volteo
-            increaseButtonVolteo.addEventListener('click', function() 
+            // 🔼 Incrementar Volteo (Solo cuenta los clics)
+            increaseButtonVolteo.addEventListener('click', function () 
             {
-                let currentValue = getValue(numberInputVolteo);
-                numberInputVolteo.value = currentValue + 1;
+                numberInputVolteo.innerText = getValue(numberInputVolteo) + 1;
+                incrementCountVolteo++; // Contar incremento
             });
 
-            // Decrementar Plano
-            decreaseButtonPlano.addEventListener('click', function() 
+            // 🔽 Decrementar Plano (Solo cuenta los clics)
+            decreaseButtonPlano.addEventListener('click', function () 
             {
                 let currentValue = getValue(numberInputPlano);
-                if (currentValue > 0) // Evitar valores negativos
-                { 
-                    numberInputPlano.value = currentValue - 1;
+                if (currentValue > 0) 
+                {
+                    numberInputPlano.innerText = currentValue - 1;
+                    decrementCountPlano++; // Contar decremento
                 }
             });
 
-            // Incrementar Plano
-            increaseButtonPlano.addEventListener('click', function() 
+            // 🔼 Incrementar Plano (Solo cuenta los clics)
+            increaseButtonPlano.addEventListener('click', function () 
             {
-                let currentValue = getValue(numberInputPlano);
-                numberInputPlano.value = currentValue + 1;
+                numberInputPlano.innerText = getValue(numberInputPlano) + 1;
+                incrementCountPlano++; // Contar incremento
             });
 
-            // Validación al solicitar Volteo
-            solicitarVolteo.addEventListener('click', function() 
+            // ✅ Solicitar Volteo (Ejecuta `SolicitarUnidad()` y `ReducirUnidad()`)
+            solicitarVolteo.addEventListener('click', function () 
             {
-                let currentValue = getValue(numberInputVolteo);
-                var Tipo_Unidad = 'V';
+                let Tipo_Unidad = 'V';
 
-                // Establecer el valor de numberInputVolteo a 0
-                numberInputVolteo.value = 0;
-                SolicitarUnidad(Tipo_Unidad, currentValue);
+                // Enviar SOLO las veces que se hizo click en "+"
+                if (incrementCountVolteo > 0) 
+                {
+                    console.log(`Solicitando Volteo: ${incrementCountVolteo} unidades`);
+                    SolicitarUnidad(Tipo_Unidad, incrementCountVolteo);
+                }
+
+                // Enviar SOLO las veces que se hizo click en "-"
+                if (decrementCountVolteo > 0) 
+                {
+                    console.log(`Reduciendo Volteo: ${decrementCountVolteo} unidades`);
+                    ReducirUnidad(Tipo_Unidad, decrementCountVolteo);
+                }
+
+                // Reiniciar contadores después de enviar
+                incrementCountVolteo = 0;
+                decrementCountVolteo = 0;
             });
 
-            // Validación al solicitar Plano
-            solicitarPlano.addEventListener('click', function() 
+            // ✅ Solicitar Plano (Ejecuta `SolicitarUnidad()` y `ReducirUnidad()`)
+            solicitarPlano.addEventListener('click', function () 
             {
-                let currentValue = getValue(numberInputPlano);
-                var Tipo_Unidad = 'R';
+                let Tipo_Unidad = 'R';
 
-                // Establecer el valor de numberInputPlano a 0
-                numberInputPlano.value = 0;
-                SolicitarUnidad(Tipo_Unidad, currentValue);
+                // Enviar SOLO las veces que se hizo click en "+"
+                if (incrementCountPlano > 0) 
+                {
+                    console.log(`Solicitando Plano: ${incrementCountPlano} unidades`);
+                    SolicitarUnidad(Tipo_Unidad, incrementCountPlano);
+                }
+
+                // Enviar SOLO las veces que se hizo click en "-"
+                if (decrementCountPlano > 0) 
+                {
+                    console.log(`Reduciendo Plano: ${decrementCountPlano} unidades`);
+                    ReducirUnidad(Tipo_Unidad, decrementCountPlano);
+                }
+
+                // Reiniciar contadores después de enviar
+                incrementCountPlano = 0;
+                decrementCountPlano = 0;
             });
         });
 
-        function SolicitarUnidad(Tipo_Unidad, currentValue) 
+        // 🔼 Función para solicitar unidades
+        function SolicitarUnidad(Tipo_Unidad, unidadesSolicitadas) 
         {
-            if (Tipo_Unidad === "V") 
-            {
-                nuevaVariable = "Volteo";
-            } 
-            else if (Tipo_Unidad === "R") 
-            {
-                nuevaVariable = "Plana";
-            }
+            let nuevaVariable = Tipo_Unidad === "V" ? "Volteo" : "Plana";
+
+            console.log(`📢 Enviando solicitud de ${unidadesSolicitadas} unidades de tipo ${nuevaVariable}`);
 
             $.ajax({
                 async: true,
                 type: "POST",
                 url: "Tiempos_Azucar.aspx/SolicitarUnidad",
-                data: JSON.stringify({ Tipo_Unidad: Tipo_Unidad, currentValue: currentValue }),
+                data: JSON.stringify({ Tipo_Unidad: Tipo_Unidad, currentValue: unidadesSolicitadas }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) 
+                beforeSend: function () 
                 {
-                    // Verificar si la respuesta es un mensaje de éxito en formato de texto
-                    if (typeof response.d === "string" && response.d.includes("Status: waiting_to_send")) 
+                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+                },
+                success: function (response) 
+                {
+                    console.log("✅ Respuesta exitosa de la API:", response);
+                    try 
                     {
-                        // Extraer detalles del mensaje (opcional)
-                        const status = response.d.split(",")[0]; // "Status: waiting_to_send"
-                        const entryTime = response.d.split(",")[1].trim(); // "EntryTime: 04/02/2025 21:40:16"
+                        let mensajeAPI = response.d;
+                        // Si la API devuelve un error dentro del JSON, mostrarlo correctamente
+                        if (!mensajeAPI || mensajeAPI.includes("Error") || mensajeAPI.includes("Límite de 4 alcanzado")) 
+                        {
+                            throw new Error(mensajeAPI);
+                        }
 
-                        // Mostrar SweetAlert de éxito con los detalles
                         Swal.fire({
                             icon: 'success',
                             title: '¡Solicitud Enviada!',
-                            html: `
-                                <p>La solicitud se ha procesado correctamente.</p>
-                                <p><strong> Has solicitado ${currentValue} camiones del tipo ${nuevaVariable}.</strong></p>
-                            `,
+                            text: `Has solicitado ${unidadesSolicitadas} unidades del tipo ${nuevaVariable}.`,
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#28a745',
+                        }).then(() => {
+                            // Recargar la página después de aceptar el mensaje
+                            location.reload();
+                            $("#spinner-overlay").show();
                         });
-                    }
-                    // Verificar si la respuesta es un objeto JSON con éxito
-                    else if (response.d && response.d.success) 
+                    } 
+                    catch (error) 
                     {
-                        // Mostrar SweetAlert de éxito con mensaje personalizado
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Solicitud Enviada!',
-                            text: `Has solicitado ${currentValue} camiones del tipo ${nuevaVariable}.`,
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#28a745',
-                        });
-                    }
-                    // Si la respuesta no es exitosa o no tiene el formato esperado
-                    else 
-                    {
+                        console.error("⚠️ Error detectado en la respuesta de la API:", error.message);
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: response.d || 'Hubo un problema al procesar la solicitud.',
+                            title: 'Error al solicitar unidades',
+                            text: error.message || "La API devolvió una respuesta no válida.",
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#dc3545',
+                        }).then(() => {
+                            // Recargar la página después de aceptar el mensaje
+                            location.reload();
+                            $("#spinner-overlay").show();
                         });
                     }
                 },
-                error: function(xhr, status, error) 
+                error: function (xhr, status, error) 
                 {
-                    console.log("Error en la solicitud: ", error);
+                    console.error("❌ Error en la solicitud AJAX:", xhr.status, xhr.responseText);
+                    let mensajeError = "Error desconocido en la solicitud.";
+                    try 
+                    {
+                        let respuestaJSON = JSON.parse(xhr.responseText);
+                        console.log("📩 Respuesta JSON de error:", respuestaJSON);
+                        mensajeError = respuestaJSON.Message || respuestaJSON.d || "Error en la API.";
+                    } 
+                    catch (e) 
+                    {
+                        mensajeError = xhr.responseText || "Error en el servidor.";
+                    }
 
-                    // Mostrar SweetAlert de error en caso de fallo en la solicitud AJAX
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'Hubo un problema con la solicitud. Verifica tu conexión e intenta nuevamente.',
+                        title: 'Error al solicitar unidades',
+                        text: mensajeError,
                         confirmButtonText: 'Aceptar',
                         confirmButtonColor: '#dc3545',
-                    });
+                    }).then(() => {
+                            // Recargar la página después de aceptar el mensaje
+                            location.reload();
+                            $("#spinner-overlay").show();
+                        });
                 }
             });
         }
-    </script>
 
-    <script>
-        let intervals = { timer1: null, timer2: null }; // Objeto para almacenar los intervalos de cada cronómetro
-        let isRunning = { timer1: false, timer2: false }; // Estado de ejecución de cada cronómetro
-        let lastTimestamps = { timer1: null, timer2: null }; // Tiempos de inicio de cada cronómetro
+        // 🔽 Función para reducir unidades
+        function ReducirUnidad(Tipo_Unidad, unidadesReducidas) 
+        {
+            let nuevaVariable = Tipo_Unidad === "V" ? "Volteo" : "Plana";
 
+            $.ajax({
+                async: true,
+                type: "POST",  // CAMBIADO A POST
+                url: "Tiempos_Azucar.aspx/ReducirUnidad",
+                data: JSON.stringify({ Tipo_Unidad: Tipo_Unidad, unidadesReducidas: unidadesReducidas }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                beforeSend: function () 
+                {
+                    $("#spinner-overlay").show(); // 🔹 Mostrar el spinner antes de la petición
+                },
+                success: function (response) 
+                {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Unidades Eliminadas!',
+                        text: `Se eliminaron ${unidadesReducidas} camiones del tipo ${nuevaVariable}.`,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#28a745',
+                    }).then(() => {
+                        // Recargar la página después de aceptar el mensaje
+                        location.reload();
+                        $("#spinner-overlay").show();
+                    });
+                    console.log(`Unidades Eliminadas: ${unidadesReducidas} camiones ${nuevaVariable}`);
+                },
+                error: function (xhr, status, error) 
+                {
+                    location.reload();
+                    console.error(`Error en reducción: ${xhr.status} - ${xhr.responseText}`);
+                }
+            });
+        }
         window.onload = function () 
         {
             for (const key in intervals) 
@@ -1117,41 +1261,48 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 {
                     console.log(`Restaurando ${key}, tiempo acumulado: ${storedMilliseconds}ms`);
                     lastTimestamps[key] = performance.now();
-                    restoreTimer(key, storedMilliseconds);
+                    restoreTimer(key, storedMilliseconds);  // Restaura el cronómetro
                 } 
                 else 
                 {
                     console.log(`${key} no estaba en ejecución.`);
-                    updateTimerDisplay(key === 'timer1' ? 'timerText1' : 'timerText2', storedMilliseconds);
+                    updateTimerDisplay(key, storedMilliseconds);  // Solo actualiza la visualización
                 }
             }
         };
+    </script>
 
-        // Función para manejar la modal y la lógica de barrido
-        function mostrarModal(event, button) 
+    <script>
+    let intervals = { timer1: null, timer2: null, timer3: null }; 
+    let isRunning = { timer1: false, timer2: false, timer3: false }; 
+    let lastTimestamps = { timer1: null, timer2: null, timer3: null }; 
+
+    function mostrarModal(event, button) 
         {
-            const requiresSweeping = button.getAttribute('data-requires-sweeping'); // Obtener el valor de requiresSweeping desde el atributo de datos
-            const isSweepingRequired = requiresSweeping === 'S'; // evalúa si requiresSweeping es igual a "S", asignando true si lo es y false en caso contrario
-            const codigoGeneracion = button.getAttribute('data-codigo-generacion'); //Obtener el valor del codigo de generacion
+            const requiresSweeping = button.getAttribute('data-requires-sweeping');
+            const isSweepingRequired = requiresSweeping === 'S';
+            const codigoGeneracion = button.getAttribute('data-codigo-generacion');
 
             let storageKey;
             if (button.id === 'startButton1') 
             {
-                storageKey = 'timer1'; // Si el id es 'startButton1', asigna 'timer1'
+                storageKey = 'timer1';
             } 
             else if (button.id === 'startButton2') 
             {
-                storageKey = 'timer2'; // Si el id es 'startButton2', asigna 'timer2'
+                storageKey = 'timer2';
+            } 
+            else if (button.id === 'startButton3') // Nuevo botón para el tercer cronómetro
+            {
+                storageKey = 'timer3';
             } 
             else 
             {
-                console.error('Botón desconocido: ' + button.id); // Para otros casos, se muestra un error
+                console.error('Botón desconocido: ' + button.id);
             }
 
-            // Mostrar la modal de barrido
             $('#barridoModal').modal('show');
 
-            // Al hacer clic en el botón de confirmar barrido
             document.getElementById('confirmBarrido').onclick = function () 
             {
                 const tipoSeleccionado = document.getElementById('tipoBarrido').value;
@@ -1159,10 +1310,8 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 console.log('requiresSweeping:', requiresSweeping);
                 console.log('storageKey:', storageKey);
 
-                // Verificar discrepancias entre el tipo de barrido requerido y el seleccionado
                 if ((requiresSweeping === 'S' && tipoSeleccionado === 'N') || (requiresSweeping === 'N' && tipoSeleccionado === 'S')) 
                 {
-                    // Discrepancia detectada
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: 'El tipo de barrido seleccionado no coincide con el requerido. ¿Deseas continuar?',
@@ -1174,30 +1323,25 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                     {
                         if (result.isConfirmed) 
                         {
-                            // Mostrar modal de comentario y cerrar la modal de barrido
                             $('#barridoModal').modal('hide');
                             showCommentModal(codigoGeneracion, isSweepingRequired, (comentario) => 
                             {
                                 console.log('Iniciando cronómetro tras comentario...');
-                                //sweepinglog(codigoGeneracion, isSweepingRequired, comentario); // Registrar el barrido con el comentario
-                                startTimer(storageKey); // Llamar al inicio del cronómetro
+                                startTimer(storageKey);
                             });
                         }
                     });
                 } 
                 else 
                 {
-                    // Si no hay discrepancias, se procede directamente con el cronómetro
                     console.log(`Tipo de barrido seleccionado: ${tipoSeleccionado}`);
-                    $('#barridoModal').modal('hide'); // Cerrar modal de barrido
+                    $('#barridoModal').modal('hide');
                     console.log('Iniciando cronómetro directamente...');
-                    //sweepinglog(codigoGeneracion, isSweepingRequired, '');
-                    startTimer(storageKey); // Llamar al inicio del cronómetro
+                    startTimer(storageKey);
                 }
             };
         }
 
-        // Función para mostrar el modal de comentario
         function showCommentModal(codigoGeneracion, isSweepingRequired, callback) 
         {
             Swal.fire({
@@ -1215,7 +1359,7 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                     const textarea = modal.querySelector('textarea');
                     if (textarea) 
                     {
-                        textarea.removeAttribute('readonly'); // Asegurarse de que no sea readonly
+                        textarea.removeAttribute('readonly');
                         textarea.focus();
                         console.log("Textarea listo para escribir");
                     }
@@ -1231,28 +1375,7 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 } 
                 else 
                 {
-                    // Si cancela, reabrir la modal de barrido
                     $('#barridoModal').modal('show');
-                }
-            });
-        }
-
-        function sweepinglog(codeGen, requiresSweeping, observation)
-        {
-            //alert(codeGen + " - " + requiresSweeping + " - " + observation);
-            $.ajax({
-                type: "POST",
-                url: "Tiempos_Azucar.aspx/sweepinglog",
-                data: JSON.stringify({ codeGen: codeGen, requiresSweeping: requiresSweeping, observation: observation }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) 
-                {
-                    console.log("Respuesta de la API: ", response.d);     
-                },
-                error: function(xhr, status, error) 
-                {
-                    console.error("Error cambiando el estado: ", error);
                 }
             });
         }
@@ -1261,9 +1384,17 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
         {
             if (!storageKey || isRunning[storageKey]) return;
 
-            const duration = storageKey === 'timer1' ? 9 * 60 * 1000 : 5 * 60 * 1000;
-            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
-            const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
+            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 :
+                            storageKey === 'timer2' ? 10 * 60 * 1000 :
+                            10 * 60 * 1000; 
+
+            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' :
+                                    storageKey === 'timer2' ? 'progressCircle2' :
+                                    'progressCircle3';
+
+            const timerTextId = storageKey === 'timer1' ? 'timerText1' :
+                                storageKey === 'timer2' ? 'timerText2' :
+                                'timerText3';
 
             let milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
             const wasRunning = localStorage.getItem(`${storageKey}_isRunning`) === 'true';
@@ -1282,8 +1413,7 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
             lastTimestamps[storageKey] = performance.now();
             localStorage.setItem(`${storageKey}_isRunning`, 'true');
 
-            intervals[storageKey] = setInterval(() => 
-            {
+            intervals[storageKey] = setInterval(() => {
                 const currentTimestamp = performance.now();
                 const elapsed = currentTimestamp - lastTimestamps[storageKey];
                 lastTimestamps[storageKey] = currentTimestamp;
@@ -1299,42 +1429,37 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                     progressCircleElement.style.background = `conic-gradient(${getColor(milliseconds, duration, storageKey)} ${angle}deg, #f0f0f0 ${angle}deg)`;
                 }
 
-                updateTimerDisplay(timerTextId, milliseconds);
-
-                // Eliminar o comentar este bloque para que el cronómetro no se detenga automáticamente
-                // if (milliseconds >= duration) 
-                // {
-                //     clearInterval(intervals[storageKey]);
-                //     isRunning[storageKey] = false;
-                //     localStorage.setItem(`${storageKey}_isRunning`, 'false');
-                // }
+                updateTimerDisplay(storageKey, milliseconds);
             }, 50);
         }
 
         function stopTimer(stopButtonId) 
         {
             const codigoGeneracion = document.getElementById(stopButtonId).getAttribute('data-codigo-generacion');
-            const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : 'timer2';
-            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
-            const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
-            const threshold = storageKey === 'timer1' ? 9 * 60 * 1000 : 5 * 60 * 1000; // 9 min para timer1 y 5 min para timer2
+            const storageKey = stopButtonId === 'stopButton1' ? 'timer1' : stopButtonId === 'stopButton2' ? 'timer2' : 'timer3'; 
+            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : storageKey === 'timer2' ? 'progressCircle2' : 'progressCircle3';
+            const timerTextId = storageKey === 'timer1' ? 'timerText1' : storageKey === 'timer2' ? 'timerText2' : 'timerText3';
+            const threshold = storageKey === 'timer1' ? 15 * 60 * 1000 : storageKey === 'timer2' ? 10 * 60 * 1000 : 10 * 60 * 1000;
             const milliseconds = parseInt(localStorage.getItem(`${storageKey}_milliseconds`)) || 0;
-            const tiempoTranscurrido = formatTime(milliseconds); // Formatear el tiempo transcurrido
+            const tiempoTranscurrido = formatTime(milliseconds);
 
             console.log(`Código de generación: ${codigoGeneracion}`);
             console.log(`Tiempo transcurrido: ${tiempoTranscurrido}`);
 
-            if (!isRunning[storageKey]) {
+            if (!isRunning[storageKey]) 
+            {
                 console.log("El cronómetro ya está detenido.");
                 return; // No hacer nada si el cronómetro ya está detenido
             }
 
             // Mostrar la modal si se supera el umbral de tiempo
-            if (milliseconds > threshold) {
+            if (milliseconds > threshold) 
+            {
                 const confirmationModal = document.getElementById("confirmationModal");
                 confirmationModal.style.display = "block"; // Mostrar modal
 
-                document.getElementById("confirmStopButton").onclick = function () {
+                document.getElementById("confirmStopButton").onclick = function () 
+                {
                     const motivoDetencion = document.getElementById("motivoDetencion").value || ''; // Comentario opcional
                     console.log('Motivo seleccionado:', motivoDetencion);
 
@@ -1352,7 +1477,8 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                     confirmationModal.style.display = "none"; // Ocultar modal
                 };
 
-                document.getElementById("cancelStopButton").onclick = function () {
+                document.getElementById("cancelStopButton").onclick = function () 
+                {
                     confirmationModal.style.display = "none"; // Cerrar modal sin detener el cronómetro
                 };
 
@@ -1373,12 +1499,15 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
 
         function restoreTimer(storageKey, initialMilliseconds) 
         {
-            const duration = storageKey === 'timer1' ? 9 * 60 * 1000 : 5 * 60 * 1000;
-            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' : 'progressCircle2';
-            const timerTextId = storageKey === 'timer1' ? 'timerText1' : 'timerText2';
+            const duration = storageKey === 'timer1' ? 15 * 60 * 1000 :
+                            storageKey === 'timer2' ? 10 * 60 * 1000 :
+                            10 * 60 * 1000;
+
+            const progressCircleId = storageKey === 'timer1' ? 'progressCircle1' :
+                                    storageKey === 'timer2' ? 'progressCircle2' :
+                                    'progressCircle3';
 
             let milliseconds = initialMilliseconds;
-
             isRunning[storageKey] = true;
 
             intervals[storageKey] = setInterval(() => 
@@ -1397,15 +1526,16 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                     progressCircleElement.style.background = `conic-gradient(${getColor(milliseconds, duration, storageKey)} ${angle}deg, #f0f0f0 ${angle}deg)`;
                 }
 
-                updateTimerDisplay(timerTextId, milliseconds);
-
-                // Eliminar la condición de detención del cronómetro
-                // Ya no hay necesidad de detener el cronómetro si ha alcanzado el tiempo máximo
+                updateTimerDisplay(storageKey, milliseconds);
             }, 50);
         }
 
-        function updateTimerDisplay(timerTextId, milliseconds) 
+        function updateTimerDisplay(storageKey, milliseconds) 
         {
+            const timerTextId = storageKey === 'timer1' ? 'timerText1' :
+                                storageKey === 'timer2' ? 'timerText2' :
+                                'timerText3';
+
             const timeString = formatTime(milliseconds);
             const timerTextElement = document.getElementById(timerTextId);
             if (timerTextElement) 
@@ -1422,47 +1552,30 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
         {
             const minutes = Math.floor(milliseconds / 60000);
             const seconds = Math.floor((milliseconds % 60000) / 1000);
-            const millis = Math.floor((milliseconds % 1000) / 10); // Milisegundos
+            const millis = Math.floor((milliseconds % 1000) / 10);
             return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millis.toString().padStart(2, '0')}`;
         }
 
         function getColor(milliseconds, maxMilliseconds, storageKey) 
         {
-            let warningTime; // Tiempo límite para cambiar a color rojo
-            if (storageKey === 'timer1') 
-            {
-                warningTime = 9 * 60 * 1000; // 9 minutos en milisegundos
-            } 
-            else if (storageKey === 'timer2') 
-            {
-                warningTime = 5 * 60 * 1000; // 5 minutos en milisegundos
-            } 
-            else 
-            {
-                console.error("StorageKey desconocido");
-                return "#ffbf00"; // Color inicial por defecto
-            }
-
-            // Calcula el progreso del tiempo
-            const ratio = milliseconds / maxMilliseconds;
+            let warningTime = storageKey === 'timer1' ? 15 * 60 * 1000 :
+                            storageKey === 'timer2' ? 10 * 60 * 1000 :
+                            10 * 60 * 1000;
 
             if (milliseconds < warningTime / 2) 
             {
-                // Primera mitad del tiempo
-                return "#abebc6"; // Amarillo
+                return "#00da5c"; 
             } 
             else if (milliseconds < warningTime) 
             {
-                // Segunda mitad del tiempo
-                return "#ff7300"; // Naranja
+                return "#ff7300"; 
             } 
             else 
             {
-                // Tiempo excedido o alcanzado
-                return "#ff0000"; // Rojo
+                return "#ff0000"; 
             }
         }
-
+        
         // Función para cambiar el estatus después de la validación exitosa
         function changeStatusAzucar(codigoGeneracion) 
         {
@@ -1485,22 +1598,28 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) {
+                success: function(response) 
+                {
                     console.log("Respuesta completa de la API:", response);
                     
-                    if (response.d && typeof response.d === "string") {
+                    if (response.d && typeof response.d === "string") 
+                    {
                         console.log("Estructura dentro de response.d:", response.d);
-
                         let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
 
-                        for (const key in response.d) {
-                            if (response.d.hasOwnProperty(key)) {
+                        for (const key in response.d) 
+                        {
+                            if (response.d.hasOwnProperty(key)) 
+                            {
                                 let value = response.d[key];
 
                                 // Si el valor es un objeto, lo convertimos en un JSON legible
-                                if (typeof value === "string" && value !== null) {
+                                if (typeof value === "string" && value !== null) 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
-                                } else {
+                                } 
+                                else 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
                                 }
                             }
@@ -1511,15 +1630,17 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                             title: '¡Actualización exitosa!',
                             text: 'El estado se actualizó correctamente.',
                             confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
+                        }).then((result) => 
+                        {
+                            if (result.isConfirmed) 
+                            {
                                 location.reload();
                                 $("#spinner-overlay").show();
-
                             }
                         });
-
-                    } else {
+                    } 
+                    else 
+                    {
                         console.error("La respuesta no es un objeto válido:", response.d);
                         Swal.fire({
                             icon: 'error',
@@ -1529,9 +1650,11 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, status, error) 
+                {
                     console.error("Error en la solicitud AJAX:", error);
-                    try {
+                    try 
+                    {
                         let errorResponse = JSON.parse(xhr.responseText);
                         let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
                         Swal.fire({
@@ -1540,7 +1663,8 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                             text: errorMessage,
                             confirmButtonText: 'Aceptar'
                         });
-                    } catch (e) {
+                    } catch (e) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -1628,7 +1752,6 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 if (result.isConfirmed) 
                 {
                     // Llamar a changeStatus después de la validación exitosa
-                    $("#spinner-overlay").show();
                     changeStatus(codigoGeneracion);
                 }
             });
@@ -1659,22 +1782,29 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                 data: JSON.stringify({ codeGen: codigoGeneracion, predefinedStatusId: predefinedStatusId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(response) {
+                success: function(response) 
+                {
                     console.log("Respuesta completa de la API:", response);
                     
-                    if (response.d && typeof response.d === "string") {
+                    if (response.d && typeof response.d === "string") 
+                    {
                         console.log("Estructura dentro de response.d:", response.d);
 
                         let detailsHTML = "<p>El estado se actualizó correctamente.</p>";
 
-                        for (const key in response.d) {
-                            if (response.d.hasOwnProperty(key)) {
+                        for (const key in response.d) 
+                        {
+                            if (response.d.hasOwnProperty(key)) 
+                            {
                                 let value = response.d[key];
 
                                 // Si el valor es un objeto, lo convertimos en un JSON legible
-                                if (typeof value === "string" && value !== null) {
+                                if (typeof value === "string" && value !== null) 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</p>`;
-                                } else {
+                                } 
+                                else 
+                                {
                                     detailsHTML += `<p><strong>${key}:</strong> ${value}</p>`;
                                 }
                             }
@@ -1685,14 +1815,17 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                             title: '¡Actualización exitosa!',
                             text: 'El estado se actualizó correctamente.',
                             confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
+                        }).then((result) => 
+                        {
+                            if (result.isConfirmed) 
+                            {
                                 location.reload();
-                                $("#spinner-overlay").show();
+                                $("#spinner-overlay").show(); 
                             }
                         });
-
-                    } else {
+                    } 
+                    else 
+                    {
                         console.error("La respuesta no es un objeto válido:", response.d);
                         Swal.fire({
                             icon: 'error',
@@ -1702,9 +1835,15 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                complete: function () 
+                {
+                    $("#spinner-overlay").hide(); // 🔹 Ocultar el spinner después de recibir la respuesta
+                },
+                error: function(xhr, status, error) 
+                {
                     console.error("Error en la solicitud AJAX:", error);
-                    try {
+                    try 
+                    {
                         let errorResponse = JSON.parse(xhr.responseText);
                         let errorMessage = errorResponse.message || 'Ocurrió un problema al actualizar el estado.';
                         Swal.fire({
@@ -1713,7 +1852,9 @@ document.addEventListener("DOMContentLoaded", filtrarOpcionesMenu);
                             text: errorMessage,
                             confirmButtonText: 'Aceptar'
                         });
-                    } catch (e) {
+                    } 
+                    catch (e) 
+                    {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',

@@ -14,10 +14,23 @@ using System.IO;
 using System.Web.Services;
 using System.Text;
 
-
-
 public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 {
+    public class QueueData
+    {
+        public QueueDataInner data { get; set; }
+    }
+
+    public class QueueDataInner
+    {
+        public int V { get; set; }
+        public int P { get; set; }
+        public int R { get; set; }
+    }
+
+    // Variable estática para alternar registros
+    private static int lastAssignedIndex = 0;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
@@ -30,8 +43,10 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             if (!IsPostBack)
             {
                 // URL que deseas hacer el fetch
-                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7?includeAttachments=true";
-                string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8?includeAttachments=true";
+                string url = "https://apiclientes.almapac.com:9010/api/shipping/status/7";  // Estatus 7
+                string url1 = "https://apiclientes.almapac.com:9010/api/shipping/status/8"; // Estatus 8
+                string url2 = "https://apiclientes.almapac.com:9010/api/shipping/status/3"; // Estatus 3 para unidades pendiente de ingresar
+                string url3 = "https://apiclientes.almapac.com:9010/api/queue/count/";      // Conteo de unidades solicitadas
 
                 // Token
                 string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
@@ -40,6 +55,106 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                 // Definir la zona horaria de UTC -6
                 TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
 
+                using (WebClient client = new WebClient())
+                {
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
+    
+                    try
+                    {
+                        string response2 = client.DownloadString(url3);
+                        var queueData = JsonConvert.DeserializeObject<QueueData>(response2);
+
+                        if (queueData != null && queueData.data != null)
+                        {
+                            numberInputVolteo.Text = queueData.data.V != null ? queueData.data.V.ToString() : "0";
+                            numberInputPlano.Text = queueData.data.R != null ? queueData.data.R.ToString() : "0";
+                        }
+                        else
+                        {
+                            numberInputVolteo.Text = "0";
+                            numberInputPlano.Text = "0";
+                        }   
+                    }
+                    catch (Exception ex)
+                    {
+                        numberInputVolteo.Text = "0";
+                        numberInputPlano.Text = "0";
+
+                        this.LogEvent("Error al realizar la solicitud o procesar la respuesta.");
+                        this.LogEvent("Mensaje de excepción: " + ex.Message);
+                        this.LogEvent("Pila de llamadas: " + ex.StackTrace);
+                    }
+                }
+
+
+                using (WebClient client = new WebClient())
+                {
+                    client.Headers.Add("Authorization", "Bearer " + token);
+                    client.Encoding = Encoding.UTF8;
+    
+                    try
+                    {
+                        // Realizar la solicitud GET y leer la respuesta
+                        string responseBody = client.DownloadString(url2);
+                        var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
+
+                        var filteredData = data.Where(p => p.currentStatus == 3 && p.vehicle != null && (p.vehicle.truckType == "P" || p.vehicle.truckType == "R"))
+                            .Select((p, index) =>
+                            {
+                                p.IsFirst = (index == 0); // Nueva propiedad
+                                // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                                p.TimeForId2 = p.dateTimePrecheckeo.HasValue
+                                    ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                    : "No hay datos"; // Valor por defecto si es null
+                                return p;
+                            })
+                            .OrderBy(p => p.dateTimePrecheckeo)  // Ordena los elementos por dateTimePrecheckeo (de más antiguo a más nuevo)
+                            .ToList();
+
+                            var filteredData1 = data.Where(p => p.currentStatus == 3 && p.vehicle != null && (p.vehicle.truckType == "V"))
+                            .Select((p, index) =>
+                            {
+                                p.IsFirst = (index == 0); // Nueva propiedad
+                                // Comprobar si dateTimePrecheckeo es null y asignar valor predeterminado
+                                p.TimeForId2 = p.dateTimePrecheckeo.HasValue
+                                    ? p.dateTimePrecheckeo.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                    : "No hay datos"; // Valor por defecto si es null
+                                return p;
+                            })
+                            .OrderBy(p => p.dateTimePrecheckeo)  // Ordena los elementos por dateTimePrecheckeo (de más antiguo a más nuevo)
+                            .ToList();
+
+                        // Depuración: Verifica el conteo de registros
+                        Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
+
+                        if (filteredData.Count > 0)
+                        {
+                            lblTotalRegistros.Text = filteredData.Count.ToString();
+                        }
+                        else
+                        {
+                            lblTotalRegistros.Text = "0";
+                        }
+
+                        if (filteredData1.Count > 0)
+                        {
+                            lblTotalRegistrosV.Text = filteredData1.Count.ToString();
+                        }
+                        else
+                        {
+                            lblTotalRegistrosV.Text = "0";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        this.LogEvent(ex.Message);
+                        this.LogEvent(ex.StackTrace);
+                        lblTotalRegistros.Text = "0";
+                    }
+                }
+                
                 using (WebClient client = new WebClient())
                 {
                     client.Headers.Add("Authorization", "Bearer " + token);
@@ -80,15 +195,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         // Depuración: Verifica el conteo de registros
                         Console.WriteLine("Número de registros filtrados: " + filteredData.Count);
 
-                        if (filteredData.Count > 0)
-                        {
-                            lblTotalRegistros.Text = filteredData.Count.ToString();
-                        }
-                        else
-                        {
-                            lblTotalRegistros.Text = "0";
-                        }
-
                         // Vincula los datos filtrados al Repeater
                         rptRutas.DataSource = filteredData;
                         rptRutas.DataBind();
@@ -104,7 +210,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
                         this.LogEvent(ex.Message);
                         this.LogEvent(ex.StackTrace);
-                        lblTotalRegistros.Text = "0";
+                        //lblTotalRegistros.Text = "0";
                     }
                 }
 
@@ -204,7 +310,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                             .ToList();
 
                         // Asigna el conteo de los registros filtrados al Label
-                        lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
+                        //lblTotalRegistrosV.Text = String.Format("{0}", filteredData.Count);
 
                         // Vincular los datos filtrados al control Repeater
                         rptRutas2.DataSource = filteredData;
@@ -216,21 +322,17 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
                         this.LogEvent(ex.Message);
                         this.LogEvent(ex.StackTrace);
-                        lblTotalRegistrosV.Text = "0";
+                        //lblTotalRegistrosV.Text = "0";
                     }
                 }
-
                 using (WebClient client = new WebClient())
                 {
-                    // Añadir el token al encabezado de autorización
                     client.Headers.Add("Authorization", "Bearer " + token);
                     client.Encoding = Encoding.UTF8;
+
                     try
                     {
-                        // Realizar la solicitud GET y leer la respuesta
                         string responseBody = client.DownloadString(url1);
-
-                        // Deserializar la respuesta JSON
                         var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
                         // Convertir dateTimePrecheckeo a UTC -6
@@ -238,41 +340,55 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         {
                             if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
                             {
-                                // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
                                 DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
-
-                                // Convierte a UTC -6
                                 item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
                             }
                         }
 
-                        // Filtrar para mostrar solo aquellos registros donde el currentStatus es 8
-                        // y el tipo de camión es 'VOLTEO'
-                        var filteredData = data.Where(p =>
-                            p.currentStatus == 8 && // Filtrar por currentStatus
-                            p.vehicle != null &&
+                        // Filtrar registros con status 8 y truckType "V"
+                        var filteredData = data.Where(p => 
+                            p.currentStatus == 8 && 
+                            p.vehicle != null && 
                             p.vehicle.truckType == "V"
-                        )
-                        .Select(p =>
+                        ).OrderBy(p => p.dateTimePrecheckeo).ToList();
+
+                        // Determinar qué registros se asignan a cada Repeater
+                        Post recordForRpt3 = null;
+                        Post recordForRpt4 = null;
+
+                        if (filteredData.Count > 0)
                         {
-                            // Asignar el tiempo directamente a TimeForId2
-                            p.TimeForId2 = "No disponible"; // Este es el valor por defecto
+                            // Alternar la asignación de registros entre rptRutas3 y rptRutas4
+                            if (lastAssignedIndex % 2 == 0)
+                            {
+                                recordForRpt3 = filteredData[0];
+                                if (filteredData.Count > 1) recordForRpt4 = filteredData[1];
+                            }
+                            else
+                            {
+                                recordForRpt4 = filteredData[0];
+                                if (filteredData.Count > 1) recordForRpt3 = filteredData[1];
+                            }
 
-                            // Retornar el objeto con los datos filtrados
-                            return p;
-                        })
-                        .ToList();
+                            lastAssignedIndex++; // Cambiar el índice para la próxima asignación
+                        }
 
-                        // Vincular los datos filtrados al control Repeater
-                        rptRutas3.DataSource = filteredData;
+                        // Verificar si rptRutas3 está vacío
+                        bool isRutas3Empty = (recordForRpt3 == null);
+                        ViewState["ShowHeaderInRutas4"] = isRutas3Empty;
+
+                        // Enlazar a rptRutas3 y rptRutas4
+                        rptRutas3.DataSource = (recordForRpt3 != null) ? new List<Post> { recordForRpt3 } : new List<Post>();
                         rptRutas3.DataBind();
+
+                        rptRutas4.DataSource = (recordForRpt4 != null) ? new List<Post> { recordForRpt4 } : new List<Post>();
+                        rptRutas4.DataBind();
                     }
                     catch (Exception ex)
                     {
-                        // Manejo de errores (por ejemplo, mostrar un mensaje de error)
                         this.LogEvent(ex.Message);
                         this.LogEvent(ex.StackTrace);
-                        Console.WriteLine("Error al obtener o procesar los datos: " + ex.Message);
+                        Console.WriteLine("Error: " + ex.Message);
                     }
                 }
             }
@@ -282,12 +398,127 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             Response.Redirect("login.aspx");
         }
     }
+
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
     {
-        // Código para solicitar una unidad
+        // URL base para la solicitud
         string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/call-multiple/";
         string url = baseUrl + Tipo_Unidad + "/" + currentValue;
+
+        // Token de autenticación
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        
+        // Asegurar compatibilidad con TLS 1.2
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+        try
+        {
+            using (WebClient client = new WebClient())
+            {
+                try
+                {
+                    // Configurar los encabezados de la solicitud
+                    client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    // Enviar la solicitud POST sin cuerpo
+                    string response = client.UploadString(url, "POST", "");
+
+                    // Verificar si la respuesta está vacía
+                    if (string.IsNullOrEmpty(response))
+                    {
+                        string mensaje = "⚠️ El servidor no devolvió respuesta.";
+                        LogEventS(mensaje);
+                        return mensaje;
+                    }
+
+                    try
+                    {
+                        // Intentar deserializar la respuesta como JSON
+                        var responseArray = JsonConvert.DeserializeObject(response) as Newtonsoft.Json.Linq.JArray;
+
+                        if (responseArray != null && responseArray.Count > 0)
+                        {
+                            // Extraer información del primer objeto del arreglo
+                            var firstItem = responseArray[0];
+                            string status = firstItem["status"] != null ? firstItem["status"].ToString() : "Sin estado";
+                            string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "Sin hora de entrada";
+
+                            string mensaje = "Solicitud exitosa: Estado - " + status + ", Hora de entrada - " + entryTime;
+                            LogEventS(mensaje);
+                            return mensaje;
+                        }
+                        else
+                        {
+                            string mensaje = "⚠️ La respuesta de la API está vacía.";
+                            LogEventS(mensaje);
+                            return mensaje;
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        string mensaje = "Error al procesar la respuesta JSON: " + ex.Message;
+                        LogEventS(mensaje);
+                        return mensaje;
+                    }
+                }
+                catch (WebException webEx)
+                {
+                    string mensajeError = "Error desconocido.";
+
+                    HttpWebResponse httpResponse = webEx.Response as HttpWebResponse;
+                    if (httpResponse != null)
+                    {
+                        using (StreamReader reader = new StreamReader(httpResponse.GetResponseStream()))
+                        {
+                            string errorResponse = reader.ReadToEnd();
+
+                            try
+                            {
+                                // Intentar deserializar la respuesta de error para extraer "message"
+                                var errorJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(errorResponse);
+                                if (errorJson["message"] != null)
+                                {
+                                    mensajeError = errorJson["message"].ToString(); // Extraemos solo el mensaje
+                                }
+                            }
+                            catch (JsonException)
+                            {
+                                mensajeError = "Error en la API: Respuesta inesperada.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        mensajeError = "Error en la solicitud: " + webEx.Message;
+                    }
+
+                    LogEventS(mensajeError);
+                    return mensajeError;
+                }
+                catch (Exception ex)
+                {
+                    string mensaje = "Error al realizar la solicitud: " + ex.Message;
+                    LogEventS(mensaje);
+                    return mensaje;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            string mensaje = "Error inesperado: " + ex.Message;
+            LogEventS(mensaje);
+            return mensaje;
+        }
+    }
+
+    [WebMethod]
+    public static string ReducirUnidad(string Tipo_Unidad, int unidadesReducidas)
+    {
+        // Construir la URL correctamente
+        string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/release-multiple/";
+        string url = baseUrl + Tipo_Unidad + "/" + unidadesReducidas;
 
         // Token de autenticación
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
@@ -302,61 +533,27 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     // Configurar los encabezados
                     client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
                     client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    client.Headers[HttpRequestHeader.UserAgent] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
 
-                    // Enviar la solicitud POST sin cuerpo
-                    string response = client.UploadString(url, "POST", "");
+                    LogEventS("Enviando solicitud DELETE a: " + url);
 
-                    // Verificar si la respuesta está vacía
-                    if (string.IsNullOrEmpty(response))
-                    {
-                        LogEventS("El servidor no devolvió respuesta.");
-                        return "El servidor no devolvió respuesta.";
-                    }
+                    // Enviar la solicitud DELETE sin cuerpo
+                    string response = client.UploadString(url, "DELETE", "");
 
-                    // Intentar parsear la respuesta como JSON
-                    try
-                    {
-                        // Deserializar la respuesta como un arreglo JSON (JArray)
-                        var responseArray = JsonConvert.DeserializeObject(response) as Newtonsoft.Json.Linq.JArray;
-
-                        // Verificar si el arreglo contiene elementos
-                        if (responseArray != null && responseArray.Count > 0)
-                        {
-                            // Extraer información del primer objeto del arreglo
-                            var firstItem = responseArray[0];
-                            string status = firstItem["status"] != null ? firstItem["status"].ToString() : "No status";
-                            string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "No entryTime";
-
-                            // Crear un mensaje de respuesta
-                            string serverResponse = "Status: " + status + ", EntryTime: " + entryTime;
-
-                            // Log del mensaje de respuesta
-                            return serverResponse;
-                        }
-                        else
-                        {
-                            LogEventS("La respuesta de la API está vacía.");
-                            return "La respuesta de la API está vacía.";
-                        }
-                    }
-                    catch (JsonException ex)
-                    {
-                        // Si la respuesta no es un JSON válido
-                        LogEventS("Error al procesar la respuesta JSON: " + ex.Message);
-                        return "Error al procesar la respuesta JSON: " + ex.Message;
-                    }
+                    LogEventS("Respuesta del servidor: " + response);
+                    return response;
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
-                    // Captura cualquier error dentro del bloque 'using'
-                    LogEventS("Error al realizar la solicitud: " + ex.Message);
-                    return "Error al realizar la solicitud: " + ex.Message;
+                    // Capturar detalles del error
+                    string errorMessage = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                    LogEventS("Error en la solicitud: " + errorMessage);
+                    return "Error en la solicitud: " + errorMessage;
                 }
             }
         }
         catch (Exception ex)
         {
-            // Captura cualquier error inesperado fuera del 'using'
             LogEventS("Error inesperado: " + ex.Message);
             return "Error inesperado: " + ex.Message;
         }
@@ -396,6 +593,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         sql_rutas_actividades.SelectCommand = "SELECT * FROM [dbo].[ALMAPAC$Work Type]";
         sql_rutas_actividades.DataBind();
     }
+    
     public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
@@ -429,7 +627,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
     // Método para escribir en el Visor de eventos
     public static void LogEventS(object message)
     {
-        string logFilePath = "C:/trasacciones-almapac-main/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logFilePath = "C:/trasacciones-almapac/Logs/MyAppLog.txt"; // Ruta absoluta
         string logDirectory = Path.GetDirectoryName(logFilePath);
 
         // Crear el directorio si no existe
@@ -638,7 +836,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public int bultos { get; set; }
         public string documentos { get; set; }
         public DateTime fechaTemp { get; set; }
-        public int temperatura { get; set; }
+        public double temperatura { get; set; }
         public int basculaEntrada { get; set; }
         public int idZafra { get; set; }
         public int peso2 { get; set; }
@@ -661,6 +859,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public string marchamo3 { get; set; }
         public string marchamo4 { get; set; }
     }
+    private static Post LastFirstRecord = null;
 
     protected void lnk_VerRuta_Click(object sender, EventArgs e)
     {
