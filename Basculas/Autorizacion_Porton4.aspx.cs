@@ -34,7 +34,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
             string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4?page=1&size=10000&includeAttachments=true";
 
             // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyb250ZW5kX3ByZXRyYW5zYWN0aW9uc19xdWlja3Bhc3MiLCJzdWIiOjMsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3Mzk4NDc0MTMsImV4cCI6MjUyODc4NzQxM30.eApDwV3eK7Tlf_HfoJ--V3Pay5oF7mUzazTusfrzguM";
 
             // Forzar el uso de TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -103,7 +103,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         }
 
         string url = string.Format("https://apiclientes.almapac.com:9010/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyb250ZW5kX3ByZXRyYW5zYWN0aW9uc19xdWlja3Bhc3MiLCJzdWIiOjMsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3Mzk4NDc0MTMsImV4cCI6MjUyODc4NzQxM30.eApDwV3eK7Tlf_HfoJ--V3Pay5oF7mUzazTusfrzguM";
         
         // Forzar el uso de TLS 1.2
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
