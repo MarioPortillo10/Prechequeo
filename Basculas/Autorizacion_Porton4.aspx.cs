@@ -34,7 +34,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
             string url = "https://apiclientes.almapac.com:9010/api/shipping/status/4?page=1&size=10000&includeAttachments=true";
 
             // Token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyb250ZW5kX3ByZXRyYW5zYWN0aW9uc19xdWlja3Bhc3MiLCJzdWIiOjMsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3Mzk4NDc0MTMsImV4cCI6MjUyODc4NzQxM30.eApDwV3eK7Tlf_HfoJ--V3Pay5oF7mUzazTusfrzguM";
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
 
             // Forzar el uso de TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -53,15 +53,17 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
                     // Deserializar la respuesta JSON
                     var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                    // Definir la zona horaria de UTC -6
-                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+                    // Definir la zona horaria UTC-6 (sin horario de verano)
+                    TimeZoneInfo utcMinus6 = TimeZoneInfo.CreateCustomTimeZone("UTC-6", TimeSpan.FromHours(-6), "UTC-6", "UTC-6");
 
-                    // Convertir dateTimePrecheckeo a UTC -6
+                    // Recorrer y convertir fechas
                     foreach (var item in data)
                     {
                         if (item.dateTimePrecheckeo != DateTime.MinValue)
                         {
-                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                            // Asegurarse de que la fecha sea tratada como UTC
+                            var utcDate = DateTime.SpecifyKind(item.dateTimePrecheckeo, DateTimeKind.Utc);
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDate, utcMinus6);
                         }
                     }
 
@@ -103,7 +105,7 @@ public partial class Basculas_Autorizacion_Porton4 : System.Web.UI.Page
         }
 
         string url = string.Format("https://apiclientes.almapac.com:9010/api/shipping/{0}?includeAttachments=true", codigoGeneracion);
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyb250ZW5kX3ByZXRyYW5zYWN0aW9uc19xdWlja3Bhc3MiLCJzdWIiOjMsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3Mzk4NDc0MTMsImV4cCI6MjUyODc4NzQxM30.eApDwV3eK7Tlf_HfoJ--V3Pay5oF7mUzazTusfrzguM";
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
         
         // Forzar el uso de TLS 1.2
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

@@ -30,16 +30,10 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 
     // Variable estática para alternar registros
     private static int lastAssignedIndex = 0;
-
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Request.Cookies["username"] != null && Request.Cookies["cod_bascula"] != null && Request.Cookies["cod_usuario"] != null && Request.Cookies["cod_turno"] != null)
-        {
-            string username = Request.Cookies["username"].Value;
-            string cod_bascula = Request.Cookies["cod_bascula"].Value;
-            string cod_usuario = Request.Cookies["cod_usuario"].Value;
-            string cod_turno = Request.Cookies["cod_turno"].Value;
-
+        {    
             if (!IsPostBack)
             {
                 // URL que deseas hacer el fetch
@@ -53,7 +47,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 // Definir la zona horaria de UTC -6
-                TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+                TimeZoneInfo gmtMinus6 = TimeZoneInfo.CreateCustomTimeZone("GMT-6", TimeSpan.FromHours(-6), "GMT-6", "GMT-6");
 
                 using (WebClient client = new WebClient())
                 {
@@ -86,7 +80,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         this.LogEvent("Pila de llamadas: " + ex.StackTrace);
                     }
                 }
-
 
                 using (WebClient client = new WebClient())
                 {
@@ -174,8 +167,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                                 // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
                                 DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
 
-                                // Convierte a UTC -6
-                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                                // Convierte a GMT-6 (zona horaria sin horario de verano)
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, gmtMinus6);
                             }
                         }
 
@@ -236,8 +229,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                                 // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
                                 DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
 
-                                // Convierte a UTC -6
-                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                                // Convierte a GMT-6 (zona horaria sin horario de verano)
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, gmtMinus6);
                             }
                         }
 
@@ -258,6 +251,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         // Vincular los datos filtrados al control Repeater
                         rptRutas1.DataSource = filteredData;
                         rptRutas1.DataBind();
+                        PanelTituloPlanas.Visible = filteredData.Count > 0;
                     }
                     catch (Exception ex)
                     {
@@ -289,8 +283,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                                 // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
                                 DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
 
-                                // Convierte a UTC -6
-                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+                                // Convierte a GMT-6 (zona horaria sin horario de verano)
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, gmtMinus6);
                             }
                         }
 
@@ -340,8 +334,11 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                         {
                             if (item.dateTimePrecheckeo.HasValue && item.dateTimePrecheckeo.Value != DateTime.MinValue)
                             {
+                                // Asegúrate de que dateTimePrecheckeo sea tratado como UTC
                                 DateTime utcDateTime = DateTime.SpecifyKind(item.dateTimePrecheckeo.Value, DateTimeKind.Utc);
-                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, utcMinus6);
+
+                                // Convierte a GMT-6 (zona horaria sin horario de verano)
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, gmtMinus6);
                             }
                         }
 
@@ -383,6 +380,8 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
 
                         rptRutas4.DataSource = (recordForRpt4 != null) ? new List<Post> { recordForRpt4 } : new List<Post>();
                         rptRutas4.DataBind();
+
+                        PanelTituloVolteo.Visible = (recordForRpt3 != null || recordForRpt4 != null);
                     }
                     catch (Exception ex)
                     {
@@ -402,14 +401,12 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
     [WebMethod]
     public static string SolicitarUnidad(string Tipo_Unidad, int currentValue)
     {
-        // URL base para la solicitud
+        // Código para solicitar una unidad
         string baseUrl = "https://apiclientes.almapac.com:9010/api/queue/call-multiple/";
         string url = baseUrl + Tipo_Unidad + "/" + currentValue;
 
         // Token de autenticación
         string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByb2dyYW1hX3RyYW5zYWNjaW9uZXMiLCJzdWIiOjYsInJvbGVzIjpbImJvdCJdLCJpYXQiOjE3MzMzMjIxNDAsImV4cCI6MjUyMjI2MjE0MH0.LPLUEOv4kNsozjwc1BW6qZ5R1fqT_BwsF-MM5vY5_Cc";
-        
-        // Asegurar compatibilidad con TLS 1.2
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         try
@@ -418,7 +415,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
             {
                 try
                 {
-                    // Configurar los encabezados de la solicitud
+                    // Configurar los encabezados
                     client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
                     client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
@@ -428,88 +425,56 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
                     // Verificar si la respuesta está vacía
                     if (string.IsNullOrEmpty(response))
                     {
-                        string mensaje = "⚠️ El servidor no devolvió respuesta.";
-                        LogEventS(mensaje);
-                        return mensaje;
+                        LogEventS("El servidor no devolvió respuesta.");
+                        return "El servidor no devolvió respuesta.";
                     }
 
+                    // Intentar parsear la respuesta como JSON
                     try
                     {
-                        // Intentar deserializar la respuesta como JSON
+                        // Deserializar la respuesta como un arreglo JSON (JArray)
                         var responseArray = JsonConvert.DeserializeObject(response) as Newtonsoft.Json.Linq.JArray;
 
+                        // Verificar si el arreglo contiene elementos
                         if (responseArray != null && responseArray.Count > 0)
                         {
                             // Extraer información del primer objeto del arreglo
                             var firstItem = responseArray[0];
-                            string status = firstItem["status"] != null ? firstItem["status"].ToString() : "Sin estado";
-                            string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "Sin hora de entrada";
+                            string status = firstItem["status"] != null ? firstItem["status"].ToString() : "No status";
+                            string entryTime = firstItem["entryTime"] != null ? firstItem["entryTime"].ToString() : "No entryTime";
 
-                            string mensaje = "Solicitud exitosa: Estado - " + status + ", Hora de entrada - " + entryTime;
-                            LogEventS(mensaje);
-                            return mensaje;
+                            // Crear un mensaje de respuesta
+                            string serverResponse = "Status: " + status + ", EntryTime: " + entryTime;
+
+                            // Log del mensaje de respuesta
+                            return serverResponse;
                         }
                         else
                         {
-                            string mensaje = "⚠️ La respuesta de la API está vacía.";
-                            LogEventS(mensaje);
-                            return mensaje;
+                            LogEventS("La respuesta de la API está vacía.");
+                            return "La respuesta de la API está vacía.";
                         }
                     }
                     catch (JsonException ex)
                     {
-                        string mensaje = "Error al procesar la respuesta JSON: " + ex.Message;
-                        LogEventS(mensaje);
-                        return mensaje;
+                        // Si la respuesta no es un JSON válido
+                        LogEventS("Error al procesar la respuesta JSON: " + ex.Message);
+                        return "Error al procesar la respuesta JSON: " + ex.Message;
                     }
-                }
-                catch (WebException webEx)
-                {
-                    string mensajeError = "Error desconocido.";
-
-                    HttpWebResponse httpResponse = webEx.Response as HttpWebResponse;
-                    if (httpResponse != null)
-                    {
-                        using (StreamReader reader = new StreamReader(httpResponse.GetResponseStream()))
-                        {
-                            string errorResponse = reader.ReadToEnd();
-
-                            try
-                            {
-                                // Intentar deserializar la respuesta de error para extraer "message"
-                                var errorJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(errorResponse);
-                                if (errorJson["message"] != null)
-                                {
-                                    mensajeError = errorJson["message"].ToString(); // Extraemos solo el mensaje
-                                }
-                            }
-                            catch (JsonException)
-                            {
-                                mensajeError = "Error en la API: Respuesta inesperada.";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        mensajeError = "Error en la solicitud: " + webEx.Message;
-                    }
-
-                    LogEventS(mensajeError);
-                    return mensajeError;
                 }
                 catch (Exception ex)
                 {
-                    string mensaje = "Error al realizar la solicitud: " + ex.Message;
-                    LogEventS(mensaje);
-                    return mensaje;
+                    // Captura cualquier error dentro del bloque 'using'
+                    LogEventS("Error al realizar la solicitud: " + ex.Message);
+                    return "Error al realizar la solicitud: " + ex.Message;
                 }
             }
         }
         catch (Exception ex)
         {
-            string mensaje = "Error inesperado: " + ex.Message;
-            LogEventS(mensaje);
-            return mensaje;
+            // Captura cualquier error inesperado fuera del 'using'
+            LogEventS("Error inesperado: " + ex.Message);
+            return "Error inesperado: " + ex.Message;
         }
     }
 
@@ -593,7 +558,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         sql_rutas_actividades.SelectCommand = "SELECT * FROM [dbo].[ALMAPAC$Work Type]";
         sql_rutas_actividades.DataBind();
     }
-    
     public void LogEvent(object message)
     {
         string logFilePath = Server.MapPath("~/Logs/MyAppLog.txt");
@@ -627,7 +591,7 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
     // Método para escribir en el Visor de eventos
     public static void LogEventS(object message)
     {
-        string logFilePath = "C:/trasacciones-almapac/Logs/MyAppLog.txt"; // Ruta absoluta
+        string logFilePath = "C:/trasacciones-almapac-main/Logs/MyAppLog.txt"; // Ruta absoluta
         string logDirectory = Path.GetDirectoryName(logFilePath);
 
         // Crear el directorio si no existe
@@ -859,7 +823,6 @@ public partial class Basculas_Tiempos_azucar : System.Web.UI.Page
         public string marchamo3 { get; set; }
         public string marchamo4 { get; set; }
     }
-    private static Post LastFirstRecord = null;
 
     protected void lnk_VerRuta_Click(object sender, EventArgs e)
     {

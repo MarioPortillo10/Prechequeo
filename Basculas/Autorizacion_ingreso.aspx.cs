@@ -77,14 +77,17 @@ public partial class Basculas_Autorizacion_ingreso : System.Web.UI.Page
 
                 if (data1 != null)
                 {
-                    // Definir la zona horaria UTC -6 (verifica que el ID sea correcto en tu entorno)
-                    TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+                    // Definir la zona horaria GMT-6 (sin horario de verano)
+                    TimeZoneInfo gmtMinus6 = TimeZoneInfo.CreateCustomTimeZone("GMT-6", TimeSpan.FromHours(-6), "GMT-6", "GMT-6");
 
+                    // Recorrer y convertir fechas
                     foreach (var item in data1)
                     {
                         if (item.dateTimePrecheckeo != DateTime.MinValue)
                         {
-                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                            // Asegurarse de que la fecha sea tratada como UTC
+                            var utcDate = DateTime.SpecifyKind(item.dateTimePrecheckeo, DateTimeKind.Utc);
+                            item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDate, gmtMinus6);
                         }
                     }
 

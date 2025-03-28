@@ -46,15 +46,17 @@ public partial class Basculas_Autorizacion_Camiones : System.Web.UI.Page
                         // Deserialización de datos
                         var data = JsonConvert.DeserializeObject<List<Post>>(responseBody);
 
-                        // Definir la zona horaria de UTC -6
-                        TimeZoneInfo utcMinus6 = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"); // Ajusta según tu zona horaria
+                        // Crear zona horaria personalizada GMT-6 sin horario de verano
+                        TimeZoneInfo gmtMinus6 = TimeZoneInfo.CreateCustomTimeZone("GMT-6", TimeSpan.FromHours(-6), "GMT-6", "GMT-6");
 
                         // Convertir dateTimePrecheckeo a UTC -6
                         foreach (var item in data)
                         {
                             if (item.dateTimePrecheckeo != DateTime.MinValue)
                             {
-                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(item.dateTimePrecheckeo, utcMinus6);
+                                // Asegurar que la fecha sea tratada como UTC
+                                var utcDate = DateTime.SpecifyKind(item.dateTimePrecheckeo, DateTimeKind.Utc);
+                                item.dateTimePrecheckeo = TimeZoneInfo.ConvertTimeFromUtc(utcDate, gmtMinus6);
                             }
                         }
 
