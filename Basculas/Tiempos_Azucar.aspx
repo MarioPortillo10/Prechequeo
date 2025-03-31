@@ -469,73 +469,73 @@
         <!-- Unidades Planas & Unidades de Volteo -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-8" style="font-family: 'Gilroy-Bold', sans-serif;">
             <div class="w-3/4 mx-auto bg-white"> 
-                <asp:Repeater ID="rptRutas1" runat="server">
-                    <ItemTemplate>
-                        <!-- Unidades Planas -->
-                        <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #182A6E; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
-                                <div class="w-1/4 flex flex-col items-center">
-                                    <div id="progressCircle1" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
-                                        <div id="timerText1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-2 flex flex-col items-center">
-                                    <div class="flex justify-center">
-                                        <button id="startButton1" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
-                                            data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
-                                        <button id="stopButton1" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" 
-                                            onclick="console.log('Detener Cronómetro 1'); stopTimer('stopButton1')" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                <asp:Panel ID="PanelTituloPlanas" runat="server" Visible="false">
+                    <h2 class="text-lg font-bold mb-4 text-center">UNIDADES PLANAS</h2>
+                    <asp:Repeater ID="rptRutas1" runat="server">
+                        <ItemTemplate>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #182A6E; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
+                                    <div class="w-1/4 flex flex-col items-center">
+                                        <div id="progressCircle1" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
+                                            <div id="timerText1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
+                                        </div>
                                     </div>
                                     
-                                    <!-- Texto condicional con recuadro -->
-                                    <span class="text-blue-500 font-bold mt-2" 
-                                        runat="server" 
-                                        Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
-                                        style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #0067c2; border-radius: 8px; background-color: #0067c2; color: #f0f0f0;">
-                                        Se Requiere Barrido
-                                    </span>
+                                    <div class="mt-2 flex flex-col items-center">
+                                        <div class="flex justify-center">
+                                            <button id="startButton1" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
+                                                data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
+                                            <button id="stopButton1" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" 
+                                                onclick="console.log('Detener Cronómetro 1'); stopTimer('stopButton1')" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                                        </div>
+                                        
+                                        <!-- Texto condicional con recuadro -->
+                                        <span class="text-blue-500 font-bold mt-2" 
+                                            runat="server" 
+                                            Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
+                                            style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #0067c2; border-radius: 8px; background-color: #0067c2; color: #f0f0f0;">
+                                            Se Requiere Barrido
+                                        </span>
+                                    </div>
+
                                 </div>
+                            </div>
+                            <!-- Info 1 -->
+                            <div class="bg-white p-2 rounded-md  text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
+                                <p>
+                                    <strong>Transacción:</strong>
+                                    <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
+                                </p>
+                                
+                                <p>
+                                    <strong>Ingenio:</strong> 
+                                    <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
+                                </p>
+
+                                <p>
+                                    <strong>Motorista:</strong>
+                                    <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                                </p>
+
+                                <p>
+                                    <strong>Placa Remolque:</strong>
+                                    <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                                </p>
+
+                                <p>
+                                    <strong>Placa Camión:</strong> 
+                                    <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                                </p>
+
+                                <p>
+                                    <strong>Hora de Ingreso:</strong> 
+                                    <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
+                                </p>
 
                             </div>
-                        </div>
-                        <!-- Info 1 -->
-                        <div class="bg-white p-2 rounded-md  text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
-                            <p>
-                                <strong>Transacción:</strong>
-                                <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
-                            </p>
-                            
-                            <p>
-                                <strong>Ingenio:</strong> 
-                                <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Motorista:</strong>
-                                <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Placa Remolque:</strong>
-                                <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Placa Camión:</strong> 
-                                <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Hora de Ingreso:</strong> 
-                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("TimeForId2") %>'></asp:Label>
-                            </p>
-
-                        </div>
-                    </ItemTemplate>
-                </asp:Repeater>
-
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </asp:Panel>
 
                 <asp:Repeater ID="rptRutas" runat="server">
                     <ItemTemplate>
@@ -584,74 +584,74 @@
             
             <!-- Unidades de Volteo -->
             <div class="w-3/4 mx-auto bg-white"> 
-            <asp:Repeater ID="rptRutas3" runat="server">
-                <ItemTemplate>
+                <asp:Panel ID="PanelTituloVolteo" runat="server" Visible="false">
                     <h2 class="text-lg font-bold mb-4 text-center">UNIDADES DE VOLTEO</h2>
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #242424; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
-                            <div class="w-1/4 flex flex-col items-center">
-                                <div id="progressCircle2" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
-                                    <div id="timerText2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
+                    <asp:Repeater ID="rptRutas3" runat="server">
+                        <ItemTemplate>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center text-white p-2 rounded-lg" style="background-color: #242424; background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;">
+                                    <div class="w-1/4 flex flex-col items-center">
+                                        <div id="progressCircle2" style="width: 95px; height: 95px; border-radius: 50%; background: #f0f0f0; position: relative;">
+                                            <div id="timerText2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: black;">00:00:00</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-2 flex flex-col items-center">
+                                        <div class="flex justify-center">
+                                            <button id="startButton2" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
+                                                data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
+                                            <button id="stopButton2" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" 
+                                                onclick="console.log('Detener Cronómetro 2'); stopTimer('stopButton2')" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+                                        </div>
+                                        <!-- Texto condicional con recuadro -->
+                                        <span class="text-gray-500 font-bold mt-2" 
+                                            runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
+                                            style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
+                                            Se Requiere Barrido
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="mt-2 flex flex-col items-center">
-                                <div class="flex justify-center">
-                                    <button id="startButton2" type="button" class="bg-green-500 text-white px-3 py-1 rounded-md" onclick="mostrarModal(event, this)" 
-                                        data-requires-sweeping='<%# Eval("requiresSweeping") %>'>Iniciar</button>
-                                    <button id="stopButton2" type="button" class="bg-red-500 text-white px-3 py-1 rounded-md ml-2" 
-                                        onclick="console.log('Detener Cronómetro 2'); stopTimer('stopButton2')" data-codigo-generacion='<%# HttpUtility.HtmlEncode(Eval("codeGen").ToString()) %>'>Detener</button>
+
+                                <!-- Info 1 -->
+                                <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
+                                    <p>
+                                        <strong>Transacción:</strong>
+                                        <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
+                                    </p>
+                                        
+                                    <p>
+                                        <strong>Ingenio:</strong> 
+                                        <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
+                                    </p>
+
+                                    <p>
+                                        <strong>Motorista:</strong>
+                                        <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
+                                    </p>
+                                    
+                                    <p>
+                                        <strong>Placa Remolque:</strong>
+                                        <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
+                                    </p>
+
+                                    <p>
+                                        <strong>Placa Camión:</strong> 
+                                        <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
+                                    </p>
+
+                                    <p>
+                                        <strong>Hora de Ingreso:</strong> 
+                                        <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
+                                    </p>
                                 </div>
-                                <!-- Texto condicional con recuadro -->
-                                <span class="text-gray-500 font-bold mt-2" 
-                                    runat="server" Visible='<%# Eval("requiresSweeping").ToString() == "S" %>'
-                                    style="display: inline-block; padding: 8px 12px; margin-top: 8px; border: 2px solid #343435; border-radius: 8px; background-color: #343435; color: #f0f0f0;">
-                                    Se Requiere Barrido
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                        <!-- Info 1 -->
-                        <div class="bg-white p-2 rounded-md text-sm mb-4" style="font-family: 'Gilroy-Light', sans-serif;">
-                            <p>
-                                <strong>Transacción:</strong>
-                                <asp:Label ID="lblTransaccion" runat="server" Text='<%# Eval("idNavRecord") != null ? Convert.ToString(Eval("idNavRecord")) : "Sin Datos" %>' />
-                            </p>
-                                
-                            <p>
-                                <strong>Ingenio:</strong> 
-                                <asp:Label ID="lblIngenio" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("ingenio.name").ToString().Replace("_", " ")) %>' /></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Motorista:</strong>
-                                <asp:Label ID="lblMotorista" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("driver.name").ToString()) %>'></asp:Label>
-                            </p>
-                            
-                            <p>
-                                <strong>Placa Remolque:</strong>
-                                <asp:Label ID="lblPlacaR" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.trailerPlate").ToString()) %>'></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Placa Camión:</strong> 
-                                <asp:Label ID="lblPlacaC" runat="server" CssClass="no-bold" Text='<%# HttpUtility.HtmlEncode(Eval("vehicle.plate").ToString()) %>'></asp:Label>
-                            </p>
-
-                            <p>
-                                <strong>Hora de Ingreso:</strong> 
-                                <asp:Label ID="lblHoraIngreso" runat="server" CssClass="no-bold" Text='<%# Eval("dateTimePrecheckeo") != null ? Convert.ToDateTime(Eval("dateTimePrecheckeo")).ToString("yyyy-MM-dd HH:mm:ss") : "No hay datos" %>'></asp:Label>
-                            </p>
-                        </div>
-                    </ItemTemplate>
-                </asp:Repeater>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </asp:Panel>
 
                 <asp:Repeater ID="rptRutas4" runat="server">
                     <HeaderTemplate>
-                        <% if ((bool)(ViewState["ShowHeaderInRutas4"] ?? false)) { %>
-                            <h2 class="text-lg font-bold mb-4 text-center">UNIDADES DE VOLTEO</h2>
-                        <% } %>
+                        
                     </HeaderTemplate>
                     <ItemTemplate>
                         <div class="space-y-2">
